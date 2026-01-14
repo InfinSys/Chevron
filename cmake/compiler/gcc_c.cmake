@@ -5,7 +5,7 @@
 
 # TODO: Setup gcc compiler configuration (if applicable)
 
-set(CHEVRON_GCC_C_VERSION_MIN 14 CACHE STRING "Minimum gcc compiler version")
+set(CHEVRON_GCC_C_VERSION_MIN 13 CACHE STRING "Minimum gcc compiler version")
 
 # Confirm supported gcc compiler version
 if(CMAKE_C_COMPILER_VERSION VERSION_LESS ${CHEVRON_GCC_C_VERSION_MIN})

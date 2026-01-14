@@ -5,7 +5,7 @@
 
 # TODO: Setup g++ compiler configuration (if applicable)
 
-set(CHEVRON_GCC_CXX_VERSION_MIN 14 CACHE STRING "Minimum g++ compiler version")
+set(CHEVRON_GCC_CXX_VERSION_MIN 13 CACHE STRING "Minimum g++ compiler version")
 
 # Confirm supported g++ compiler version
 if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS ${CHEVRON_GCC_CXX_VERSION_MIN})
