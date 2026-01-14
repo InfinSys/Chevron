@@ -3,15 +3,13 @@
 #     CLANG-TIDY UTILITY TARGET SETUP
 #==========================================
 
-# TODO: Configure clang-tidy utility target...
-
 set(
     RECURSIVE_HEADER_SEARCH_DIRS
 
     "${CMAKE_SOURCE_DIR}/include/*.h"
     "${CMAKE_SOURCE_DIR}/include/*.hpp"
-    "${CMAKE_SOURCE_DIR}/lib/*.h"
-    "${CMAKE_SOURCE_DIR}/lib/*.hpp"
+    "${CMAKE_SOURCE_DIR}/lib/include/*.h"
+    "${CMAKE_SOURCE_DIR}/lib/include/*.hpp"
 )
 
 set(
@@ -19,8 +17,8 @@ set(
 
     "${CMAKE_SOURCE_DIR}/src/*.c"
     "${CMAKE_SOURCE_DIR}/src/*.cpp"
-    "${CMAKE_SOURCE_DIR}/lib/*.c"
-    "${CMAKE_SOURCE_DIR}/lib/*.cpp"
+    "${CMAKE_SOURCE_DIR}/lib/src/*.c"
+    "${CMAKE_SOURCE_DIR}/lib/src/*.cpp"
 )
 
 # Clang-Tidy config file path
@@ -35,14 +33,6 @@ if(NOT EXISTS "${CLANG_TIDY_CONFIG}")
     )
 endif()
 
-# set(
-#     CMAKE_CXX_CLANG_TIDY
-# 
-#     "${CLANG_TIDY_EXECUTABLE}"
-#     "-config-file=${CLANG_TIDY_CONFIG}"
-#     "-p=${CMAKE_BINARY_DIR}"
-# )
-
 # Collect all source files
 file(
     GLOB_RECURSE ALL_SOURCE_FILES
@@ -56,7 +46,7 @@ file(
 )
 
 add_custom_target(
-    ${PRJ_PREFIX}_clang_tidy
+    CHEVRON_clang_tidy
 
     COMMAND
         ${CLANG_TIDY_EXECUTABLE}
@@ -66,6 +56,6 @@ add_custom_target(
         "--config-file=${CLANG_TIDY_CONFIG}"
         "-system-headers=false"
     
-    COMMENT "Running Clang-Tidy on source files..."
+    COMMENT "Running Clang-Tidy on project source..."
     VERBATIM
 )

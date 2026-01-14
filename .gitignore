@@ -2,13 +2,13 @@
 # Ignore IDE project directories
 .vs/*
 .vscode/*
+.idea/*
 
 # EXCEPT THE FOLLOWING IDE PROJECT FILES:
 !.vscode/launch.json
 !.vscode/extensions.json
-!.vs/launch.vs.json
 
-# Ignore binary output directories
+# Ignore artifact output directories
 build/*
 install/*
 

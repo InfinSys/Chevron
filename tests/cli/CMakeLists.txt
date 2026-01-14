@@ -4,30 +4,36 @@
 #======================================
 
 # Create developer command line executable
-add_executable(dev_cli_debug "dev_exe.cpp")
+add_executable(devexe "dev_exe.cpp")
 
-if(${${PRJ_PREFIX}_CXX_GCC})
+if(${CHEVRON_CXX_GCC})
     target_link_libraries(
-        dev_cli_debug
+        devexe
     
         PRIVATE
-        ${PRJ_PREFIX}_gcc_cxx_bundle
+        CHEVRON_gcc_cxx_bundle
     )
-# elseif(${${PRJ_PREFIX}_CXX_CLANG})
-elseif(${${PRJ_PREFIX}_CXX_MSVC})
+elseif(${CHEVRON_CXX_CLANG})
     target_link_libraries(
-        dev_cli_debug
+        devexe
     
         PRIVATE
-        ${PRJ_PREFIX}_msvc_cxx_bundle
+        CHEVRON_clang_cxx_bundle
+    )
+elseif(${CHEVRON_CXX_MSVC})
+    target_link_libraries(
+        devexe
+    
+        PRIVATE
+        CHEVRON_msvc_cxx_bundle
     )
 endif()
 
 # Setup installation of developer executable
 install(
-    TARGETS dev_cli_debug
+    TARGETS devexe
     COMPONENT DevDebugApp
-    EXPORT dev_cli_debug-targets
+    EXPORT devexe-targets
 
     RUNTIME
         DESTINATION ${CMAKE_INSTALL_BINDIR}

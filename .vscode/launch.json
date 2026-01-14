@@ -9,8 +9,7 @@
             "name": "Windows x64 MSVC (vsdbg)",
             "type": "cppvsdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/install/win32-x64-msvc-debug/bin/Demo_Executable.exe",
-            // TODO: Replace 'Demo_Executable.exe' above with your executable name
+            "program": "${workspaceFolder}/install/win32-x64-msvc-debug/bin/devexe.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
@@ -21,8 +20,7 @@
             "name": "Windows x64 MinGW (gdb)",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/install/win32-x64-mingw-debug/bin/Demo_Executable.exe",
-            // TODO: Replace 'Demo_Executable.exe' above with your executable name
+            "program": "${workspaceFolder}/install/win32-x64-mingw-debug/bin/devexe.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
@@ -47,8 +45,7 @@
             "name": "Linux x64 GCC (gdb)",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/install/linux-x64-gcc-debug/bin/Demo_Executable",
-            // TODO: Replace 'Demo_Executable' above with your executable name
+            "program": "${workspaceFolder}/install/linux-x64-gcc-debug/bin/devexe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
@@ -72,8 +69,7 @@
             "name": "Linux x64 Clang (lldb)",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/install/linux-x64-clang-debug/bin/Demo_Executable",
-            // TODO: Replace 'Demo_Executable' above with your executable name
+            "program": "${workspaceFolder}/install/linux-x64-clang-debug/bin/devexe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",

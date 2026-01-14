@@ -3,8 +3,6 @@
 #     CLANG-FORMAT UTILITY TARGET SETUP
 #============================================
 
-# TODO: Configure clang-format utility target...
-
 # Directories to search recursively
 set(
     RECURSIVE_SEARCH_DIRS
@@ -12,7 +10,6 @@ set(
     "${CMAKE_SOURCE_DIR}/lib"
     "${CMAKE_SOURCE_DIR}/include"
     "${CMAKE_SOURCE_DIR}/src"
-    "${CMAKE_SOURCE_DIR}/tests"
 )
 
 # File extensions to target
@@ -45,10 +42,10 @@ endforeach()
 
 # Create Clang-Format utility target
 add_custom_target(
-    ${PRJ_PREFIX}_clang_format
+    CHEVRON_clang_format
 
     COMMAND clang-format -i ${FORMAT_FILE_LIST}
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-    COMMENT "Running Clang-Format on source files..."
+    COMMENT "Formatting source files..."
     VERBATIM
 )

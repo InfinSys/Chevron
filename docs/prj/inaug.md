@@ -4,7 +4,7 @@
 -->
 
 <div>
-    <h1 align="center">@RESOLVED_SFTW_NAME@ Library</h1>
+    <h1 align="center">Chevron Library</h1>
     <h5 align="center">InfinSys, LLC. 2026</h5>
     <h6 align="center">and <em>Jamon T. Bailey</em></h6>
 </div>

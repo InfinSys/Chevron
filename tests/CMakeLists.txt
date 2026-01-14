@@ -3,14 +3,14 @@
 #     /tests Directory Script
 #==================================
 
-if(${PRJ_PREFIX}_CLI_DEBUG)
+if(CHEVRON_CLI_DEBUG)
     add_subdirectory(cli)
 endif()
 
-if(${PRJ_PREFIX}_UNIT_TEST)
+if(CHEVRON_UNIT_TEST)
     add_subdirectory(unit)
 endif()
 
-if(${PRJ_PREFIX}_BENCHMARK)
+if(CHEVRON_BENCHMARK)
     add_subdirectory(benchmark)
 endif()
