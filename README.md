@@ -12,9 +12,9 @@
 
 </br>
 
-[![Windows Build Status](https://github.com/InfinSys/Chevron/actions/workflows/windows-build.yml/badge.svg)](https://github.com/InfinSys/Chevron/actions/workflows/windows-build.yml)
-[![Linux Build Status](https://github.com/InfinSys/Chevron/actions/workflows/linux-build.yml/badge.svg)](https://github.com/InfinSys/Chevron/actions/workflows/linux-build.yml)
-[![macOS Build Status](https://github.com/InfinSys/Chevron/actions/workflows/macos-build.yml/badge.svg)](https://github.com/InfinSys/Chevron/actions/workflows/macos-build.yml)
+[![Windows Build Status](https://github.com/InfinSys/Chevron/actions/workflows/windows-build.yml/badge.svg?branch=v0.x)](https://github.com/InfinSys/Chevron/actions/workflows/windows-build.yml)
+[![Linux Build Status](https://github.com/InfinSys/Chevron/actions/workflows/linux-build.yml/badge.svg?branch=v0.x)](https://github.com/InfinSys/Chevron/actions/workflows/linux-build.yml)
+[![macOS Build Status](https://github.com/InfinSys/Chevron/actions/workflows/macos-build.yml/badge.svg?branch=v0.x)](https://github.com/InfinSys/Chevron/actions/workflows/macos-build.yml)
 
 <br/>
 

@@ -17,7 +17,6 @@
 
 extern "C"
 {
-
 /*!
  * @brief
  * Chevron publisher.
@@ -65,7 +64,6 @@ const char CHEVRON_SHORT_NAME[] = "Chevron";
  * Chevron main binary name.
  */
 const char CHEVRON_MAIN_BINARY[] = "chevron";
-
 } // Extern "C"
 
 #endif // CHEVRON_SOFTWARE_IDENTITY_H_

@@ -6,6 +6,13 @@
 # Create developer command line executable
 add_executable(devexe "dev_exe.cpp")
 
+target_link_libraries(
+    devexe
+
+    PRIVATE
+    chevron
+)
+
 if(${CHEVRON_CXX_GCC})
     target_link_libraries(
         devexe

@@ -17,7 +17,6 @@
 
 extern "C"
 {
-
 /*!
  * @brief
  * @RESOLVED_SFTW_NAME@ publisher.
@@ -65,7 +64,6 @@ const char @RESOLVED_SFTW_META_PREFIX@_SHORT_NAME[] = "@RESOLVED_SFTW_SHORT_NAME
  * @RESOLVED_SFTW_NAME@ main binary name.
  */
 const char @RESOLVED_SFTW_META_PREFIX@_MAIN_BINARY[] = "@RESOLVED_SFTW_MAIN_BINARY@";
-
 } // Extern "C"
 
 #endif // @RESOLVED_SFTW_META_PREFIX@_SOFTWARE_IDENTITY_H_

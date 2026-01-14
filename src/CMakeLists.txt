@@ -47,7 +47,7 @@ elseif(${CHEVRON_CXX_MSVC})
     )
 endif()
 
-# Setup installation of demo executable
+# Setup installation of Chevron library
 install(
     TARGETS
     ${CHEVRON_MAIN_BINARY_NAME}

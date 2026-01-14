@@ -17,7 +17,6 @@
 
 extern "C"
 {
-
 /*!
  * @brief
  * Software version major.
@@ -35,13 +34,6 @@ const uint8_t CHEVRON_VERSION_MINOR = 0;
  * Software version patch number.
  */
 const uint8_t CHEVRON_VERSION_PATCH = 0;
-
-/*!
- * @brief
- * Arbitrary software version tweak number.
- */
-const uint8_t CHEVRON_VERSION_TWEAK = ;
-
 } // Extern "C"
 
 #endif // CHEVRON_SOFTWARE_VERSION_H_
