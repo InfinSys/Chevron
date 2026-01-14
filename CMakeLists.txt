@@ -16,7 +16,7 @@
 #
 #=======================================================
 
-cmake_minimum_required(VERSION 3.12 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.25 FATAL_ERROR)
 
 project(
     chevron_core
