@@ -4,7 +4,7 @@
 
 // [ISJTB-CXX-XL20260108-000003]
 
-#include"chevron/model/function/func_pointer.hpp"
+#include "chevron/model/function/func_pointer.hpp"
 
 //	chevron::model::FuncPtr : CONSTRUCTOR
 //	chevron::model::FuncPtr : CONSTRUCTOR END!
