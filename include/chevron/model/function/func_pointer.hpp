@@ -106,9 +106,7 @@ class FuncPtr<ReturnT, FuncArgs<ArgsT...>> {
     [[nodiscard]] bool bind(ReturnType(*callable)(ArgsT...))
     {
         if (callable) {
-            this->funcPtr = [callable](ArgsT... args) -> ReturnType {
-                return callable(std::forward<ArgsT>(args)...);
-            };
+            this->funcPtr = std::forward<ReturnType(*)(ArgsT...)>(callable);
             return true;
         }
         return false;
