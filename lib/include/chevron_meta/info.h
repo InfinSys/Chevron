@@ -9,7 +9,6 @@
  * Metadata for Chevron.
  */
 
-
 #ifndef CHEVRON_SOFTWARE_IDENTITY_H_
 #define CHEVRON_SOFTWARE_IDENTITY_H_
 

@@ -1,14 +1,13 @@
 
 /*!
-* @file version.h
-*
-* @brief
-* Software version header.
-*
-* @details
-* Version information for Chevron.
-*/
-
+ * @file version.h
+ *
+ * @brief
+ * Software version header.
+ *
+ * @details
+ * Version information for Chevron.
+ */
 
 #ifndef CHEVRON_SOFTWARE_VERSION_H_
 #define CHEVRON_SOFTWARE_VERSION_H_

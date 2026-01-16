@@ -5,7 +5,7 @@
 // [ISJTB-CXX-XL20260108-000003]
 
 /*!
- * @file export.hpp
+ * @file export.h
  *
  * @brief
  * Library symbol visibility macro definitions.
