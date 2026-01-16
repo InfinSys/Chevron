@@ -15,13 +15,13 @@
 #define CHEVRON_LIB_H_FUNCTION_POINTER_H_
 
 #include <functional>
-#include "chevron/common/export.hpp"
 #include "chevron/model/function/func_args.hpp"
+#include "chevron/model/function/type_traits.hpp"
 
 namespace chevron::model
 {
 
-/*! @details Base specialization template. */
+/*! @brief Base specialization template. */
 template <typename ReturnT, typename ArgsClass = FuncArgs<>>
 class FuncPtr;
 
@@ -87,7 +87,7 @@ class FuncPtr<ReturnT, FuncArgs<ArgsT...>> {
     /*!
      * @brief
      * Evaluates presence of internal callable function.
-     * 
+     *
      * @return
      * True if no function present
      */
@@ -99,14 +99,14 @@ class FuncPtr<ReturnT, FuncArgs<ArgsT...>> {
     /*!
      * @brief
      * Bind callable free function, lambda, or functor.
-     * 
+     *
      * @return
      * True if successful
      */
-    [[nodiscard]] bool bind(ReturnType(*callable)(ArgsT...))
+    [[nodiscard]] bool bind(ReturnType (*callable)(ArgsT...))
     {
         if (callable) {
-            this->funcPtr = std::forward<ReturnType(*)(ArgsT...)>(callable);
+            this->funcPtr = std::forward<ReturnType (*)(ArgsT...)>(callable);
             return true;
         }
         return false;
@@ -123,9 +123,11 @@ class FuncPtr<ReturnT, FuncArgs<ArgsT...>> {
     [[nodiscard]] bool bind(ClassType* instance, Method method)
     {
         if (instance && method) {
-            this->funcPtr = [instance, method](ArgsT... args) -> ReturnType {
+            this->funcPtr = [instance, method](ArgsT... args) -> ReturnType
+            {
                 return (instance->*method)(std::forward<ArgsT>(args)...);
             };
+            return true;
         }
         return false;
     }
@@ -134,9 +136,6 @@ class FuncPtr<ReturnT, FuncArgs<ArgsT...>> {
     /*! @brief Function pointer. */
     StdFunc funcPtr;
 };
-
-/*! @details Default constructor deduction guide. */
-//FuncPtr() -> FuncPtr<void, FuncArgs<>>;
 
 /*! @details Free function deduction guide. */
 template <typename ReturnT, typename... ArgsT>
@@ -151,7 +150,24 @@ template <typename ClassType, typename ReturnT, typename... ArgsT>
 FuncPtr(ClassType*, ReturnT (ClassType::*)(ArgsT...) const)
     -> FuncPtr<ReturnT, FuncArgs<ArgsT...>>;
 
-// TODO: Lambda and functor deduction guide!!!
+/*! @details Lambda and functor deduction guide. */
+template <typename Function>
+FuncPtr(Function&&) -> FuncPtr<
+    typename traits::callable_signature<std::decay_t<Function>>::ReturnType,
+    traits::to_funcargs_t<
+        typename traits::callable_signature<std::decay_t<Function>>::ArgsTuple>>;
+
+// TODO: Lambda and functor deduction guide only works
+//       when directly naming `FuncPtr` with it's fully
+//       qualified name. Other instantiations do not
+//       appear to exhibit this behavior in identical
+//       circumstances.
+
+// NOTE: Is this because there is no `FuncPtr` constructor
+//       that can construct a call to the `::operator()`
+//       method of the lambda/functor? Perhaps the reliance
+//       soley on the guide to properly make the appropriate
+//       type is the issue here.
 
 } // namespace chevron::model
 

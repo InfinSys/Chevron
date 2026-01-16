@@ -16,7 +16,6 @@
 #include <tuple>
 #include <type_traits>
 #include <utility>
-#include "chevron/common/export.hpp"
 #include "chevron/model/function/concepts.hpp"
 
 namespace chevron::model
@@ -92,6 +91,25 @@ class FuncArgs {
     /*! @brief Pre-defined arguments tuple. */
     Types args;
 };
+
+namespace traits
+{
+
+/*! @brief Function arguments structure conversion utility. */
+template <typename T>
+struct to_funcargs;
+
+/*! @brief Tuple to function arguments structure specialization. */
+template <typename... ArgsT>
+struct to_funcargs<std::tuple<ArgsT...>> {
+    using type = FuncArgs<ArgsT...>;
+};
+
+/*! @brief Function arguments structure conversion utility helper. */
+template <typename T>
+using to_funcargs_t = to_funcargs<T>::type;
+
+} // namespace traits
 
 /*! @details Function argument deduction guide. */
 template <typename... ArgsT>
