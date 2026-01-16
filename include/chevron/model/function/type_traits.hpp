@@ -41,6 +41,7 @@ struct callable_signature<ReturnT (ClassType::*)(ArgsT...)> {
     using ReturnType = ReturnT;
     using ArgsTuple  = std::tuple<ArgsT...>;
     using FuncType   = ReturnT (ClassType::*)(ArgsT...);
+    using Class      = ClassType;
 };
 
 /*!
@@ -51,7 +52,8 @@ template <typename ClassType, typename ReturnT, typename... ArgsT>
 struct callable_signature<ReturnT (ClassType::*)(ArgsT...) const> {
     using ReturnType = ReturnT;
     using ArgsTuple  = std::tuple<ArgsT...>;
-    using FuncType   = ReturnT (ClassType::*)(ArgsT...);
+    using FuncType   = ReturnT (ClassType::*)(ArgsT...) const;
+    using Class      = ClassType;
 };
 
 /*!
