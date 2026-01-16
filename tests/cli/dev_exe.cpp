@@ -1,5 +1,6 @@
 
 #include <iostream>
+#include <string>
 #include"chevron/model/function/func_args.hpp"
 #include"chevron/model/function/func_pointer.hpp"
 
@@ -31,6 +32,8 @@ struct tester {
     void setValue(const int newVal) { value = newVal; }
     bool isMatch(const int val1, const int val2) const { return val1 == val2; }
 
+    int operator()() const { return value; }
+
     int value;
 };
 
@@ -41,12 +44,19 @@ int main(int argc, char* argv[])
 
     FuncArgs cmdlArgs{ argc, argv };
 
+    auto lambda = [&cmdlArgs](const int val, const char& te) -> bool {
+        return val > 75;
+    };
+
     tester ggg{ 12 };
 
     FuncArgs args{ 10, 10 };
     FuncPtr demoCall{ demoMethod };
     FuncPtr callPtr{ &ggg, &tester::isMatch };
+    FuncPtr nCallPtr{ &ggg, &tester::setValue };
     FuncPtr freeCall{ demoMethod2 };
+    chevron::model::FuncPtr lambCall{lambda};  ///< Deduction issue here...
+    chevron::model::FuncPtr functCall{ ggg };  ///< Deduction issue here...
     FuncPtr<int> noArgCall;
 
     if (freeCall)
@@ -63,10 +73,18 @@ int main(int argc, char* argv[])
 
     noArgCall();
     callPtr(25, 16);
+    callPtr(args);
+    lambCall(12, 'C');
+    functCall();
+
+    //
+    //\\//
+
+    return 0;
+
+    // FIX: Need specific constructor for lambda/functor using `::operator()`!!!
 
     // struct FunctionModel --> ReturnType & Arguments --> FuncPtr or Func
 
     // Static callable type? (No heap alloc)
-
-    return 0;
 }
