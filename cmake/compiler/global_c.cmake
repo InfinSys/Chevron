@@ -27,4 +27,8 @@ target_compile_definitions(
         $<$<BOOL:${Chevron_SHARED_BUILD}>:
             CHEVRON_SHARED
         >
+
+        $<$<BOOL:${chevron_EXPORTS}>:
+            chevron_EXPORTS=1
+        >
 )
