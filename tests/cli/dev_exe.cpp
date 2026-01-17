@@ -3,12 +3,7 @@
 #include <string>
 #include"chevron/model/function/func_args.hpp"
 #include"chevron/model/function/func_pointer.hpp"
-
-template <typename... ArgsT>
-using FuncArgs = chevron::model::FuncArgs<ArgsT...>;
-
-template <typename ReturnT, typename... ArgsT>
-using FuncPtr = chevron::model::FuncPtr<ReturnT, ArgsT...>;
+#include"chevron/common/export.h"
 
 bool demoMethod(int val1, int val2)
 {
@@ -42,7 +37,7 @@ int main(int argc, char* argv[])
     //\\//
     //
 
-    FuncArgs cmdlArgs{ argc, argv };
+    chevron::FuncArgs cmdlArgs{ argc, argv };
 
     auto lambda = [&cmdlArgs](const int val, const char& te) -> bool {
         return val > 75;
@@ -50,14 +45,14 @@ int main(int argc, char* argv[])
 
     tester ggg{ 12 };
 
-    FuncArgs args{ 10, 10 };
-    FuncPtr demoCall{ demoMethod };
-    FuncPtr callPtr{ &ggg, &tester::isMatch };
-    FuncPtr nCallPtr{ &ggg, &tester::setValue };
-    FuncPtr freeCall{ demoMethod2 };
-    chevron::model::FuncPtr lambCall{lambda};  ///< Deduction issue here...
-    chevron::model::FuncPtr functCall{ ggg };  ///< Deduction issue here...
-    FuncPtr<int> noArgCall;
+    chevron::FuncArgs args{ 10, 10 };
+    chevron::FuncPtr demoCall{ demoMethod };
+    chevron::FuncPtr callPtr{ &ggg, &tester::isMatch };
+    chevron::FuncPtr nCallPtr{ &ggg, &tester::setValue };
+    chevron::FuncPtr freeCall{ demoMethod2 };
+    chevron::FuncPtr lambCall{ lambda };
+    chevron::FuncPtr functCall{ ggg };
+    chevron::FuncPtr<int> noArgCall;
 
     if (freeCall)
         std::cout << freeCall(false) << std::endl;
