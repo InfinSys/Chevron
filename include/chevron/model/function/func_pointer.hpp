@@ -18,7 +18,7 @@
 #include "chevron/model/function/func_args.hpp"
 #include "chevron/model/function/type_traits.hpp"
 
-namespace chevron::model
+namespace chevron
 {
 
 /*! @brief Base specialization template. */
@@ -153,9 +153,9 @@ FuncPtr(ClassType*, ReturnT (ClassType::*)(ArgsT...) const)
 /*! @details Lambda and functor deduction guide. */
 template <typename Function>
 FuncPtr(Function&&) -> FuncPtr<
-    typename traits::callable_signature<std::decay_t<Function>>::ReturnType,
-    traits::to_funcargs_t<
-        typename traits::callable_signature<std::decay_t<Function>>::ArgsTuple>>;
+    typename model::traits::callable_signature<std::decay_t<Function>>::ReturnType,
+    model::traits::to_funcargs_t<
+        typename model::traits::callable_signature<std::decay_t<Function>>::ArgsTuple>>;
 
 // TODO: Lambda and functor deduction guide only works
 //       when directly naming `FuncPtr` with it's fully
@@ -165,10 +165,10 @@ FuncPtr(Function&&) -> FuncPtr<
 
 // NOTE: Is this because there is no `FuncPtr` constructor
 //       that can construct a call to the `::operator()`
-//       method of the lambda/functor? Perhaps the reliance
-//       soley on the guide to properly make the appropriate
-//       type is the issue here.
+//       method of the lambda/functor? Perhaps the sole
+//       reliance on the guide to properly make the
+//       appropriate type is the issue here.
 
-} // namespace chevron::model
+} // namespace chevron
 
 #endif // CHEVRON_LIB_H_FUNCTION_POINTER_H_

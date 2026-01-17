@@ -18,7 +18,7 @@
 #include <utility>
 #include "chevron/model/function/concepts.hpp"
 
-namespace chevron::model
+namespace chevron
 {
 
 /*!
@@ -49,9 +49,8 @@ class FuncArgs {
             (std::is_constructible_v<ArgsT, IncomingArgsT &&> && ...) &&
             (!std::is_same_v<std::remove_cvref_t<IncomingArgsT>, FuncArgs> && ...)
         )
-    constexpr explicit FuncArgs(IncomingArgsT&&... arg) noexcept(
-        (std::is_nothrow_constructible_v<IncomingArgsT> && ...)
-    )
+    constexpr explicit FuncArgs(IncomingArgsT&&... arg
+    ) noexcept((std::is_nothrow_constructible_v<IncomingArgsT> && ...))
         : args{std::forward<IncomingArgsT>(arg)...}
     {
         //
@@ -61,7 +60,7 @@ class FuncArgs {
 
     /*! @brief Get argument at specified index. */
     template <std::size_t Index>
-        requires(concepts::is_valid_args_index<Index, ArgsT...>)
+        requires(model::concepts::is_valid_args_index<Index, ArgsT...>)
     [[nodiscard]] constexpr decltype(auto) get() noexcept
     {
         return std::get<Index>(this->args);
@@ -69,7 +68,7 @@ class FuncArgs {
 
     /*! @brief Get argument at specified index. */
     template <std::size_t Index>
-        requires(concepts::is_valid_args_index<Index, ArgsT...>)
+        requires(model::concepts::is_valid_args_index<Index, ArgsT...>)
     [[nodiscard]] constexpr decltype(auto) get() const noexcept
     {
         return std::get<Index>(this->args);
@@ -92,7 +91,7 @@ class FuncArgs {
     Types args;
 };
 
-namespace traits
+namespace model::traits
 {
 
 /*! @brief Function arguments structure conversion utility. */
@@ -109,7 +108,7 @@ struct to_funcargs<std::tuple<ArgsT...>> {
 template <typename T>
 using to_funcargs_t = to_funcargs<T>::type;
 
-} // namespace traits
+} // namespace model::traits
 
 /*! @details Function argument deduction guide. */
 template <typename... ArgsT>
@@ -118,6 +117,6 @@ FuncArgs(ArgsT&&...) -> FuncArgs<std::decay_t<ArgsT>...>;
 /*! @details Empty function argument deduction guide. */
 FuncArgs() -> FuncArgs<>;
 
-} // namespace chevron::model
+} // namespace chevron
 
 #endif // CHEVRON_LIB_H_FUNCTION_ARGUMENTS_H_
