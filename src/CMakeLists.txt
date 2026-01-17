@@ -10,6 +10,16 @@ else()
     add_library(${CHEVRON_MAIN_BINARY_NAME} STATIC)
 endif()
 
+#set_target_properties(
+#    ${CHEVRON_MAIN_BINARY_NAME} PROPERTIES
+#
+#    SOVERSION
+#      ${CMAKE_PROJECT_VERSION_MAJOR}
+#
+#    VERSION
+#      ${CMAKE_PROJECT_VERSION}
+#)
+
 target_include_directories(
     ${CHEVRON_MAIN_BINARY_NAME}
 
