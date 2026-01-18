@@ -30,7 +30,7 @@ target_include_directories(
 )
 
 # Source directories
-add_subdirectory(model)
+add_subdirectory(temp)  # NOTE: Temporary Stub Source
 
 # Conditionally link against compiler configuration
 if(${CHEVRON_CXX_GCC})
