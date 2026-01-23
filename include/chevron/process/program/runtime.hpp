@@ -15,10 +15,12 @@
 #ifndef CHEVRON_CORE_LIB_PROC_GUI_RUNTIME_H_
 #define CHEVRON_CORE_LIB_PROC_GUI_RUNTIME_H_
 
+#include "chevron/common/export.h"
+
 namespace chevron::process
 {
 
-class ProgInstance {
+class CHEVRON_API ProgInstance {
 public:
     ProgInstance() noexcept = default;
     ~ProgInstance() noexcept = default;
