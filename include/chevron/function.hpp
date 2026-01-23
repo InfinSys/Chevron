@@ -14,9 +14,9 @@
 #ifndef CHEVRON_LIB_HDR_FUNCTION_INCLUDE_H_
 #define CHEVRON_LIB_HDR_FUNCTION_INCLUDE_H_
 
-#include"chevron/model/function/func_args.hpp"
-#include"chevron/model/function/func_pointer.hpp"
-#include<string>
+#include "chevron/model/function/func_args.hpp"
+#include "chevron/model/function/func_pointer.hpp"
+#include <string>
 
 namespace chevron
 {
@@ -40,7 +40,7 @@ using FloatReturnNoArgs = FuncPtr<float>;
 using DoubleReturnNoArgs = FuncPtr<double>;
 
 /*! @brief Callable function that accepts no arguments and returns a const char pointer. */
-using CharPtrReturnNoArgs = FuncPtr<const char*>;
+using CstrReturnNoArgs = FuncPtr<const char*>;
 
 /*! @brief Callable function that accepts no arguments and returns a string. */
 using StringReturnNoArgs = FuncPtr<std::string>;
@@ -52,6 +52,6 @@ using SizeReturnNoArgs = FuncPtr<size_t>;
 template <typename ReturnT>
 using NoArgsReturn = FuncPtr<ReturnT>;
 
-}
+} // namespace chevron
 
 #endif // CHEVRON_LIB_HDR_FUNCTION_INCLUDE_H_
