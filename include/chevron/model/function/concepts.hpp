@@ -20,13 +20,6 @@
 namespace chevron::model::concepts
 {
 
-/*! @brief Concepts that validates construction of function arguments. */
-template <typename FuncArgsT, typename... ArgsT, typename... IncomingArgsT>
-concept is_viable_function_arguments =
-    (sizeof...(IncomingArgsT) == sizeof...(ArgsT)) &&
-    (std::is_constructible_v<ArgsT, IncomingArgsT&&> && ...) &&
-    (!std::is_same_v<std::remove_cvref_t<IncomingArgsT>, FuncArgsT> && ...);
-
 /*! @brief Concept that validates indexing into function parameters. */
 template <std::size_t Index, typename... ArgsT>
 concept is_valid_args_index = Index >= 0 && Index < sizeof...(ArgsT);
