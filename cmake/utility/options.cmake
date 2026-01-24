@@ -17,9 +17,3 @@ option(
     "Build Chevron with a wxWidgets dependency."
     OFF
 )
-
-option(
-    Chevron_WX_SHARED_BUILD
-    "Build Chevron's wxWidgets dependency as a shared/dynamic library."
-    ON
-)

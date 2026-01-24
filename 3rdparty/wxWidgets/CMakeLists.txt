@@ -5,7 +5,7 @@
 
 message(STATUS "Fetching wxWidgets library source...")
 
-if(Chevron_WX_SHARED_BUILD)
+if(Chevron_SHARED_BUILD)
     # Build wxWidgets as a shared/dynamic library
     set(wxBUILD_SHARED ON)
 else()
