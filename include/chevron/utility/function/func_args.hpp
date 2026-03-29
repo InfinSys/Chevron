@@ -23,7 +23,6 @@
 #include <type_traits>
 #include <utility>
 #include "chevron/utility/function/concepts.hpp"
-#include "chevron/common/export.h"
 
 namespace chevron
 {
@@ -36,7 +35,7 @@ namespace chevron
  * N/A
  */
 template <typename... ArgsT>
-class CHEVRON_API FuncArgs {
+class FuncArgs {
     // ===================================================================================== //
     //      <> chevron::FuncArgs | TYPE ALIASES
     // ===================================================================================== //

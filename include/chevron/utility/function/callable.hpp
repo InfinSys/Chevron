@@ -38,7 +38,7 @@ class Callable;
  * N/a
  */
 template <typename ReturnT, typename... ArgsT>
-class CHEVRON_API Callable<ReturnT, FuncArgs<ArgsT...>> {
+class Callable<ReturnT, FuncArgs<ArgsT...>> {
     // ===================================================================================== //
     //      <> chevron::Callable | TYPE ALIASES
     // ===================================================================================== //
