@@ -8,15 +8,21 @@
  * @file func_args.hpp
  *
  * @brief
+ * Provides declaration of function argument structure.
+ *
+ * @author
+ * Jamon T. Bailey
+ *
+ * @date 01-15-2026
  */
 
-#ifndef CHEVRON_LIB_H_FUNCTION_ARGUMENTS_H_
-#define CHEVRON_LIB_H_FUNCTION_ARGUMENTS_H_
+#ifndef CHEVRON_LIB_HDR_FUNCTION_ARGUMENTS_H_
+#define CHEVRON_LIB_HDR_FUNCTION_ARGUMENTS_H_
 
 #include <tuple>
 #include <type_traits>
 #include <utility>
-#include "chevron/model/function/concepts.hpp"
+#include "chevron/utility/function/concepts.hpp"
 
 namespace chevron
 {
@@ -30,9 +36,16 @@ namespace chevron
  */
 template <typename... ArgsT>
 class FuncArgs {
+    // ===================================================================================== //
+    //      <> chevron::FuncArgs | TYPE ALIASES
+    // ===================================================================================== //
   public:
     /*! @brief Argument types pack. */
     using Types = std::tuple<ArgsT...>;
+
+    // ===================================================================================== //
+    //      <> chevron::FuncArgs | CONSTRUCTORS / DESTRUCTOR
+    // ===================================================================================== //
 
     /*! @brief Default construct all function arguments. */
     constexpr FuncArgs() noexcept((std::is_nothrow_default_constructible_v<ArgsT> && ...))
@@ -49,14 +62,19 @@ class FuncArgs {
             (std::is_constructible_v<ArgsT, IncomingArgsT &&> && ...) &&
             (!std::is_same_v<std::remove_cvref_t<IncomingArgsT>, FuncArgs> && ...)
         )
-    constexpr explicit FuncArgs(IncomingArgsT&&... arg
-    ) noexcept((std::is_nothrow_constructible_v<IncomingArgsT> && ...))
+    constexpr explicit FuncArgs(IncomingArgsT&&... arg) noexcept(
+        (std::is_nothrow_constructible_v<IncomingArgsT> && ...)
+    )
         : args{std::forward<IncomingArgsT>(arg)...}
     {
         //
     }
 
     ~FuncArgs() noexcept = default;
+
+    // ===================================================================================== //
+    //      <> chevron::FuncArgs | [PUBLIC] MEMBER METHODS
+    // ===================================================================================== //
 
     /*! @brief Get argument at specified index. */
     template <std::size_t Index>
@@ -86,10 +104,17 @@ class FuncArgs {
         return this->args;
     }
 
+    // ===================================================================================== //
+    //      <> chevron::FuncArgs | [PRIVATE] ATTRIBUTES
+    // ===================================================================================== //
   private:
     /*! @brief Pre-defined arguments tuple. */
     Types args;
 };
+
+// ===================================================================================== //
+//      <> chevron::FuncArgs | TYPE TRAIT UTILITIES
+// ===================================================================================== //
 
 namespace model::traits
 {
@@ -110,6 +135,10 @@ using to_funcargs_t = to_funcargs<T>::type;
 
 } // namespace model::traits
 
+// ===================================================================================== //
+//      <> chevron::FuncArgs | DEDUCTION GUIDES
+// ===================================================================================== //
+
 /*! @details Function argument deduction guide. */
 template <typename... ArgsT>
 FuncArgs(ArgsT&&...) -> FuncArgs<std::decay_t<ArgsT>...>;
@@ -119,4 +148,4 @@ FuncArgs() -> FuncArgs<>;
 
 } // namespace chevron
 
-#endif // CHEVRON_LIB_H_FUNCTION_ARGUMENTS_H_
+#endif // CHEVRON_LIB_HDR_FUNCTION_ARGUMENTS_H_

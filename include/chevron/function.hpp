@@ -14,43 +14,43 @@
 #ifndef CHEVRON_LIB_HDR_FUNCTION_INCLUDE_H_
 #define CHEVRON_LIB_HDR_FUNCTION_INCLUDE_H_
 
-#include "chevron/model/function/func_args.hpp"
-#include "chevron/model/function/func_pointer.hpp"
+#include "chevron/utility/function/func_args.hpp"
+#include "chevron/utility/function/callable.hpp"
 #include <string>
 
 namespace chevron
 {
 
 /*! @brief Callable function that accepts no arguments and returns void. */
-using VoidReturnNoArgs = FuncPtr<void>;
+using VoidReturnNoArgs = Callable<void>;
 
 /*! @brief Callable function that accepts no arguments and returns a boolean. */
-using BoolReturnNoArgs = FuncPtr<bool>;
+using BoolReturnNoArgs = Callable<bool>;
 
 /*! @brief Callable function that accepts no arguments and returns a character. */
-using CharReturnNoArgs = FuncPtr<char>;
+using CharReturnNoArgs = Callable<char>;
 
 /*! @brief Callable function that accepts no arguments and returns an integer. */
-using IntReturnNoArgs = FuncPtr<int>;
+using IntReturnNoArgs = Callable<int>;
 
 /*! @brief Callable function that accepts no arguments and returns a float. */
-using FloatReturnNoArgs = FuncPtr<float>;
+using FloatReturnNoArgs = Callable<float>;
 
 /*! @brief Callable function that accepts no arguments and returns a double. */
-using DoubleReturnNoArgs = FuncPtr<double>;
+using DoubleReturnNoArgs = Callable<double>;
 
 /*! @brief Callable function that accepts no arguments and returns a const char pointer. */
-using CstrReturnNoArgs = FuncPtr<const char*>;
+using CstrReturnNoArgs = Callable<const char*>;
 
 /*! @brief Callable function that accepts no arguments and returns a string. */
-using StringReturnNoArgs = FuncPtr<std::string>;
+using StringReturnNoArgs = Callable<std::string>;
 
 /*! @brief Callable function that accepts no arguments and returns size_t. */
-using SizeReturnNoArgs = FuncPtr<size_t>;
+using SizeReturnNoArgs = Callable<size_t>;
 
 /*! @brief Callable function that accepts no arguments and returns specified type. */
 template <typename ReturnT>
-using NoArgsReturn = FuncPtr<ReturnT>;
+using NoArgsReturn = Callable<ReturnT>;
 
 } // namespace chevron
 

@@ -5,35 +5,43 @@
 // [ISJTB-CXX-XL20260108-000003]
 
 /*!
- * @file func_pointer.hpp
+ * @file callable.hpp
  *
  * @brief
  * Provides declaration of callable function pointer.
+ *
+ * @author
+ * Jamon T. Bailey
+ *
+ * @date 01-15-2026
  */
 
-#ifndef CHEVRON_LIB_H_FUNCTION_POINTER_H_
-#define CHEVRON_LIB_H_FUNCTION_POINTER_H_
+#ifndef CHEVRON_LIB_HDR_FUNCTION_POINTER_H_
+#define CHEVRON_LIB_HDR_FUNCTION_POINTER_H_
 
 #include <functional>
-#include "chevron/model/function/func_args.hpp"
-#include "chevron/model/function/type_traits.hpp"
+#include "chevron/utility/function/func_args.hpp"
+#include "chevron/utility/function/type_traits.hpp"
 
 namespace chevron
 {
 
 /*! @brief Base specialization template. */
 template <typename ReturnT, typename ArgsClass = FuncArgs<>>
-class FuncPtr;
+class Callable;
 
 /*!
  * @brief
  * Function pointer.
  *
  * @details
- * N/A
+ * N/a
  */
 template <typename ReturnT, typename... ArgsT>
-class FuncPtr<ReturnT, FuncArgs<ArgsT...>> {
+class Callable<ReturnT, FuncArgs<ArgsT...>> {
+    // ===================================================================================== //
+    //      <> chevron::Callable | TYPE ALIASES
+    // ===================================================================================== //
   public:
     /*! @brief Function return type. */
     using ReturnType = ReturnT;
@@ -42,19 +50,21 @@ class FuncPtr<ReturnT, FuncArgs<ArgsT...>> {
     /*! @brief Specialized standard library function pointer type. */
     using StdFunc = std::function<ReturnT(ArgsT...)>;
 
-    FuncPtr() noexcept = default;
+    // ===================================================================================== //
+    //      <> chevron::Callable | CONSTRUCTORS / DESTRUCTOR
+    // ===================================================================================== //
 
     /*! @brief Construct from a free function, lambda, or functor. */
     template <typename Function>
         requires std::is_invocable_r_v<ReturnType, Function, ArgsT...>
-    explicit FuncPtr(Function&& callable) : funcPtr{std::forward<Function>(callable)}
+    explicit Callable(Function&& callable) : funcPtr{std::forward<Function>(callable)}
     {
         //
     }
 
     /*! @brief Construct from a member method of a class instance. */
     template <typename ClassType, typename Method>
-    FuncPtr(ClassType* instance, Method method)
+    Callable(ClassType* instance, Method method)
     {
         if (instance && method) {
             this->funcPtr = [instance, method](ArgsT... args) -> ReturnType
@@ -64,25 +74,13 @@ class FuncPtr<ReturnT, FuncArgs<ArgsT...>> {
         }
     }
 
-    ~FuncPtr() noexcept = default;
+    Callable() noexcept = default;
 
-    /*! @brief Execute function with specified arguments. */
-    ReturnType operator()(ArgsT... arg) const
-    {
-        return this->funcPtr(std::forward<ArgsT>(arg)...);
-    }
+    ~Callable() noexcept = default;
 
-    /*! @brief Execute function with specified arguments. */
-    ReturnType operator()(Arguments& arguments)
-    {
-        return std::apply(this->funcPtr, arguments.argsTuple());
-    }
-
-    /*! @brief Verify presence of callable function. */
-    [[nodiscard]] explicit operator bool() const noexcept
-    {
-        return !!this->funcPtr;
-    }
+    // ===================================================================================== //
+    //      <> chevron::Callable | [PUBLIC] MEMBER METHODS
+    // ===================================================================================== //
 
     /*!
      * @brief
@@ -132,38 +130,68 @@ class FuncPtr<ReturnT, FuncArgs<ArgsT...>> {
         return false;
     }
 
+    /* ------------------------------------------------------------------------------------- */
+    //      > chevron::Callable | OPERATORS
+    /* ------------------------------------------------------------------------------------- */
+
+    /*! @brief Execute function with specified arguments. */
+    ReturnType operator()(ArgsT... arg) const
+    {
+        return this->funcPtr(std::forward<ArgsT>(arg)...);
+    }
+
+    /*! @brief Execute function with specified arguments. */
+    ReturnType operator()(Arguments& arguments)
+    {
+        return std::apply(this->funcPtr, arguments.argsTuple());
+    }
+
+    /*! @brief Verify presence of callable function. */
+    [[nodiscard]] explicit operator bool() const noexcept
+    {
+        return !!this->funcPtr;
+    }
+
+    // ===================================================================================== //
+    //      <> chevron::Callable | [PRIVATE] ATTRIBUTES
+    // ===================================================================================== //
   private:
     /*! @brief Function pointer. */
     StdFunc funcPtr;
 };
 
+// ===================================================================================== //
+//      <> chevron::Callable | DEDUCTION GUIDES
+// ===================================================================================== //
+
 /*! @details Free function deduction guide. */
 template <typename ReturnT, typename... ArgsT>
-FuncPtr(ReturnT (*)(ArgsT...)) -> FuncPtr<ReturnT, FuncArgs<ArgsT...>>;
+Callable(ReturnT (*)(ArgsT...)) -> Callable<ReturnT, FuncArgs<ArgsT...>>;
 
 /*! @details Non-const member function deduction guide. */
 template <typename ClassType, typename ReturnT, typename... ArgsT>
-FuncPtr(ClassType*, ReturnT (ClassType::*)(ArgsT...)) -> FuncPtr<ReturnT, FuncArgs<ArgsT...>>;
+Callable(ClassType*, ReturnT (ClassType::*)(ArgsT...))
+    -> Callable<ReturnT, FuncArgs<ArgsT...>>;
 
 /*! @details Const member function deduction guide. */
 template <typename ClassType, typename ReturnT, typename... ArgsT>
-FuncPtr(ClassType*, ReturnT (ClassType::*)(ArgsT...) const)
-    -> FuncPtr<ReturnT, FuncArgs<ArgsT...>>;
+Callable(ClassType*, ReturnT (ClassType::*)(ArgsT...) const)
+    -> Callable<ReturnT, FuncArgs<ArgsT...>>;
 
 /*! @details Lambda and functor deduction guide. */
 template <typename Function>
-FuncPtr(Function&&) -> FuncPtr<
+Callable(Function&&) -> Callable<
     typename model::traits::callable_signature<std::decay_t<Function>>::ReturnType,
     model::traits::to_funcargs_t<
         typename model::traits::callable_signature<std::decay_t<Function>>::ArgsTuple>>;
 
 // TODO: Lambda and functor deduction guide only works
-//       when directly naming `FuncPtr` with it's fully
+//       when directly naming `Callable` with it's fully
 //       qualified name. Other instantiations do not
 //       appear to exhibit this behavior in identical
 //       circumstances.
 
-// NOTE: Is this because there is no `FuncPtr` constructor
+// NOTE: Is this because there is no `Callable` constructor
 //       that can construct a call to the `::operator()`
 //       method of the lambda/functor? Perhaps the sole
 //       reliance on the guide to properly make the
@@ -171,4 +199,4 @@ FuncPtr(Function&&) -> FuncPtr<
 
 } // namespace chevron
 
-#endif // CHEVRON_LIB_H_FUNCTION_POINTER_H_
+#endif // CHEVRON_LIB_HDR_FUNCTION_POINTER_H_

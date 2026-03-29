@@ -11,8 +11,8 @@
  * Defines function pointer related entity concepts.
  */
 
-#ifndef CHEVRON_LIB_H_FUNCTION_CONCEPTS_H_
-#define CHEVRON_LIB_H_FUNCTION_CONCEPTS_H_
+#ifndef CHEVRON_LIB_HDR_FUNCTION_CONCEPTS_H_
+#define CHEVRON_LIB_HDR_FUNCTION_CONCEPTS_H_
 
 #include <concepts>
 #include <type_traits>
@@ -26,4 +26,4 @@ concept is_valid_args_index = Index >= 0 && Index < sizeof...(ArgsT);
 
 } // namespace chevron::model::concepts
 
-#endif // CHEVRON_LIB_H_FUNCTION_CONCEPTS_H_
+#endif // CHEVRON_LIB_HDR_FUNCTION_CONCEPTS_H_
