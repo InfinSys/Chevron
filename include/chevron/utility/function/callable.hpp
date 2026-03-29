@@ -9,6 +9,11 @@
  *
  * @brief
  * Provides declaration of callable function pointer.
+ *
+ * @author
+ * Jamon T. Bailey
+ * 
+ * @date 01-15-2026
  */
 
 #ifndef CHEVRON_LIB_HDR_FUNCTION_POINTER_H_

@@ -8,6 +8,12 @@
  * @file func_args.hpp
  *
  * @brief
+ * Provides declaration of function argument structure.
+ *
+ * @author
+ * Jamon T. Bailey
+ * 
+ * @date 01-15-2026
  */
 
 #ifndef CHEVRON_LIB_HDR_FUNCTION_ARGUMENTS_H_
