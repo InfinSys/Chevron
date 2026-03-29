@@ -11,8 +11,8 @@
  * Defines function related entity type traits.
  */
 
-#ifndef CHEVRON_LIB_H_FUNCTION_TYPE_TRAITS_H_
-#define CHEVRON_LIB_H_FUNCTION_TYPE_TRAITS_H_
+#ifndef CHEVRON_LIB_HDR_FUNCTION_TYPE_TRAITS_H_
+#define CHEVRON_LIB_HDR_FUNCTION_TYPE_TRAITS_H_
 
 #include <concepts>
 #include <type_traits>
@@ -69,4 +69,4 @@ struct callable_signature<ReturnT (*)(ArgsT...)> {
 
 } // namespace chevron::model::traits
 
-#endif // CHEVRON_LIB_H_FUNCTION_TYPE_TRAITS_H_
+#endif // CHEVRON_LIB_HDR_FUNCTION_TYPE_TRAITS_H_
