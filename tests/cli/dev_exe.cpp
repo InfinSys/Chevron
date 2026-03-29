@@ -1,8 +1,8 @@
 
 #include <iostream>
 #include <string>
-#include"chevron/common/export.h"
-#include"chevron/function.hpp"
+
+#include "chevron/function.hpp"
 
 int doNothing()
 {
@@ -24,8 +24,7 @@ int main(int argc, char* argv[])
     return 0;
 
     // FIX: Need specific constructor for lambda/functor using `::operator()`!!!
-    // (`FuncPtr` class)
-
-    // struct CallableModel --> ReturnType & Arguments --> FuncPtr or Func
+    // (`Callable` class)
+    
     // Static callable type `Func`? (No heap alloc)
 }
