@@ -5,7 +5,7 @@
 // [ISJTB-CXX-XL20260108-000003]
 
 /*!
- * @file thread_engine.hpp
+ * @file threading_core.hpp
  *
  * @brief
  * // TODO: INCOMPLETE DOC STRING!!!
@@ -16,8 +16,8 @@
  * @date 03-29-2026
  */
 
-#ifndef CHEVRON_LIB_PROCESS_THREADING_ENGINE_H_
-#define CHEVRON_LIB_PROCESS_THREADING_ENGINE_H_
+#ifndef CHEVRON_LIB_PROCESS_THREADING_AUTHORITY_H_
+#define CHEVRON_LIB_PROCESS_THREADING_AUTHORITY_H_
 
 namespace chevron::process
 {
@@ -25,12 +25,12 @@ namespace chevron::process
 /*!
  * @brief
  * Process concurrency authority.
- * 
+ *
  * @details
  * N/a
  */
-class ThreadingEngine { /* TODO : INCOMPLETE IMPLEMENTATION!!! */ };
+class ThreadingCore { /* TODO : INCOMPLETE IMPLEMENTATION!!! */ };
 
 }
 
-#endif // CHEVRON_LIB_PROCESS_THREADING_ENGINE_H_
+#endif // CHEVRON_LIB_PROCESS_THREADING_AUTHORITY_H_
