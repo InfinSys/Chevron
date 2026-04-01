@@ -3,6 +3,7 @@
 #include <string>
 
 #include "chevron/function.hpp"
+#include "chevron/process/thread/thread_engine.hpp"
 
 int main(int argc, char* argv[])
 {
