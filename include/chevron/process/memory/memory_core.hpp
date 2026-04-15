@@ -19,6 +19,8 @@
 #ifndef CHEVRON_LIB_PROCESS_MEMORY_AUTHORITY_H_
 #define CHEVRON_LIB_PROCESS_MEMORY_AUTHORITY_H_
 
+#include "chevron/process/memory/proc_mem_pool.hpp"
+
 namespace chevron::process
 {
 
