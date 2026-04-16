@@ -19,6 +19,8 @@
 #ifndef CHEVRON_LIB_PROCESS_MEMORY_POOL_CONFIGURATION_H_
 #define CHEVRON_LIB_PROCESS_MEMORY_POOL_CONFIGURATION_H_
 
+#include "chevron/common/export.h"
+
 namespace chevron::process
 {
 
@@ -29,7 +31,7 @@ namespace chevron::process
  * @details
  * N/a
  */
-struct MemoryPoolConfig { /* TODO : INCOMPLETE IMPLEMENTATION!!! */ };
+struct CHEVRON_API MemoryPoolConfig { /* TODO : INCOMPLETE IMPLEMENTATION!!! */ };
 
 }
 
