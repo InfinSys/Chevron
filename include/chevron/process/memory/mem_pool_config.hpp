@@ -31,7 +31,14 @@ namespace chevron::process
  * @details
  * N/a
  */
-struct CHEVRON_API MemoryPoolConfig { /* TODO : INCOMPLETE IMPLEMENTATION!!! */ };
+struct CHEVRON_API MemoryPoolConfig {
+	size_t block_size;
+	size_t chunk_size;
+	size_t block_alignment;
+	size_t budget_ceiling;
+	size_t initial_thread_blocks;
+	size_t max_thread_blocks;
+};
 
 }
 
