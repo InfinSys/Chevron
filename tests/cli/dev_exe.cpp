@@ -3,6 +3,7 @@
 #include <string>
 
 #include "chevron/function.hpp"
+#include "chevron/units.hpp"
 #include "chevron/process/thread/thread_engine.hpp"
 #include "chevron/process/memory/memory_core.hpp"
 
@@ -25,6 +26,11 @@ int main(int argc, char* argv[])
  * 
  * [ Function Utilities Notes ]
  * -> Static callable type `Func`? (No heap alloc)
+ * 
+ * [ Units Facility Notes ]
+ * -> Length measure units? (i.e. milimeters, centimeters, meters, inches, feet, yards)
+ *    -> (these can use device display info to determine pixel counts?)
+ * -> Time measure units? (i.e. miliseconds, seconds, minutes, hours, days, months, years)
  */
 
 // Potential Debug Mode Bad Address Signal:
