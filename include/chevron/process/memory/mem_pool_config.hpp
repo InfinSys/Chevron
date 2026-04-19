@@ -39,6 +39,28 @@ struct CHEVRON_API MemoryPoolConfig {
 	Bytes budget_ceiling;
 	size_t initial_thread_blocks;
 	size_t max_thread_blocks;
+
+	/*!
+     * @brief
+     * TODO: INCOMPLETE DOCUMENTATION!!!
+	 * 
+	 * @return
+	 * True if valid memory configuration
+     */
+	[[nodiscard]] bool isValid() const noexcept;
+
+	/*!
+	 * @brief
+	 * TODO: INCOMPLETE DOCUMENTATION!!!
+	 */
+	void isValidOrThrow() const;
+
+private:
+	/*!
+	 * @brief
+	 * TODO: INCOMPLETE DOCUMENTATION!!!
+	 */
+	[[nodiscard]] bool validate(const char** reason) const noexcept;
 };
 
 }

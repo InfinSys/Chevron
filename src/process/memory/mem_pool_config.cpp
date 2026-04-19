@@ -16,6 +16,32 @@
  * @date 04-14-2026
  */
 
+#include <stdexcept>
 #include "chevron/process/memory/mem_pool_config.hpp"
 
- // TODO : INCOMPLETE IMPLEMENTATION!!!
+// ===================================================================================== //
+//      <> chevron::process::MemoryPoolConfig | [PUBLIC] MEMBER METHODS
+// ===================================================================================== //
+
+bool chevron::process::MemoryPoolConfig::isValid() const noexcept
+{
+    return validate(nullptr);
+}
+
+void chevron::process::MemoryPoolConfig::isValidOrThrow() const
+{
+    const char* reason = nullptr;
+
+    if (!validate(&reason))
+        throw std::invalid_argument(reason);
+}
+
+// ===================================================================================== //
+//      <> chevron::process::MemoryPoolConfig | [PRIVATE] MEMBER METHODS
+// ===================================================================================== //
+
+bool chevron::process::MemoryPoolConfig::validate(const char** reason) const noexcept
+{
+    // TODO: INCOMPLETE IMPLEMENTATION!!!
+    return false;
+}
