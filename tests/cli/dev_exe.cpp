@@ -14,6 +14,22 @@ int main(int argc, char* argv[])
     //
 
     // Start...
+    using namespace chevron::digital_size::literals;
+
+    constexpr chevron::MiB blockSize = 16_MiB;
+    constexpr chevron::MiB chunkSize = blockSize * 24;
+    constexpr chevron::GiB budgetMax = 3_GiB;
+
+    chevron::process::MemoryPoolConfig config{};
+
+    config.block_size = chevron::size_cast<chevron::Bytes>(blockSize);
+    config.chunk_size = chevron::size_cast<chevron::Bytes>(chunkSize);
+    config.block_alignment = sizeof(std::max_align_t);
+    config.budget_ceiling = chevron::size_cast<chevron::Bytes>(budgetMax);
+    config.initial_thread_blocks = 2;
+    config.max_thread_blocks = 12;
+
+    //
 
     //
     //\\//
