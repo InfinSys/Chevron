@@ -21,10 +21,24 @@
 
 #include <cstdint>
 #include <ratio>
+#include <limits>
+#include <stdexcept>
 #include "chevron/common/units/digital/type_traits.hpp"
 
 namespace chevron::units
 {
+
+/*!
+ * @brief
+ * TODO: INCOMPLETE DOCUMENTATION!!!
+ */
+inline constexpr uint64_t IEC_DIGITAL_UNIT_MAGNITUDE = 1024;
+
+/*!
+ * @brief
+ * TODO: INCOMPLETE DOCUMENTATION!!!
+ */
+inline constexpr uint64_t STD_DIGITAL_UNIT_MAGNITUDE = 1000;
 
 /*!
  * @brief
@@ -72,11 +86,45 @@ public:
      * Returns raw count of digital units.
      * 
      * @return
-     * Raw count of digital units.
+     * Raw count of digital units
      */
     constexpr ReprType count() const noexcept
     {
         return unitCount_;
+    }
+
+    /*!
+     * @brief
+     * Returns total number of bytes in this size.
+     * 
+     * @return
+     * This size in bytes
+     */
+    constexpr ReprType bytes() const noexcept
+    {
+        return unitCount_ * ByteRatio::num / ByteRatio::den;
+    }
+
+    /*!
+     * @brief
+     * Returns total number of bytes in this size as size_t.
+     * 
+     * @return
+     * This size in bytes
+     */
+    constexpr size_t size_t_bytes() const noexcept(sizeof(size_t) >= sizeof(ReprType))
+    {
+        const ReprType byteCount = bytes();
+
+        if constexpr (sizeof(size_t) < sizeof(ReprType)) {
+            if (byteCount > std::numeric_limits<size_t>::max()) {
+                throw std::overflow_error(
+                    "DigitalSize::to_size_t: Byte count exceeds size_t capacity"
+                );
+            }
+        }
+
+        return static_cast<size_t>(byteCount);
     }
 
     // ===================================================================================== //
