@@ -142,7 +142,7 @@ namespace traits {
 
 /*!
  * @brief
- * Verify conversion between provided digital unit types is lossless.
+ * Verify conversion between provided digital size units is lossless.
  */
 template <typename From_Units, typename To_Units>
 constexpr bool is_lossless_size_conversion_v = std::ratio_divide<

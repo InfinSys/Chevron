@@ -26,6 +26,10 @@
 namespace chevron
 {
 
+// ===================================================================================== //
+//      <> DigitalSize | TYPE ALIASES
+// ===================================================================================== //
+
 /*!
  * @brief
  * Bytes.
@@ -80,6 +84,10 @@ using GiB = units::DigitalSize<math::exponent<units::IEC_DIGITAL_UNIT_MAGNITUDE,
  */
 using TiB = units::DigitalSize<math::exponent<units::IEC_DIGITAL_UNIT_MAGNITUDE, 4>>;
 
+/* ------------------------------------------------------------------------------------- */
+//      > DigitalSize | Cast Operations
+/* ------------------------------------------------------------------------------------- */
+
 /*!
  * @brief
  * Cast digital size units to another digital unit.
@@ -89,6 +97,10 @@ constexpr To_Units size_cast(const From_Units& source) noexcept
 {
 	return units::DigitalSizeCast<To_Units>::cast(source);
 }
+
+// ===================================================================================== //
+//      <> DigitalSize | USER-DEFINED LITERALS
+// ===================================================================================== //
 
 /*!
  * @brief

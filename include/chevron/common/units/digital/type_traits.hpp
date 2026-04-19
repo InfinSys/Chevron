@@ -25,10 +25,11 @@
 namespace chevron::units::traits
 {
 
-template <typename T>
-struct has_byte_ratio_spec {
-	//
-};
+// TODO: INCOMPLETE IMPLEMENTATION!!!
+// template <typename T>
+// struct has_byte_ratio_spec {
+// 	//
+// };
 
 //constexpr bool has_byte_ratio_spec_v = false;
 
