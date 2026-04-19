@@ -6,6 +6,7 @@
 #include "chevron/units.hpp"
 #include "chevron/process/thread/thread_engine.hpp"
 #include "chevron/process/memory/memory_core.hpp"
+#include "chevron/utility/bits/alignment.hpp"
 
 int main(int argc, char* argv[])
 {
