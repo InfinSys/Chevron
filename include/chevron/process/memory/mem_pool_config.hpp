@@ -19,6 +19,7 @@
 #ifndef CHEVRON_LIB_PROCESS_MEMORY_POOL_CONFIGURATION_H_
 #define CHEVRON_LIB_PROCESS_MEMORY_POOL_CONFIGURATION_H_
 
+#include "chevron/units.hpp"
 #include "chevron/common/export.h"
 
 namespace chevron::process
@@ -32,10 +33,10 @@ namespace chevron::process
  * N/a
  */
 struct CHEVRON_API MemoryPoolConfig {
-	size_t block_size;
-	size_t chunk_size;
+	Bytes block_size;
+	Bytes chunk_size;
 	size_t block_alignment;
-	size_t budget_ceiling;
+	Bytes budget_ceiling;
 	size_t initial_thread_blocks;
 	size_t max_thread_blocks;
 };
