@@ -7,6 +7,7 @@
 #include "chevron/process/thread/thread_engine.hpp"
 #include "chevron/process/memory/memory_core.hpp"
 #include "chevron/utility/bits/alignment.hpp"
+#include "chevron/utility/bits/power_of_two.hpp"
 
 int main(int argc, char* argv[])
 {
@@ -28,6 +29,11 @@ int main(int argc, char* argv[])
     config.budget_ceiling = chevron::size_cast<chevron::Bytes>(budgetMax);
     config.initial_thread_blocks = 2;
     config.max_thread_blocks = 12;
+
+    if (!config.isValid()) {
+        std::cout << "\n[Process]: Invalid memory configuration." << std::endl;
+        return 1;
+    }
 
     //
 
