@@ -20,8 +20,8 @@
 #define CHEVRON_LIB_HDR_EXPLICIT_UNITS_INCLUDE_H_
 
 #include "chevron/common/units/digital/digital_size.hpp"
+#include "chevron/common/units/digital/size_units.hpp"
 #include "chevron/common/units/digital/unit_cast.hpp"
-#include "chevron/utility/math/algebra.hpp"
 
 namespace chevron
 {
@@ -30,59 +30,17 @@ namespace chevron
 //      <> DigitalSize | TYPE ALIASES
 // ===================================================================================== //
 
-/*!
- * @brief
- * Bytes.
- */
-using Bytes = units::DigitalSize<1>;
+using units::Bytes;  ///< Byte
 
-/*!
- * @brief
- * Kilobyte.
- */
-using KB = units::DigitalSize<units::STD_DIGITAL_UNIT_MAGNITUDE>;
+using units::KiB;    ///< Kibibyte
+using units::MiB;    ///< Mebibyte
+using units::GiB;    ///< Gibibyte
+using units::TiB;    ///< Tebibyte
 
-/*!
- * @brief
- * Megabyte.
- */
-using MB = units::DigitalSize<math::exponent<units::STD_DIGITAL_UNIT_MAGNITUDE, 2>>;
-
-/*!
- * @brief
- * Gigabyte.
- */
-using GB = units::DigitalSize<math::exponent<units::STD_DIGITAL_UNIT_MAGNITUDE, 3>>;
-
-/*!
- * @brief
- * Terabyte.
- */
-using TB = units::DigitalSize<math::exponent<units::STD_DIGITAL_UNIT_MAGNITUDE, 4>>;
-
-/*!
- * @brief
- * Kilobyte (IEC Standard).
- */
-using KiB = units::DigitalSize<units::IEC_DIGITAL_UNIT_MAGNITUDE>;
-
-/*!
- * @brief
- * Megabyte (IEC Standard).
- */
-using MiB = units::DigitalSize<math::exponent<units::IEC_DIGITAL_UNIT_MAGNITUDE, 2>>;
-
-/*!
- * @brief
- * Gigabyte (IEC Standard).
- */
-using GiB = units::DigitalSize<math::exponent<units::IEC_DIGITAL_UNIT_MAGNITUDE, 3>>;
-
-/*!
- * @brief
- * Terabyte (IEC Standard).
- */
-using TiB = units::DigitalSize<math::exponent<units::IEC_DIGITAL_UNIT_MAGNITUDE, 4>>;
+using units::KB;     ///< Kilobyte
+using units::MB;     ///< Megabyte
+using units::GB;     ///< Gigabyte
+using units::TB;     ///< Terabyte
 
 /* ------------------------------------------------------------------------------------- */
 //      > DigitalSize | Cast Operations
@@ -90,7 +48,7 @@ using TiB = units::DigitalSize<math::exponent<units::IEC_DIGITAL_UNIT_MAGNITUDE,
 
 /*!
  * @brief
- * Cast digital size units to another digital unit.
+ * Cast digital size to another digital size.
  */
 template <typename To_Units, typename From_Units>
 constexpr To_Units size_cast(const From_Units& source) noexcept
