@@ -21,7 +21,7 @@
 
 #include <bit>
 #include <limits>
-#include <concepts>  ///< NOTE: Potentially unreliable use of `std::unsigned_integral` concept
+#include <concepts>
 #include <stdexcept>
 
 namespace chevron::bits
