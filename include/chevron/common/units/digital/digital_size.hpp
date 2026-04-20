@@ -22,6 +22,7 @@
 #include <cstdint>
 #include <ratio>
 #include <limits>
+#include <algorithm>
 #include <stdexcept>
 #include "chevron/common/units/digital/type_traits.hpp"
 
@@ -62,13 +63,13 @@ using coarser_size_t = std::conditional_t<
 
 /*!
  * @brief
- * TODO: INCOMPLETE DOCUMENTATION!!!
+ * Binary-based digital unit magnitude.
  */
 inline constexpr uint64_t IEC_DIGITAL_UNIT_MAGNITUDE = 1024;
 
 /*!
  * @brief
- * TODO: INCOMPLETE DOCUMENTATION!!!
+ * Decimal-based digital unit magnitude.
  */
 inline constexpr uint64_t STD_DIGITAL_UNIT_MAGNITUDE = 1000;
 
@@ -151,12 +152,25 @@ public:
         if constexpr (sizeof(size_t) < sizeof(ReprType)) {
             if (byteCount > std::numeric_limits<size_t>::max()) {
                 throw std::overflow_error(
-                    "DigitalSize::to_size_t: Byte count exceeds size_t capacity"
+                    "DigitalSize::size_t_bytes(): Byte count exceeds size_t capacity"
                 );
             }
         }
 
         return static_cast<size_t>(byteCount);
+    }
+
+    template <uint64_t IncomingUnitBytes>
+    constexpr auto absoluteDifference(const DigitalSize<IncomingUnitBytes>& other) const noexcept
+    {
+        using FinerUnit = traits::finer_size_t<DigitalSize<UnitBytes>, DigitalSize<IncomingUnitBytes>>;
+
+        const ReprType thisBytes = bytes();
+        const ReprType otherBytes = other.bytes();
+        return FinerUnit{
+            std::max(thisBytes, otherBytes) - std::min(thisBytes, otherBytes)
+        };
+        // TODO: INCOMPLETE IMPLEMENTATION!!!
     }
 
     // ===================================================================================== //
@@ -168,11 +182,41 @@ public:
      * TODO: INCOMPLETE DOCUMENTATION!!!
      */
     template <uint64_t IncomingUnitBytes>
+    constexpr bool operator==(const DigitalSize<IncomingUnitBytes>& other) const noexcept
+    {
+        return this->bytes() == other.bytes();
+    }
+
+    /*!
+     * @brief
+     * TODO: INCOMPLETE DOCUMENTATION!!!
+     */
+    template <uint64_t IncomingUnitBytes>
+    constexpr bool operator<(const DigitalSize<IncomingUnitBytes>& other) const noexcept
+    {
+        return this->bytes() < other.bytes();
+    }
+
+    /*!
+     * @brief
+     * TODO: INCOMPLETE DOCUMENTATION!!!
+     */
+    template <uint64_t IncomingUnitBytes>
+    constexpr bool operator>(const DigitalSize<IncomingUnitBytes>& other) const noexcept
+    {
+        return this->bytes() > other.bytes();
+    }
+
+    /*!
+     * @brief
+     * TODO: INCOMPLETE DOCUMENTATION!!!
+     */
+    template <uint64_t IncomingUnitBytes>
     constexpr auto operator+(const DigitalSize<IncomingUnitBytes>& other) const noexcept
     {
         using FinerUnit = traits::finer_size_t<DigitalSize<UnitBytes>, DigitalSize<IncomingUnitBytes>>;
 
-        const ReprType totalBytes = bytes() + other.bytes();
+        const ReprType totalBytes = this->bytes() + other.bytes();
         return FinerUnit{static_cast<ReprType>(totalBytes / FinerUnit::ByteRatio::num)};
     }
 
@@ -185,7 +229,7 @@ public:
     {
         using FinerUnit = traits::finer_size_t<DigitalSize<UnitBytes>, DigitalSize<IncomingUnitBytes>>;
 
-        const ReprType diffBytes = bytes() - other.bytes();
+        const ReprType diffBytes = this->bytes() - other.bytes();
         return FinerUnit{static_cast<ReprType>(diffBytes / FinerUnit::ByteRatio::num)};
     }
 
@@ -195,7 +239,7 @@ public:
      */
     constexpr DigitalSize<UnitBytes> operator*(const ReprType scalar) const noexcept
     {
-        return DigitalSize<UnitBytes>{unitCount_ * scalar};
+        return DigitalSize<UnitBytes>{this->unitCount_ * scalar};
     }
 
     /*!
@@ -208,7 +252,7 @@ public:
             throw std::invalid_argument{"DigitalSize::operator/(): Division by zero."};
         }
 
-        return DigitalSize<UnitBytes>{unitCount_ / scalar};
+        return DigitalSize<UnitBytes>{this->unitCount_ / scalar};
     }
 
     /*!
@@ -222,7 +266,7 @@ public:
             throw std::invalid_argument{ "DigitalSize::operator/(): Division by zero." };
         }
 
-        return static_cast<double>(bytes()) / static_cast<double>(other.bytes());
+        return static_cast<double>(this->bytes()) / static_cast<double>(other.bytes());
     }
 
     // ===================================================================================== //
@@ -234,10 +278,30 @@ public:
      * TODO: INCOMPLETE DOCUMENTATION!!!
      */
     template <uint64_t IncomingUnitBytes>
+    constexpr bool operator<=(const DigitalSize<IncomingUnitBytes>& other) const noexcept
+    {
+        return this->bytes() <= other.bytes();
+    }
+
+    /*!
+     * @brief
+     * TODO: INCOMPLETE DOCUMENTATION!!!
+     */
+    template <uint64_t IncomingUnitBytes>
+    constexpr bool operator>=(const DigitalSize<IncomingUnitBytes>& other) const noexcept
+    {
+        return this->bytes() >= other.bytes();
+    }
+
+    /*!
+     * @brief
+     * TODO: INCOMPLETE DOCUMENTATION!!!
+     */
+    template <uint64_t IncomingUnitBytes>
     DigitalSize<UnitBytes>& operator+=(const DigitalSize<IncomingUnitBytes>& other) noexcept
     {
-        const ReprType totalBytes = bytes() + other.bytes();
-        unitCount_ = static_cast<ReprType>(totalBytes / ByteRatio::num);
+        const ReprType totalBytes = this->bytes() + other.bytes();
+        this->unitCount_ = static_cast<ReprType>(totalBytes / ByteRatio::num);
         return *this;
     }
 
@@ -248,8 +312,8 @@ public:
     template <uint64_t IncomingUnitBytes>
     DigitalSize<UnitBytes>& operator-=(const DigitalSize<IncomingUnitBytes>& other) noexcept
     {
-        const ReprType diffBytes = bytes() - other.bytes();
-        unitCount_ = static_cast<ReprType>(diffBytes / ByteRatio::num);
+        const ReprType diffBytes = this->bytes() - other.bytes();
+        this->unitCount_ = static_cast<ReprType>(diffBytes / ByteRatio::num);
         return *this;
     }
 
@@ -259,7 +323,7 @@ public:
      */
     DigitalSize<UnitBytes>& operator*=(const ReprType scalar) noexcept
     {
-        unitCount_ *= scalar;
+        this->unitCount_ *= scalar;
         return *this;
     }
 
@@ -273,7 +337,7 @@ public:
             throw std::invalid_argument{ "DigitalSize::operator/=(): Division by zero." };
         }
 
-        unitCount_ /= scalar;
+        this->unitCount_ /= scalar;
         return *this;
     }
 
