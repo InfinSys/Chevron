@@ -36,7 +36,7 @@ struct DigitalSizeCast {
 	 * TODO : INCOMPLETE DOCUMENTATION!!!
 	 */
 	template <typename From_Units>
-	static constexpr To_Units cast(const From_Units units)
+	static constexpr To_Units cast(const From_Units units) noexcept
 	{
 		using SourceRatio = typename From_Units::ByteRatio;
 		using TargetRatio = typename To_Units::ByteRatio;
