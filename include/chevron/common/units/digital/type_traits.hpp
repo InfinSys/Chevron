@@ -25,20 +25,34 @@
 namespace chevron::units::traits
 {
 
-// TODO: INCOMPLETE IMPLEMENTATION!!!
-// template <typename T>
-// struct has_byte_ratio_spec {
-// 	//
-// };
-
-//constexpr bool has_byte_ratio_spec_v = false;
+/* ------------------------------------------------------------------------------------- */
+//      > is_std_ratio | TYPE TRAIT
+/* ------------------------------------------------------------------------------------- */
 
 /*!
  * @brief
- * Verify conversion between provided ratios is lossless.
+ * TODO: INCOMPLETE DOCUMENTATION!!!!
  */
-template <typename From_Ratio, typename To_Ratio>
-constexpr bool is_lossless_ratio_conversion_v = std::ratio_divide<From_Ratio, To_Ratio>::den == 1;
+template <typename T>
+struct is_std_ratio : std::false_type {};
+
+/*!
+ * @brief
+ * TODO: INCOMPLETE DOCUMENTATION!!!
+ */
+template <std::intmax_t Numerator, std::intmax_t Denominator>
+struct is_std_ratio<std::ratio<Numerator, Denominator>> : std::true_type {};
+
+/*!
+ * @brief
+ * TODO: INCOMPLETE DOCUMENTATION!!!
+ */
+template <typename T>
+constexpr bool is_std_ratio_v = is_std_ratio<T>::value;
+
+/* ------------------------------------------------------------------------------------- */
+//      > finer_ratio / coarser_ratio | TYPE TRAIT
+/* ------------------------------------------------------------------------------------- */
 
 /*!
  * @brief
@@ -55,6 +69,49 @@ using finer_ratio_t = std::conditional_t<
 template <typename Ratio_A, typename Ratio_B>
 using coarser_ratio_t = std::conditional_t<
 	!std::ratio_less_v<Ratio_A, Ratio_B>, Ratio_A, Ratio_B>;
+
+/* ------------------------------------------------------------------------------------- */
+//      > is_lossless_ratio_conversion | TYPE TRAIT
+/* ------------------------------------------------------------------------------------- */
+
+/*!
+ * @brief
+ * Verify conversion between provided ratios is lossless.
+ */
+template <typename From_Ratio, typename To_Ratio>
+constexpr bool is_lossless_ratio_conversion_v = std::ratio_divide<From_Ratio, To_Ratio>::den == 1;
+
+/* ------------------------------------------------------------------------------------- */
+//      > is_lossless_size_conversion | TYPE TRAIT
+/* ------------------------------------------------------------------------------------- */
+
+/*!
+ * @brief
+ * TODO: INCOMPLETE DOCUMENTATION!!!
+ */
+template <typename From_Units, typename To_Units>
+constexpr bool is_lossless_size_conversion_v = std::ratio_divide<
+	typename From_Units::ByteRatio, typename To_Units::ByteRatio>::den == 1;
+
+/* ------------------------------------------------------------------------------------- */
+//      > finer_size / coarser_size | TYPE TRAIT
+/* ------------------------------------------------------------------------------------- */
+
+/*!
+ * @brief
+ * Determine which of two digital size units is smaller.
+ */
+template <typename Units_A, typename Units_B>
+using finer_size_t = std::conditional_t<
+    std::ratio_less_v<typename Units_A::ByteRatio, typename Units_B::ByteRatio>, Units_A, Units_B>;
+
+/*!
+ * @brief
+ * Determine which of two digital size units is larger.
+ */
+template <typename Units_A, typename Units_B>
+using coarser_size_t = std::conditional_t<
+    !std::ratio_less_v<typename Units_A::ByteRatio, typename Units_B::ByteRatio>, Units_A, Units_B>;
 
 }
 

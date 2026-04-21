@@ -24,52 +24,20 @@
 #include <limits>
 #include <algorithm>
 #include <stdexcept>
-#include "chevron/common/units/digital/type_traits.hpp"
+#include "chevron/common/units/digital/unit_cast.hpp"
 
 namespace chevron::units
 {
 
-// ===================================================================================== //
-//      <> chevron::units::DigitalSize | TYPE TRAITS
-// ===================================================================================== //
-
-namespace traits {
-
 /*!
  * @brief
- * Verify conversion between provided digital size units is lossless.
- */
-template <typename From_Units, typename To_Units>
-constexpr bool is_lossless_size_conversion_v = std::ratio_divide<
-    typename From_Units::ByteRatio, typename To_Units::ByteRatio>::den == 1;
-
-/*!
- * @brief
- * Determine which of two digital size units is smaller.
- */
-template <typename Units_A, typename Units_B>
-using finer_size_t = std::conditional_t<
-    std::ratio_less_v<typename Units_A::ByteRatio, typename Units_B::ByteRatio>, Units_A, Units_B>;
-
-/*!
- * @brief
- * Determine which of two digital size units is larger.
- */
-template <typename Units_A, typename Units_B>
-using coarser_size_t = std::conditional_t<
-    !std::ratio_less_v<typename Units_A::ByteRatio, typename Units_B::ByteRatio>, Units_A, Units_B>;
-
-}
-
-/*!
- * @brief
- * Binary-based digital unit magnitude.
+ * Binary-based digital size unit magnitude.
  */
 inline constexpr uint64_t IEC_DIGITAL_UNIT_MAGNITUDE = 1024;
 
 /*!
  * @brief
- * Decimal-based digital unit magnitude.
+ * Decimal-based digital size unit magnitude.
  */
 inline constexpr uint64_t STD_DIGITAL_UNIT_MAGNITUDE = 1000;
 
@@ -347,6 +315,35 @@ public:
 private:
     ReprType unitCount_;
 };
+
+namespace traits {
+
+/* ------------------------------------------------------------------------------------- */
+//      > is_digital_size | TYPE TRAIT
+/* ------------------------------------------------------------------------------------- */
+
+/*!
+ * @brief
+ * TODO: INCOMPLETE DOCUMENTATION!!!
+ */
+template <typename T>
+struct is_digital_size : std::false_type {};
+
+/*!
+ * @brief
+ * TODO: INCOMPLETE DOCUMENTATION!!!
+ */
+template <uint64_t UInt>
+struct is_digital_size<DigitalSize<UInt>> : std::true_type {};
+
+/*!
+ * @brief
+ * TODO: INCOMPLETE DOCUMENTATION!!!
+ */
+template <uint64_t UInt>
+constexpr bool is_digital_size_v = is_digital_size<UInt>::value;
+
+}
 
 }
 
