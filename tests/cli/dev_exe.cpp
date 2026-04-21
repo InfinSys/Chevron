@@ -7,7 +7,7 @@
 #include "chevron/process/thread/thread_engine.hpp"
 #include "chevron/process/memory/memory_core.hpp"
 #include "chevron/utility/bits/alignment.hpp"
-#include "chevron/utility/bits/power_of_two.hpp"
+#include "chevron/utility/bits/powers.hpp"
 
 int main(int argc, char* argv[])
 {
