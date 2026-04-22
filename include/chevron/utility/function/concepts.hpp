@@ -17,13 +17,13 @@
 #include <concepts>
 #include <type_traits>
 
-namespace chevron::model::concepts
+namespace chevron::func::concepts
 {
 
 /*! @brief Concept that validates indexing into function parameters. */
 template <std::size_t Index, typename... ArgsT>
-concept is_valid_args_index = Index >= 0 && Index < sizeof...(ArgsT);
+concept valid_arguments_index = Index >= 0 && Index < sizeof...(ArgsT);
 
-} // namespace chevron::model::concepts
+} // namespace chevron::func::concepts
 
 #endif // CHEVRON_LIB_HDR_FUNCTION_CONCEPTS_H_

@@ -18,7 +18,7 @@
 #include <type_traits>
 #include <tuple>
 
-namespace chevron::model::traits
+namespace chevron::func::traits
 {
 
 /*! @brief Callable entity signature extraction utility. */
@@ -67,6 +67,6 @@ struct callable_signature<ReturnT (*)(ArgsT...)> {
     using FuncType   = ReturnT (*)(ArgsT...);
 };
 
-} // namespace chevron::model::traits
+} // namespace chevron::func::traits
 
 #endif // CHEVRON_LIB_HDR_FUNCTION_TYPE_TRAITS_H_

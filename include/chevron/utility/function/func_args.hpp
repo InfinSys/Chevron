@@ -78,7 +78,7 @@ class FuncArgs {
 
     /*! @brief Get argument at specified index. */
     template <std::size_t Index>
-        requires(model::concepts::is_valid_args_index<Index, ArgsT...>)
+        requires(func::concepts::valid_arguments_index<Index, ArgsT...>)
     [[nodiscard]] constexpr decltype(auto) get() noexcept
     {
         return std::get<Index>(this->args);
@@ -86,7 +86,7 @@ class FuncArgs {
 
     /*! @brief Get argument at specified index. */
     template <std::size_t Index>
-        requires(model::concepts::is_valid_args_index<Index, ArgsT...>)
+        requires(func::concepts::valid_arguments_index<Index, ArgsT...>)
     [[nodiscard]] constexpr decltype(auto) get() const noexcept
     {
         return std::get<Index>(this->args);
@@ -116,7 +116,7 @@ class FuncArgs {
 //      <> chevron::FuncArgs | TYPE TRAIT UTILITIES
 // ===================================================================================== //
 
-namespace model::traits
+namespace func::traits
 {
 
 /*! @brief Function arguments structure conversion utility. */
@@ -133,7 +133,7 @@ struct to_funcargs<std::tuple<ArgsT...>> {
 template <typename T>
 using to_funcargs_t = to_funcargs<T>::type;
 
-} // namespace model::traits
+} // namespace func::traits
 
 // ===================================================================================== //
 //      <> chevron::FuncArgs | DEDUCTION GUIDES
