@@ -25,6 +25,7 @@
 #include <algorithm>
 #include <stdexcept>
 #include "chevron/common/units/digital/unit_cast.hpp"
+#include "chevron/common/units/digital/size_concepts.hpp"
 
 namespace chevron::units
 {
@@ -51,6 +52,13 @@ inline constexpr uint64_t STD_DIGITAL_UNIT_MAGNITUDE = 1000;
 template <uint64_t UnitBytes>
 class DigitalSize {
     // ===================================================================================== //
+    //      <> chevron::units::DigitalSize | [PRIVATE] NESTED TYPES
+    // ===================================================================================== //
+
+    /*! @brief Highest digital size resolution (Bytes). */
+    using ByteResolution = DigitalSize<1ULL>;
+
+    // ===================================================================================== //
     //      <> chevron::units::DigitalSize | [PUBLIC] NESTED TYPES
     // ===================================================================================== //
 public:
@@ -72,6 +80,17 @@ public:
      */
     constexpr explicit DigitalSize(ReprType units) noexcept
         : unitCount_{units}
+    {
+        //
+    }
+
+    /*!
+     * @brief
+     * Construct digital size quantity with different size units (lossy).
+     */
+    template <uint64_t IncomingUnitBytes>
+    constexpr explicit DigitalSize(const DigitalSize<IncomingUnitBytes>& other)
+        : unitCount_{DigitalSizeCast<DigitalSize<UnitBytes>>::cast(other).count()}
     {
         //
     }
@@ -128,17 +147,22 @@ public:
         return static_cast<size_t>(byteCount);
     }
 
+    /*!
+     * @brief
+     * TODO: INCOMPLETE DOCUMENTATION!!!
+     */
     template <uint64_t IncomingUnitBytes>
     constexpr auto absoluteDifference(const DigitalSize<IncomingUnitBytes>& other) const noexcept
     {
-        using FinerUnit = traits::finer_size_t<DigitalSize<UnitBytes>, DigitalSize<IncomingUnitBytes>>;
+        using Self = DigitalSize<UnitBytes>;
+        using Other = DigitalSize<IncomingUnitBytes>;
+        using FinerUnit = traits::finer_size_t<Self, Other>;
 
-        const ReprType thisBytes = bytes();
-        const ReprType otherBytes = other.bytes();
+        const ReprType selfUnits = DigitalSizeCast<FinerUnit>::cast(*this).count();
+        const ReprType otherUnits = DigitalSizeCast<FinerUnit>::cast(other).count();
         return FinerUnit{
-            std::max(thisBytes, otherBytes) - std::min(thisBytes, otherBytes)
+            std::max(selfUnits, otherUnits) - std::min(selfUnits, otherUnits)
         };
-        // TODO: INCOMPLETE IMPLEMENTATION!!!
     }
 
     // ===================================================================================== //
@@ -182,10 +206,19 @@ public:
     template <uint64_t IncomingUnitBytes>
     constexpr auto operator+(const DigitalSize<IncomingUnitBytes>& other) const noexcept
     {
-        using FinerUnit = traits::finer_size_t<DigitalSize<UnitBytes>, DigitalSize<IncomingUnitBytes>>;
+        using Self = DigitalSize<UnitBytes>;
+        using Other = DigitalSize<IncomingUnitBytes>;
 
-        const ReprType totalBytes = this->bytes() + other.bytes();
-        return FinerUnit{static_cast<ReprType>(totalBytes / FinerUnit::ByteRatio::num)};
+        if constexpr (concepts::matching_digital_size_systems<Self, Other>) {
+            using FinerUnit = traits::finer_size_t<Self, Other>;
+
+            const FinerUnit lhs = DigitalSizeCast<FinerUnit>::cast(*this);
+            const FinerUnit rhs = DigitalSizeCast<FinerUnit>::cast(other);
+            return FinerUnit{ lhs.count() + rhs.count() };
+        }
+        else {
+            return ByteResolution{ this->bytes() + other.bytes() };
+        }
     }
 
     /*!
@@ -195,10 +228,19 @@ public:
     template <uint64_t IncomingUnitBytes>
     constexpr auto operator-(const DigitalSize<IncomingUnitBytes>& other) const noexcept
     {
-        using FinerUnit = traits::finer_size_t<DigitalSize<UnitBytes>, DigitalSize<IncomingUnitBytes>>;
+        using Self = DigitalSize<UnitBytes>;
+        using Other = DigitalSize<IncomingUnitBytes>;
 
-        const ReprType diffBytes = this->bytes() - other.bytes();
-        return FinerUnit{static_cast<ReprType>(diffBytes / FinerUnit::ByteRatio::num)};
+        if constexpr (concepts::matching_digital_size_systems<Self, Other>) {
+            using FinerUnit = traits::finer_size_t<Self, Other>;
+
+            const FinerUnit lhs = DigitalSizeCast<FinerUnit>::cast(*this);
+            const FinerUnit rhs = DigitalSizeCast<FinerUnit>::cast(other);
+            return FinerUnit{ lhs.count() - rhs.count() };
+        }
+        else {
+            return ByteResolution{ this->bytes() - other.bytes() };
+        }
     }
 
     /*!
@@ -216,9 +258,8 @@ public:
      */
     constexpr DigitalSize<UnitBytes> operator/(const ReprType scalar) const
     {
-        if (scalar == 0) {
+        if (scalar == 0)
             throw std::invalid_argument{"DigitalSize::operator/(): Division by zero."};
-        }
 
         return DigitalSize<UnitBytes>{this->unitCount_ / scalar};
     }
@@ -230,11 +271,27 @@ public:
     template <uint64_t IncomingUnitBytes>
     constexpr double operator/(const DigitalSize<IncomingUnitBytes>& other) const
     {
-        if (other.count() == 0) {
-            throw std::invalid_argument{ "DigitalSize::operator/(): Division by zero." };
-        }
+        if (other.count() == 0)
+            throw std::invalid_argument{"DigitalSize::operator/(): Division by zero."};
 
         return static_cast<double>(this->bytes()) / static_cast<double>(other.bytes());
+    }
+
+    /*!
+     * @brief
+     * TODO: INCOMPLETE DOCUMENTATION!!!
+     */
+    template <uint64_t IncomingUnitBytes>
+    constexpr ReprType operator%(const DigitalSize<IncomingUnitBytes>& other) const
+    {
+        using Self = DigitalSize<UnitBytes>;
+
+        const Self castedOther = DigitalSizeCast<Self>::cast(other);
+
+        if (castedOther.count() == 0)
+            throw std::invalid_argument{"DigitalSize::operator%(): Division by zero."};
+
+        return static_cast<ReprType>(this->unitCount_ % castedOther.count());
     }
 
     // ===================================================================================== //
@@ -268,8 +325,9 @@ public:
     template <uint64_t IncomingUnitBytes>
     DigitalSize<UnitBytes>& operator+=(const DigitalSize<IncomingUnitBytes>& other) noexcept
     {
-        const ReprType totalBytes = this->bytes() + other.bytes();
-        this->unitCount_ = static_cast<ReprType>(totalBytes / ByteRatio::num);
+        using Self = DigitalSize<UnitBytes>;
+
+        this->unitCount_ += DigitalSizeCast<Self>::cast(other).count();
         return *this;
     }
 
@@ -280,8 +338,9 @@ public:
     template <uint64_t IncomingUnitBytes>
     DigitalSize<UnitBytes>& operator-=(const DigitalSize<IncomingUnitBytes>& other) noexcept
     {
-        const ReprType diffBytes = this->bytes() - other.bytes();
-        this->unitCount_ = static_cast<ReprType>(diffBytes / ByteRatio::num);
+        using Self = DigitalSize<UnitBytes>;
+
+        this->unitCount_ -= DigitalSizeCast<Self>::cast(other).count();
         return *this;
     }
 
