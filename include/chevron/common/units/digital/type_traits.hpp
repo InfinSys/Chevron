@@ -21,6 +21,7 @@
 
 #include <type_traits>
 #include <ratio>
+#include "chevron/utility/bits/powers.hpp"
 
 namespace chevron::units::traits
 {
@@ -82,18 +83,6 @@ template <typename From_Ratio, typename To_Ratio>
 constexpr bool is_lossless_ratio_conversion_v = std::ratio_divide<From_Ratio, To_Ratio>::den == 1;
 
 /* ------------------------------------------------------------------------------------- */
-//      > is_lossless_size_conversion | TYPE TRAIT
-/* ------------------------------------------------------------------------------------- */
-
-/*!
- * @brief
- * TODO: INCOMPLETE DOCUMENTATION!!!
- */
-template <typename From_Units, typename To_Units>
-constexpr bool is_lossless_size_conversion_v = std::ratio_divide<
-	typename From_Units::ByteRatio, typename To_Units::ByteRatio>::den == 1;
-
-/* ------------------------------------------------------------------------------------- */
 //      > finer_size / coarser_size | TYPE TRAIT
 /* ------------------------------------------------------------------------------------- */
 
@@ -112,6 +101,32 @@ using finer_size_t = std::conditional_t<
 template <typename Units_A, typename Units_B>
 using coarser_size_t = std::conditional_t<
     !std::ratio_less_v<typename Units_A::ByteRatio, typename Units_B::ByteRatio>, Units_A, Units_B>;
+
+/*!
+ * @brief
+ * TODO: INCOMPLETE DOCUMENTATION!!!
+ */
+template <typename UnitsT>
+constexpr bool is_binary_size_system_v =
+	requires { typename UnitsT::ByteRatio; }
+    && requires { typename UnitsT::ReprType; }
+    && (UnitsT::ByteRatio::den == 1)
+	&& bits::is_power_of_two(
+		static_cast<UnitsT::ReprType>(UnitsT::ByteRatio::num)
+	);
+
+/*!
+ * @brief
+ * TODO: INCOMPLETE DOCUMENTATION!!!
+ */
+template <typename UnitsT>
+constexpr bool is_decimal_size_system_v =
+	requires { typename UnitsT::ByteRatio; }
+    && requires { typename UnitsT::ReprType; }
+    && (UnitsT::ByteRatio::den == 1)
+	&& bits::is_power_of_ten(
+		static_cast<UnitsT::ReprType>(UnitsT::ByteRatio::num)
+	);
 
 }
 
