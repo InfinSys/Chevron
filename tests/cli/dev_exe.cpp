@@ -30,11 +30,6 @@ int main(int argc, char* argv[])
     config.initial_thread_blocks = 2;
     config.max_thread_blocks = 12;
 
-    if (!config.isValid()) {
-        std::cout << "\n[Process]: Invalid memory configuration." << std::endl;
-        return 1;
-    }
-
     //
 
     //
