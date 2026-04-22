@@ -21,6 +21,7 @@
 
 #include <cstdint>
 #include <ratio>
+#include "chevron/common/units/digital/size_concepts.hpp"
 
 namespace chevron::units
 {
