@@ -33,7 +33,8 @@ namespace chevron::bits
 
 /*!
  * @brief
- * TODO: INCOMPLETE DOCUMENTATION!!!
+ * Determines maximum power of 2 exponent representable by
+ * the provided unsigned integer type.
  */
 template <std::unsigned_integral UIntT>
 constexpr UIntT max_power_of_two_exponent = []() {
@@ -42,7 +43,13 @@ constexpr UIntT max_power_of_two_exponent = []() {
 
 /*!
  * @brief
- * TODO: INCOMPLETE DOCUMENTATION!!!
+ * Determines if provided unsigned integer is a power of 2.
+ * 
+ * @note
+ * Note that `1` is considered a power of 2 because 2^0 is
+ * equal to 1. Additionally, `0` is **NOT** considered a
+ * power of 2 because no integer exponent produces a value
+ * of zero with 2 as the base.
  * 
  * @return
  * True if provided value is a power of 2
@@ -55,17 +62,23 @@ constexpr bool is_power_of_two(UIntT value) noexcept {
 /*!
  * @brief
  * Rounds provided value up to next power of 2.
+ * 
+ * @note
+ * If the provided value is already a power of 2, it is
+ * returned unchanged. Additionally, the smallest power
+ * of 2 is 1, so `power_of_two_ceil(0)` returns `1` by
+ * convention.
  *
  * @return
  * Next power of 2
  */
 template <std::unsigned_integral UIntT>
-constexpr UIntT next_power_of_two(UIntT value) {
+constexpr UIntT power_of_two_ceil(UIntT value) {
 	constexpr UIntT maxPower = max_power_of_two_exponent<UIntT>;
 
 	if (value > maxPower) {
 		throw std::overflow_error{
-			"next_power_of_two(): Value exceeds the maximum representable "
+			"power_of_two_ceil(): Value exceeds the maximum representable "
 			"power of 2 for the target unsigned integral type."
 		};
 	}
@@ -76,15 +89,20 @@ constexpr UIntT next_power_of_two(UIntT value) {
 /*!
  * @brief
  * Rounds provided value down to previous power of 2.
+ * 
+ * @note
+ * If the provided value is already a power of 2, it is
+ * returned unchanged. Additionally, the smallest power
+ * of 2 is 1.
  *
  * @return
  * Previous power of 2
  */
 template <std::unsigned_integral UIntT>
-constexpr UIntT previous_power_of_two(UIntT value) {
+constexpr UIntT power_of_two_floor(UIntT value) {
 	if (value == 0) {
 		throw std::overflow_error{
-			"previous_power_of_two(): Zero value has no previous power of 2."
+			"power_of_two_floor(): Zero value has no previous power of 2."
 		};
 	}
 
@@ -97,7 +115,8 @@ constexpr UIntT previous_power_of_two(UIntT value) {
 
 /*!
  * @brief
- * TODO: INCOMPLETE DOCUMENTATION!!!
+ * Determines maximum power of 10 exponent representable
+ * by the provided unsigned integer type.
  */
 template <std::unsigned_integral UIntT>
 constexpr UIntT max_power_of_ten_exponent = []() {
@@ -115,7 +134,13 @@ constexpr UIntT max_power_of_ten_exponent = []() {
 
 /*!
  * @brief
- * TODO: INCOMPLETE DOCUMENTATION!!!
+ * Determines if provided unsigned integer is a power of 10.
+ * 
+ * @note
+ * Note that `1` is considered a power of 10 because 10^0 is
+ * equal to 1. Additionally, `0` is **NOT** considered a
+ * power of 10 because no integer exponent produces a value
+ * of zero with 10 as the base.
  *
  * @return
  * True if provided value is a power of 10
@@ -143,12 +168,18 @@ constexpr bool is_power_of_ten(UIntT value) noexcept {
 /*!
  * @brief
  * Rounds provided value up to next power of 10.
+ * 
+ * @note
+ * If the provided value is already a power of 10, it is
+ * returned unchanged. Additionally, the smallest power
+ * of 10 is 1, so `power_of_ten_ceil(0)` returns `1` by
+ * convention.
  *
  * @return
  * Next power of 10
  */
 template <std::unsigned_integral UIntT>
-constexpr UIntT next_power_of_ten(UIntT value) {
+constexpr UIntT power_of_ten_ceil(UIntT value) {
 	if (value == 0)
 		return UIntT{value};
 
@@ -158,7 +189,7 @@ constexpr UIntT next_power_of_ten(UIntT value) {
 	while (accumulator < value) {
 		if (accumulator > uintMax / 10) {
 			throw std::overflow_error{
-				"next_power_of_ten<>: Value exceeds the maximum representable "
+				"power_of_ten_ceil(): Value exceeds the maximum representable "
 				"power of ten for the target unsigned integral type."
 			};
 		}
@@ -172,15 +203,20 @@ constexpr UIntT next_power_of_ten(UIntT value) {
 /*!
  * @brief
  * Rounds provided value down to previous power of 10.
+ * 
+ * @note
+ * If the provided value is already a power of 10, it is
+ * returned unchanged. Additionally, the smallest power
+ * of 10 is 1.
  *
  * @return
  * Previous power of 10
  */
 template <std::unsigned_integral UIntT>
-constexpr UIntT previous_power_of_ten(UIntT value) {
+constexpr UIntT power_of_ten_floor(UIntT value) {
 	if (value == 0) {
 		throw std::overflow_error{
-			"previous_power_of_ten(): Zero value has no previous power of 10."
+			"power_of_ten_floor(): Zero value has no previous power of 10."
 		};
 	}
 
