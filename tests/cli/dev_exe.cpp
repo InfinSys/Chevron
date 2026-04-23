@@ -4,6 +4,7 @@
 
 #include "chevron/function.hpp"
 #include "chevron/units.hpp"
+#include "chevron/common/macro_defs.h"
 #include "chevron/process/thread/thread_engine.hpp"
 #include "chevron/process/memory/memory_core.hpp"
 #include "chevron/utility/bits/alignment.hpp"
