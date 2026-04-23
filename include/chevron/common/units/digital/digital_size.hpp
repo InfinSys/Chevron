@@ -399,8 +399,8 @@ struct is_digital_size<DigitalSize<UInt>> : std::true_type {};
  * @brief
  * TODO: INCOMPLETE DOCUMENTATION!!!
  */
-template <uint64_t UInt>
-constexpr bool is_digital_size_v = is_digital_size<UInt>::value;
+template <typename T>
+constexpr bool is_digital_size_v = is_digital_size<T>::value;
 
 }
 
