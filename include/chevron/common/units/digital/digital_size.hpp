@@ -34,13 +34,13 @@ namespace chevron::units
  * @brief
  * Binary-based digital size unit magnitude.
  */
-inline constexpr uint64_t IEC_DIGITAL_UNIT_MAGNITUDE = 1024;
+inline constexpr uint64_t BINARY_DIGITAL_UNIT_MAGNITUDE = 1024;
 
 /*!
  * @brief
  * Decimal-based digital size unit magnitude.
  */
-inline constexpr uint64_t STD_DIGITAL_UNIT_MAGNITUDE = 1000;
+inline constexpr uint64_t DECIMAL_DIGITAL_UNIT_MAGNITUDE = 1000;
 
 /*!
  * @brief
