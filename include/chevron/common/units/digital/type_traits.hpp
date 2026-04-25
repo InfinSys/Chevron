@@ -111,7 +111,7 @@ constexpr bool is_binary_size_system_v =
 	requires { typename UnitsT::ByteRatio; }
     && requires { typename UnitsT::ReprType; }
     && (UnitsT::ByteRatio::den == 1)
-	&& bits::is_power_of_two(
+	&& bits::isPowerOfTwo(
 		static_cast<UnitsT::ReprType>(UnitsT::ByteRatio::num)
 	);
 
@@ -124,7 +124,7 @@ constexpr bool is_decimal_size_system_v =
 	requires { typename UnitsT::ByteRatio; }
     && requires { typename UnitsT::ReprType; }
     && (UnitsT::ByteRatio::den == 1)
-	&& bits::is_power_of_ten(
+	&& bits::isPowerOfTen(
 		static_cast<UnitsT::ReprType>(UnitsT::ByteRatio::num)
 	);
 
