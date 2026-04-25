@@ -28,12 +28,20 @@ namespace chevron::bits
 
 /*!
  * @brief
- * TODO: INCOMPLETE DOCUMENTATION!!!
+ * Aligns a size or offset value upward to the nearest
+ * multiple of alignment.
+ * 
+ * @note
+ * If the provided value is already a multiple of the
+ * alignment, it is returned unchanged.
+ * 
+ * @return
+ * Value rounded up to nearest multiple of alignment
  */
 constexpr size_t alignUp(const size_t value, const size_t alignment)
 {
     if (alignment == 0)
-        throw std::invalid_argument{ "alignUp: Alignment must be non-zero." };
+        throw std::invalid_argument{"alignUp(): Alignment must be non-zero."};
 
     const size_t remainder = value % alignment;
 
@@ -45,12 +53,20 @@ constexpr size_t alignUp(const size_t value, const size_t alignment)
 
 /*!
  * @brief
- * TODO: INCOMPLETE DOCUMENTATION!!!
+ * Aligns a pointer upward to the nearest address that
+ * is a multiple of alignment.
+ *
+ * @note
+ * If the provided address is already a multiple of the
+ * alignment, it is returned unchanged.
+ *
+ * @return
+ * Pointer rounded up to nearest multiple of alignment
  */
 template <typename T>
 T* alignUp(const T* ptr, const size_t alignment)
 {
-    const uintptr_t address = static_cast<uintptr_t>(ptr);
+    const uintptr_t address = reinterpret_cast<uintptr_t>(ptr);
     const uintptr_t aligned = static_cast<uintptr_t>(
         alignUp(static_cast<size_t>(address), alignment)
     );
@@ -59,54 +75,42 @@ T* alignUp(const T* ptr, const size_t alignment)
 
 /*!
  * @brief
- * TODO: INCOMPLETE DOCUMENTATION!!!
- */
-template <typename T>
-T* alignUp(const T* ptr)
-{
-    const uintptr_t address = static_cast<uintptr_t>(ptr);
-    const uintptr_t aligned = static_cast<uintptr_t>(
-        alignUp(static_cast<size_t>(address), alignof(T))
-    );
-    return reinterpret_cast<T*>(aligned);
-}
-
-/*!
- * @brief
- * TODO: INCOMPLETE DOCUMENTATION!!!
+ * Aligns a size or offset value downward to the nearest
+ * multiple of alignment.
+ *
+ * @note
+ * If the provided value is already a multiple of the
+ * alignment, it is returned unchanged.
+ *
+ * @return
+ * Value rounded down to nearest multiple of alignment
  */
 constexpr size_t alignDown(const size_t value, const size_t alignment)
 {
     if (alignment == 0)
-        throw std::invalid_argument{ "alignDown: Alignment must be non-zero." };
+        throw std::invalid_argument{"alignDown(): Alignment must be non-zero."};
 
     return value - (value % alignment);
 }
 
 /*!
  * @brief
- * TODO: INCOMPLETE DOCUMENTATION!!!
+ * Aligns a pointer downward to the nearest address that
+ * is a multiple of alignment.
+ *
+ * @note
+ * If the provided address is already a multiple of the
+ * alignment, it is returned unchanged.
+ *
+ * @return
+ * Pointer rounded down to nearest multiple of alignment
  */
 template <typename T>
 T* alignDown(const T* ptr, const size_t alignment)
 {
-    const uintptr_t address = static_cast<uintptr_t>(ptr);
+    const uintptr_t address = reinterpret_cast<uintptr_t>(ptr);
     const uintptr_t aligned = static_cast<uintptr_t>(
         alignDown(static_cast<size_t>(address), alignment)
-    );
-    return reinterpret_cast<T*>(aligned);
-}
-
-/*!
- * @brief
- * TODO: INCOMPLETE DOCUMENTATION!!!
- */
-template <typename T>
-T* alignDown(const T* ptr)
-{
-    const uintptr_t address = static_cast<uintptr_t>(ptr);
-    const uintptr_t aligned = static_cast<uintptr_t>(
-        alignDown(static_cast<size_t>(address), alignof(T))
     );
     return reinterpret_cast<T*>(aligned);
 }
