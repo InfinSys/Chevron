@@ -19,7 +19,8 @@ int main(int argc, char* argv[])
     using namespace chevron::digital_size::literals;
 
     constexpr chevron::MiB blockSize = 16_MiB;
-    constexpr chevron::MiB chunkSize = blockSize * 32;
+    constexpr size_t blocksInChunk   = 32;
+    constexpr chevron::MiB chunkSize = blockSize * blocksInChunk;
     constexpr size_t maxOSAllocs     = 8;
     constexpr chevron::GiB budgetMax = chevron::size_cast<chevron::GiB>(
         chunkSize * maxOSAllocs
@@ -27,12 +28,12 @@ int main(int argc, char* argv[])
 
     chevron::process::MemoryPoolConfig config{};
 
-    config.block_size = blockSize;
-    config.chunk_size = chunkSize;
-    config.block_alignment = sizeof(std::max_align_t);
-    config.budget_ceiling = budgetMax;
+    config.block_size            = blockSize;
+    config.chunk_size            = chunkSize;
+    config.block_alignment       = sizeof(std::max_align_t);
+    config.budget_ceiling        = budgetMax;
     config.initial_thread_blocks = 2;
-    config.max_thread_blocks = 12;
+    config.max_thread_blocks     = 12;
 
     //
 
