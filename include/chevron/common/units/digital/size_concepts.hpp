@@ -27,7 +27,8 @@ namespace chevron::units::concepts
 
 /*!
  * @brief
- * TODO: INCOMPLETE DOCUMENTATION!!!
+ * Validates `Units` exposes a nested ByteRatio type that
+ * is a `std::ratio`.
  */
 template <typename Units>
 concept has_byte_ratio_specification = requires {
@@ -36,7 +37,7 @@ concept has_byte_ratio_specification = requires {
 
 /*!
  * @brief
- * TODO: INCOMPLETE DOCUMENTATION!!!
+ * Validates conversion between provided units is lossless.
  */
 template <typename From_Units, typename To_Units>
 concept lossless_digital_size_conversion = requires {
@@ -48,25 +49,36 @@ concept lossless_digital_size_conversion = requires {
 
 /*!
  * @brief
- * TODO: INCOMPLETE DOCUMENTATION!!!
+ * Validates `UnitsT` belongs to the IEC binary digital size
+ * system.
  */
 template <typename UnitsT>
 concept binary_digital_size_units = requires {
+	requires has_byte_ratio_specification<UnitsT>;
 	requires traits::is_binary_size_system_v<UnitsT>;
 };
 
 /*!
  * @brief
- * TODO: INCOMPLETE DOCUMENTATION!!!
+ * Validates `UnitsT` belongs to the SI decimal digital size
+ * system.
  */
 template <typename UnitsT>
 concept decimal_digital_size_units = requires {
+	requires has_byte_ratio_specification<UnitsT>;
 	requires traits::is_decimal_size_system_v<UnitsT>;
 };
 
 /*!
  * @brief
- * TODO: INCOMPLETE DOCUMENTATION!!!
+ * Validates `Units_A` and `Units_B` belong to the same digital
+ * size system.
+ * 
+ * @note
+ * This concept does **NOT** check whether the two units are equal.
+ * It asks whether they share the same baseline unit magnitude. The
+ * IEC binary size system is based on 1,024; the SI decimal size
+ * system is based on 1,000.
  */
 template <typename Units_A, typename Units_B>
 concept matching_digital_size_systems = requires {
@@ -76,7 +88,7 @@ concept matching_digital_size_systems = requires {
 
 /*!
  * @brief
- * TODO: INCOMPLETE DOCUMENTATION!!!
+ * Validates `UnitsT` exposes the `DigitalSize` accessor API.
  */
 template <typename UnitsT>
 concept digital_size_unit_api = requires(const UnitsT& u) {
@@ -87,7 +99,8 @@ concept digital_size_unit_api = requires(const UnitsT& u) {
 
 /*!
  * @brief
- * TODO: INCOMPLETE DOCUMENTATION!!!
+ * Validates `UnitsT` exposes the `DigitalSize` arithmetic
+ * operations API.
  */
 template <typename UnitsT>
 concept digital_size_unit_arithmetic = requires(UnitsT& u, typename UnitsT::ReprType i) {
@@ -97,25 +110,30 @@ concept digital_size_unit_arithmetic = requires(UnitsT& u, typename UnitsT::Repr
 	{ u == u } -> std::same_as<bool>;
 	{ u <= u } -> std::same_as<bool>;
 	{ u >= u } -> std::same_as<bool>;
+	// NOTE: Heterogeneous relational operations not covered by the above
 
 	// Arithmetic operators
 	{ u + u } -> std::same_as<UnitsT>;
 	{ u - u } -> std::same_as<UnitsT>;
-	// NOTE: Heterogeneous arithmetic results not covered by the above
+	{ u % u } -> std::same_as<UnitsT>;
+	{ u / u } -> std::same_as<double>;
+	// NOTE: Heterogeneous arithmetic operations not covered by the above
 	{ u * i } -> std::same_as<UnitsT>;
 	{ u / i } -> std::same_as<UnitsT>;
-	{ u / u } -> std::same_as<double>;
 
 	// Arithmetic assignment operators
 	{ u += u } -> std::same_as<UnitsT&>;
 	{ u -= u } -> std::same_as<UnitsT&>;
+	{ u %= u } -> std::same_as<UnitsT&>;
+	// NOTE: Heterogeneous assignment operations not covered by the above
 	{ u *= i } -> std::same_as<UnitsT&>;
 	{ u /= i } -> std::same_as<UnitsT&>;
 };
 
 /*!
  * @brief
- * TODO: INCOMPLETE DOCUMENTATION!!!
+ * Validates `UnitsT` participates in the `DigitalSize`
+ * unit system.
  */
 template <typename UnitsT>
 concept digital_size_units = requires {
