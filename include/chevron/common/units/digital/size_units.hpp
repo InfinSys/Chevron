@@ -35,6 +35,10 @@ namespace chevron::units
  */
 using Bytes = units::DigitalSize<1>;
 
+/* ------------------------------------------------------------------------------------- */
+//      > Decimal Digital Size Units
+/* ------------------------------------------------------------------------------------- */
+
 /*!
  * @brief
  * Kilobyte.
@@ -45,19 +49,23 @@ using KB = units::DigitalSize<units::DECIMAL_DIGITAL_UNIT_MAGNITUDE>;
  * @brief
  * Megabyte.
  */
-using MB = units::DigitalSize<math::exponent<units::DECIMAL_DIGITAL_UNIT_MAGNITUDE, 2>>;
+using MB = units::DigitalSize<math::exponent(units::DECIMAL_DIGITAL_UNIT_MAGNITUDE, 2)>;
 
 /*!
  * @brief
  * Gigabyte.
  */
-using GB = units::DigitalSize<math::exponent<units::DECIMAL_DIGITAL_UNIT_MAGNITUDE, 3>>;
+using GB = units::DigitalSize<math::exponent(units::DECIMAL_DIGITAL_UNIT_MAGNITUDE, 3)>;
 
 /*!
  * @brief
  * Terabyte.
  */
-using TB = units::DigitalSize<math::exponent<units::DECIMAL_DIGITAL_UNIT_MAGNITUDE, 4>>;
+using TB = units::DigitalSize<math::exponent(units::DECIMAL_DIGITAL_UNIT_MAGNITUDE, 4)>;
+
+/* ------------------------------------------------------------------------------------- */
+//      > Binary Digital Size Units
+/* ------------------------------------------------------------------------------------- */
 
 /*!
  * @brief
@@ -77,7 +85,7 @@ using KiB = units::DigitalSize<units::BINARY_DIGITAL_UNIT_MAGNITUDE>;
  * This is a binary-based digital size unit that should not be
  * confused with its decimal counterpart.
  */
-using MiB = units::DigitalSize<math::exponent<units::BINARY_DIGITAL_UNIT_MAGNITUDE, 2>>;
+using MiB = units::DigitalSize<math::exponent(units::BINARY_DIGITAL_UNIT_MAGNITUDE, 2)>;
 
 /*!
  * @brief
@@ -87,7 +95,7 @@ using MiB = units::DigitalSize<math::exponent<units::BINARY_DIGITAL_UNIT_MAGNITU
  * This is a binary-based digital size unit that should not be
  * confused with its decimal counterpart.
  */
-using GiB = units::DigitalSize<math::exponent<units::BINARY_DIGITAL_UNIT_MAGNITUDE, 3>>;
+using GiB = units::DigitalSize<math::exponent(units::BINARY_DIGITAL_UNIT_MAGNITUDE, 3)>;
 
 /*!
  * @brief
@@ -97,7 +105,7 @@ using GiB = units::DigitalSize<math::exponent<units::BINARY_DIGITAL_UNIT_MAGNITU
  * This is a binary-based digital size unit that should not be
  * confused with its decimal counterpart.
  */
-using TiB = units::DigitalSize<math::exponent<units::BINARY_DIGITAL_UNIT_MAGNITUDE, 4>>;
+using TiB = units::DigitalSize<math::exponent(units::BINARY_DIGITAL_UNIT_MAGNITUDE, 4)>;
 
 }
 
