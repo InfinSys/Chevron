@@ -24,19 +24,37 @@
 namespace chevron::math
 {
 
+/* ------------------------------------------------------------------------------------- */
+//      > Exponents
+/* ------------------------------------------------------------------------------------- */
+
 /*!
  * @brief
- * TODO: INCOMPLETE DOCUMENTATION!!!
+ * Computes integral exponentation on provided base and
+ * exponent.
+ * 
+ * @return
+ * = (base^expon)
  */
-template <uint64_t Base, uint64_t Expon>
-constexpr uint64_t exponent = []() {
+constexpr uint64_t exponent(const uint64_t base, const uint64_t expon)
+{
     uint64_t result = 1;
 
-    for (uint64_t i = 0; i < Expon; ++i)
-        result *= Base;
-    
+    for (uint64_t i = 0; i < expon; ++i)
+        result *= base;
+
     return result;
-}();
+}
+
+/*!
+ * @brief
+ * Computes integral exponentation.
+ *
+ * @return
+ * = (Base^Expon)
+ */
+template <uint64_t Base, uint64_t Expon>
+constexpr uint64_t exponent_v = exponent(Base, Expon);
 
 }
 
