@@ -32,23 +32,38 @@ namespace chevron
 
 using units::Bytes;  ///< Byte
 
+/* ------------------------------------------------------------------------------------- */
+//      > Binary Digital Size Units (IEC)
+/* ------------------------------------------------------------------------------------- */
+
 using units::KiB;    ///< Kibibyte
 using units::MiB;    ///< Mebibyte
 using units::GiB;    ///< Gibibyte
 using units::TiB;    ///< Tebibyte
+
+/* ------------------------------------------------------------------------------------- */
+//      > Decimal Digital Size Units (SI)
+/* ------------------------------------------------------------------------------------- */
 
 using units::KB;     ///< Kilobyte
 using units::MB;     ///< Megabyte
 using units::GB;     ///< Gigabyte
 using units::TB;     ///< Terabyte
 
-/* ------------------------------------------------------------------------------------- */
-//      > DigitalSize | Cast Operations
-/* ------------------------------------------------------------------------------------- */
+// ===================================================================================== //
+//      <> DigitalSize | CAST OPERATIONS
+// ===================================================================================== //
 
 /*!
  * @brief
- * Cast digital size to another digital size.
+ * Converts a digital size value to different units.
+ * 
+ * @note
+ * Values that cannot be represented exact in the target
+ * units are truncated towards zero.
+ * 
+ * @return
+ * Source units expressed in the target units
  */
 template <typename To_Units, typename From_Units>
 constexpr To_Units size_cast(const From_Units& source) noexcept
@@ -68,16 +83,60 @@ namespace digital_size::literals {
 
 /*!
  * @brief
- * Byte integer literal.
+ * Byte literal.
  */
 constexpr Bytes operator""_Bytes(unsigned long long value) noexcept
 {
     return Bytes{static_cast<Bytes::ReprType>(value)};
 }
 
+/* ------------------------------------------------------------------------------------- */
+//      > Binary Digital Size UDL's (IEC)
+/* ------------------------------------------------------------------------------------- */
+
 /*!
  * @brief
- * Kilobyte integer literal.
+ * Kibibyte literal.
+ */
+constexpr KiB operator""_KiB(unsigned long long value) noexcept
+{
+    return KiB{ static_cast<KiB::ReprType>(value) };
+}
+
+/*!
+ * @brief
+ * Mebibyte literal.
+ */
+constexpr MiB operator""_MiB(unsigned long long value) noexcept
+{
+    return MiB{ static_cast<MiB::ReprType>(value) };
+}
+
+/*!
+ * @brief
+ * Gibibyte literal.
+ */
+constexpr GiB operator""_GiB(unsigned long long value) noexcept
+{
+    return GiB{ static_cast<GiB::ReprType>(value) };
+}
+
+/*!
+ * @brief
+ * Tebibyte literal.
+ */
+constexpr TiB operator""_TiB(unsigned long long value) noexcept
+{
+    return TiB{ static_cast<TiB::ReprType>(value) };
+}
+
+/* ------------------------------------------------------------------------------------- */
+//      > Decimal Digital Size UDL's (SI)
+/* ------------------------------------------------------------------------------------- */
+
+/*!
+ * @brief
+ * Kilobyte literal.
  */
 constexpr KB operator""_KB(unsigned long long value) noexcept
 {
@@ -86,7 +145,7 @@ constexpr KB operator""_KB(unsigned long long value) noexcept
 
 /*!
  * @brief
- * Megabyte integer literal.
+ * Megabyte literal.
  */
 constexpr MB operator""_MB(unsigned long long value) noexcept
 {
@@ -95,7 +154,7 @@ constexpr MB operator""_MB(unsigned long long value) noexcept
 
 /*!
  * @brief
- * Gigabyte integer literal.
+ * Gigabyte literal.
  */
 constexpr GB operator""_GB(unsigned long long value) noexcept
 {
@@ -104,47 +163,11 @@ constexpr GB operator""_GB(unsigned long long value) noexcept
 
 /*!
  * @brief
- * Terabyte integer literal.
+ * Terabyte literal.
  */
 constexpr TB operator""_TB(unsigned long long value) noexcept
 {
     return TB{static_cast<TB::ReprType>(value)};
-}
-
-/*!
- * @brief
- * IEC Standard kilobyte integer literal.
- */
-constexpr KiB operator""_KiB(unsigned long long value) noexcept
-{
-    return KiB{static_cast<KiB::ReprType>(value)};
-}
-
-/*!
- * @brief
- * IEC Standard megabyte integer literal.
- */
-constexpr MiB operator""_MiB(unsigned long long value) noexcept
-{
-    return MiB{static_cast<MiB::ReprType>(value)};
-}
-
-/*!
- * @brief
- * IEC Standard gigabyte integer literal.
- */
-constexpr GiB operator""_GiB(unsigned long long value) noexcept
-{
-    return GiB{static_cast<GiB::ReprType>(value)};
-}
-
-/*!
- * @brief
- * IEC Standard terabyte integer literal.
- */
-constexpr TiB operator""_TiB(unsigned long long value) noexcept
-{
-    return TiB{static_cast<TiB::ReprType>(value)};
 }
 
 }

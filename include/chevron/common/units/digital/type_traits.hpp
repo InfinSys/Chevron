@@ -32,21 +32,21 @@ namespace chevron::units::traits
 
 /*!
  * @brief
- * TODO: INCOMPLETE DOCUMENTATION!!!!
+ * Base specialization of STL `std::ratio` type validation.
  */
 template <typename T>
 struct is_std_ratio : std::false_type {};
 
 /*!
  * @brief
- * TODO: INCOMPLETE DOCUMENTATION!!!
+ * Specialization for any STL `std::ratio` instantiation.
  */
 template <std::intmax_t Numerator, std::intmax_t Denominator>
 struct is_std_ratio<std::ratio<Numerator, Denominator>> : std::true_type {};
 
 /*!
  * @brief
- * TODO: INCOMPLETE DOCUMENTATION!!!
+ * Convenience alias for STL `std::ratio` type validation.
  */
 template <typename T>
 constexpr bool is_std_ratio_v = is_std_ratio<T>::value;
@@ -77,7 +77,13 @@ using coarser_ratio_t = std::conditional_t<
 
 /*!
  * @brief
- * Verify conversion between provided ratios is lossless.
+ * Validates conversion between provided ratios is lossless.
+ * 
+ * @details
+ * A conversion is lossless when the source ratio is a
+ * whole-number multiple of the target ratio. This is verified
+ * by dividing the two ratios and confirming the denominator
+ * of the **reduced** result is 1.
  */
 template <typename From_Ratio, typename To_Ratio>
 constexpr bool is_lossless_ratio_conversion_v = std::ratio_divide<From_Ratio, To_Ratio>::den == 1;
@@ -102,9 +108,14 @@ template <typename Units_A, typename Units_B>
 using coarser_size_t = std::conditional_t<
     !std::ratio_less_v<typename Units_A::ByteRatio, typename Units_B::ByteRatio>, Units_A, Units_B>;
 
+/* ------------------------------------------------------------------------------------- */
+//      > is_binary_size_system / is_decimal_size_system | TYPE TRAIT
+/* ------------------------------------------------------------------------------------- */
+
 /*!
  * @brief
- * TODO: INCOMPLETE DOCUMENTATION!!!
+ * Validates that `UnitsT` belongs to the IEC binary digital
+ * size system.
  */
 template <typename UnitsT>
 constexpr bool is_binary_size_system_v =
@@ -117,7 +128,8 @@ constexpr bool is_binary_size_system_v =
 
 /*!
  * @brief
- * TODO: INCOMPLETE DOCUMENTATION!!!
+ * Validates that `UnitsT` belongs to the SI decimal digital
+ * size system.
  */
 template <typename UnitsT>
 constexpr bool is_decimal_size_system_v =

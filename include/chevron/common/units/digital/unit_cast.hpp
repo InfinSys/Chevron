@@ -28,7 +28,7 @@ namespace chevron::units
 
 /*!
  * @brief
- * Performs unconditional conversions between DigitalSize units.
+ * Performs unconditional conversions between digital size units.
  * 
  * @important
  * Conversions that go from finer to coarser grained units can
@@ -62,7 +62,7 @@ template <typename To_Units>
 struct DigitalSizeCast {
 	/*!
 	 * @brief
-	 * Converts provided units to an equivalent value in specified
+	 * Converts source units to an equivalent value in target
 	 * units.
 	 * 
 	 * @return
@@ -81,6 +81,11 @@ struct DigitalSizeCast {
 	DigitalSizeCast() noexcept = delete;
 	~DigitalSizeCast() noexcept = delete;
 };
+
+// TODO: Template should be `template <concepts::digital_size_units To_Units>`
+//       but integrating the concept appears to cause issues with casting
+//       operations. This same concept should also be applied to the deduced
+//       type in the `cast()` template method.
 
 }
 
