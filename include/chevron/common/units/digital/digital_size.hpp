@@ -26,6 +26,7 @@
 #include <stdexcept>
 #include "chevron/common/units/digital/unit_cast.hpp"
 #include "chevron/common/units/digital/size_concepts.hpp"
+#include "chevron/common/export.h"
 
 namespace chevron::units
 {
@@ -34,13 +35,13 @@ namespace chevron::units
  * @brief
  * Binary-based digital size unit magnitude.
  */
-inline constexpr uint64_t BINARY_DIGITAL_UNIT_MAGNITUDE = 1024;
+inline constexpr CHEVRON_HEADER_API uint64_t BINARY_DIGITAL_UNIT_MAGNITUDE = 1024;
 
 /*!
  * @brief
  * Decimal-based digital size unit magnitude.
  */
-inline constexpr uint64_t DECIMAL_DIGITAL_UNIT_MAGNITUDE = 1000;
+inline constexpr CHEVRON_HEADER_API uint64_t DECIMAL_DIGITAL_UNIT_MAGNITUDE = 1000;
 
 /*!
  * @brief
