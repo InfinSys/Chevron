@@ -33,7 +33,10 @@ int main(int argc, char* argv[])
     config.block_alignment       = sizeof(std::max_align_t);
     config.budget_ceiling        = budgetMax;
     config.initial_thread_blocks = 2;
-    config.max_thread_blocks     = 12;
+    config.max_thread_blocks     = 16;
+    config.max_thread_batch_size = 8;
+
+    config.isValidOrThrow();
 
     //
 
