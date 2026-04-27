@@ -18,6 +18,7 @@
 
 #include <stdexcept>
 #include "chevron/process/memory/mem_pool_config.hpp"
+#include "chevron/utility/bits/powers.hpp"
 
 // ===================================================================================== //
 //      <> chevron::process::MemoryPoolConfig | [PUBLIC] MEMBER METHODS
@@ -42,6 +43,55 @@ void chevron::process::MemoryPoolConfig::isValidOrThrow() const
 
 bool chevron::process::MemoryPoolConfig::validate(const char** reason) const noexcept
 {
-    // TODO: INCOMPLETE IMPLEMENTATION!!!
-    return false;
+    if (block_size.bytes() == 0) {
+        if (reason) *reason = "MemoryPoolConfig: Block size must be greater than zero.";
+        return false;
+    }
+
+    if (block_alignment == 0) {
+        if (reason) *reason = "MemoryPoolConfig: Block alignment must be greater than zero.";
+        return false;
+    }
+
+    if (!bits::isPowerOfTwo(block_alignment)) {
+        if (reason) *reason = "MemoryPoolConfig: Block alignment must be a power of 2.";
+        return false;
+    }
+
+    if (chunk_size < block_size) {
+        if (reason) *reason = "MemoryPoolConfig: Block size cannot exceed chunk size.";
+        return false;
+    }
+
+    if (budget_ceiling < chunk_size) {
+        if (reason) *reason = "MemoryPoolConfig: Chunk size cannot exceed memory budget.";
+        return false;
+    }
+
+    if (initial_thread_blocks == 0) {
+        if (reason) *reason =
+            "MemoryPoolConfig: Initial thread block count must be greater than zero.";
+        return false;
+    }
+
+    if (max_thread_blocks < initial_thread_blocks) {
+        if (reason) *reason =
+            "MemoryPoolConfig: Initial thread block count cannot exceed maximum thread block count.";
+        return false;
+    }
+
+    if (max_thread_batch_size < initial_thread_blocks) {
+        if (reason) *reason =
+            "MemoryPoolConfig: Initial thread block count cannot exceed maximum block batch size.";
+        return false;
+    }
+
+    if (max_thread_batch_size > max_thread_blocks) {
+        if (reason) *reason =
+            "MemoryPoolConfig: Maximum thread block batch size cannot exceed maximum block count.";
+        return false;
+    }
+
+    // No issues found
+    return true;
 }
