@@ -5,10 +5,11 @@
 #include "chevron/function.hpp"
 #include "chevron/units.hpp"
 #include "chevron/common/macro_defs.h"
-#include "chevron/process/thread/thread_engine.hpp"
-#include "chevron/process/memory/memory_core.hpp"
 #include "chevron/memory/chunk_descriptor.hpp"
 #include "chevron/memory/region.hpp"
+#include "chevron/process/thread/thread_engine.hpp"
+#include "chevron/process/memory/memory_core.hpp"
+#include "chevron/process/memory/proc_allocator.hpp"
 #include "chevron/utility/bits/alignment.hpp"
 #include "chevron/utility/bits/powers.hpp"
 
