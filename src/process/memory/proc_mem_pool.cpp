@@ -8,7 +8,7 @@
  * @file proc_mem_pool.cpp
  *
  * @brief
- * // TODO: INCOMPLETE DOC STRING!!!
+ * TODO: INCOMPLETE DOCUMENTATION!!!
  *
  * @author
  * Jamon T. Bailey
