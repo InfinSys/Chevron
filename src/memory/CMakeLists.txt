@@ -9,4 +9,5 @@ target_sources(
     PUBLIC
     "${CMAKE_CURRENT_SOURCE_DIR}/description.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/chunk_descriptor.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/region.cpp"
 )

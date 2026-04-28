@@ -19,6 +19,8 @@
 #ifndef CHEVRON_LIB_MEMORY_REGION_H_
 #define CHEVRON_LIB_MEMORY_REGION_H_
 
+#include "chevron/memory/description.hpp"
+
 namespace chevron::memory
 {
 
@@ -29,8 +31,19 @@ namespace chevron::memory
  * @details
  * TODO: INCOMPLETE DOCUMENTATION!!!
  */
-class MemoryRegion {
-	//
+class CHEVRON_API MemoryRegion : public MemoryDescription {
+	// ===================================================================================== //
+    //      <> chevron::memory::MemoryRegion | CONSTRUCTORS / DESTRUCTOR
+    // ===================================================================================== //
+public:
+	/*!
+	 * @brief
+	 * Construct memory handle with base address, alignment
+	 * guarantee, and capacity.
+	 */
+	MemoryRegion(void* base, size_t alignment, units::Bytes size) noexcept;
+
+	virtual ~MemoryRegion() noexcept = default;
 };
 
 }
