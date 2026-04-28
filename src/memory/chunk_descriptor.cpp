@@ -22,14 +22,8 @@
 //      <> chevron::memory::ChunkDescriptor | CONSTRUCTORS / DESTRUCTOR
 // ===================================================================================== //
 
-chevron::memory::ChunkDescriptor::ChunkDescriptor(void* base, size_t alignment, size_t capacity) noexcept
-	: base_{base}, alignment_{alignment}, capacity_{capacity}
+chevron::memory::ChunkDescriptor::ChunkDescriptor(void* base, size_t alignment, units::Bytes size) noexcept
+	: MemoryDescription{base, alignment, size}
 {
 	//
 }
-
-// ===================================================================================== //
-//      <> chevron::memory::ChunkDescriptor | [PUBLIC] MEMBER METHODS
-// ===================================================================================== //
-
-// TODO : INCOMPLETE IMPLEMENTATION!!!

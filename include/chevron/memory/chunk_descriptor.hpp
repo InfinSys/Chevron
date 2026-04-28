@@ -19,6 +19,8 @@
 #ifndef CHEVRON_LIB_MEMORY_CHUNK_DESCRIPTOR_H_
 #define CHEVRON_LIB_MEMORY_CHUNK_DESCRIPTOR_H_
 
+#include "chevron/memory/description.hpp"
+
 namespace chevron::memory
 {
 
@@ -29,17 +31,27 @@ namespace chevron::memory
  * @details
  * TODO: INCOMPLETE DOCUMENTATION!!!
  */
-class ChunkDescriptor {
+class ChunkDescriptor : public MemoryDescription {
+	// ===================================================================================== //
+    //      <> chevron::memory::ChunkDescriptor | CONSTRUCTORS / DESTRUCTOR
+    // ===================================================================================== //
 public:
-	/*! TODO: INCOMPLETE DOCUMENTATION!!! */
-	ChunkDescriptor(void* base, size_t alignment, size_t capacity) noexcept;
+	/*!
+	 * @brief
+	 * Construct chunk descriptor with base address, alignment
+	 * guarantee, and capacity.
+	 */
+	ChunkDescriptor(void* base, size_t alignment, units::Bytes size) noexcept;
 
-	~ChunkDescriptor() noexcept = default;
+	ChunkDescriptor(const ChunkDescriptor&) = delete;
 
-private:
-	void* base_;
-	size_t alignment_;
-	size_t capacity_;
+	virtual ~ChunkDescriptor() noexcept = default;
+
+	// ===================================================================================== //
+    //      <> chevron::memory::ChunkDescriptor | OPERATORS
+    // ===================================================================================== //
+
+	ChunkDescriptor& operator=(const ChunkDescriptor&) = delete;
 };
 
 }
