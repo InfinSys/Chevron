@@ -41,7 +41,7 @@ public:
      * @brief
      * Construct process memory allocator with maximum allocation count.
      */
-    explicit ProcessMemoryAllocator(const size_t maxAllocs) noexcept;
+    explicit ProcessMemoryAllocator(const size_t maxAllocs);
 
     ProcessMemoryAllocator(const ProcessMemoryAllocator&) = delete;
 
