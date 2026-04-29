@@ -19,6 +19,7 @@
 #ifndef CHEVRON_LIB_PROCESS_MEMORY_ALLOCATOR_H_
 #define CHEVRON_LIB_PROCESS_MEMORY_ALLOCATOR_H_
 
+#include <atomic>
 #include "chevron/memory/chunk_descriptor.hpp"
 
 namespace chevron::process
@@ -31,7 +32,45 @@ namespace chevron::process
  * @details
  * TODO: INCOMPLETE DOCUMENTATION!!!
  */
-class ProcessMemoryAllocator { /* TODO: INCOMPLETE IMPLEMENTATION!!! */ };
+class ProcessMemoryAllocator {
+    // ===================================================================================== //
+    //      <> chevron::process::ProcessMemoryAllocator | CONSTRUCTORS / DESTRUCTOR
+    // ===================================================================================== //
+public:
+    /*!
+     * @brief
+     * Construct process memory allocator with maximum allocation count.
+     */
+    explicit ProcessMemoryAllocator(const size_t maxAllocs) noexcept;
+
+    ProcessMemoryAllocator(const ProcessMemoryAllocator&) = delete;
+
+    ProcessMemoryAllocator(ProcessMemoryAllocator&&) = delete;
+
+    ~ProcessMemoryAllocator() noexcept;
+
+    // ===================================================================================== //
+    //      <> chevron::process::ProcessMemoryAllocator | OPERATORS
+    // ===================================================================================== //
+
+    ProcessMemoryAllocator& operator=(const ProcessMemoryAllocator&) = delete;
+
+    ProcessMemoryAllocator& operator=(ProcessMemoryAllocator&&) = delete;
+
+    // ===================================================================================== //
+    //      <> chevron::process::ProcessMemoryAllocator | [PUBLIC] MEMBER METHODS
+    // ===================================================================================== //
+
+    // Start...
+
+    // ===================================================================================== //
+    //      <> chevron::process::ProcessMemoryAllocator | [PRIVATE] ATTRIBUTES
+    // ===================================================================================== //
+private:
+    memory::ChunkDescriptor* descriptors_;   ///< Fixed array of chunk descriptors
+    std::atomic<size_t> chunkCount_;         ///< Count of chunks currently acquired
+    size_t maxChunks_;                       ///< Capacity of chunk descriptor array
+};
 
 }
 
