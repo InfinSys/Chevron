@@ -27,3 +27,9 @@ chevron::memory::ChunkDescriptor::ChunkDescriptor(void* base, size_t alignment, 
 {
 	//
 }
+
+chevron::memory::ChunkDescriptor::ChunkDescriptor() noexcept
+	: MemoryDescription{nullptr, 0, units::Bytes{0}}
+{
+	//
+}

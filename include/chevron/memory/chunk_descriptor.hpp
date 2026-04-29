@@ -45,6 +45,12 @@ public:
 
 	ChunkDescriptor(const ChunkDescriptor&) = delete;
 
+	/*!
+	 * @brief
+	 * Default construct chunk descriptor.
+	 */
+	ChunkDescriptor() noexcept;
+
 	virtual ~ChunkDescriptor() noexcept = default;
 
 	// ===================================================================================== //
