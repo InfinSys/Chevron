@@ -39,7 +39,15 @@ int main(int argc, char* argv[])
     config.max_thread_blocks     = 16;
     config.max_thread_batch_size = 8;
 
-    config.isValidOrThrow();
+    try {
+        config.isValidOrThrow();
+    }
+    catch (std::exception e) {
+        std::cout
+            << "\nERROR: Process memory configuration validation failed.\n"
+            << "\n\t" << e.what() << std::endl;
+        return 1;
+    }
 
     //
 
