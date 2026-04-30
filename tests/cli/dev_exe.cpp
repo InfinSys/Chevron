@@ -42,7 +42,7 @@ int main(int argc, char* argv[])
     try {
         config.isValidOrThrow();
     }
-    catch (std::exception e) {
+    catch (std::exception& e) {
         std::cout
             << "\nERROR: Process memory configuration validation failed.\n"
             << "\n\t" << e.what() << std::endl;

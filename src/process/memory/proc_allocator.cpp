@@ -74,7 +74,7 @@ chevron::memory::MemoryRegion chevron::process::ProcessMemoryAllocator::acquire_
     units::Bytes size, size_t alignment
 )
 {
-    /* --------------------------------------------------------------------------------- */
+    ///---------------------------------------------------------------------------------
     // ----->  PHASE 1 | Budget Gate  <-------------------------------------------------
     // 
     // Atomically increment the chunk count to reserve permission for a
@@ -84,7 +84,7 @@ chevron::memory::MemoryRegion chevron::process::ProcessMemoryAllocator::acquire_
 
     // TODO: INCOMPLETE IMPLEMENTATION!!!
 
-    /* --------------------------------------------------------------------------------- */
+    ///---------------------------------------------------------------------------------
     // ----->  PHASE 2 | Memory Acquisition  <------------------------------------------
     // 
     // Request aligned memory from the OS. If this fails, roll back the
@@ -93,7 +93,7 @@ chevron::memory::MemoryRegion chevron::process::ProcessMemoryAllocator::acquire_
 
     // TODO: INCOMPLETE IMPLEMENTATION!!!
 
-    /* --------------------------------------------------------------------------------- */
+    ///---------------------------------------------------------------------------------
     // ----->  PHASE 3 | Acquisition Tracking  <----------------------------------------
     // 
     // Allocate a tracking node via regular new and populate it with the
@@ -103,7 +103,7 @@ chevron::memory::MemoryRegion chevron::process::ProcessMemoryAllocator::acquire_
 
     // TODO: INCOMPLETE IMPLEMENTATION!!!
 
-    /* --------------------------------------------------------------------------------- */
+    ///---------------------------------------------------------------------------------
     // ----->  PHASE 4 | Publish Acquisition  <-----------------------------------------
     // 
     // Prepend the node to the list head via compare-and-swap. Read the
