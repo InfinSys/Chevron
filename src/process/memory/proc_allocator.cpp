@@ -31,7 +31,7 @@
 // ===================================================================================== //
 
 chevron::process::ProcessMemoryAllocator::ProcessMemoryAllocator(const size_t maxAllocs)
-    : allocHead_{nullptr}, chunkCount_{0}, maxAllocs_{maxAllocs}
+    : allocListHead_{nullptr}, chunkCount_{0}, maxAllocs_{maxAllocs}
 {
     if (maxAllocs == 0) {
         throw std::invalid_argument{
@@ -42,7 +42,7 @@ chevron::process::ProcessMemoryAllocator::ProcessMemoryAllocator(const size_t ma
 
 chevron::process::ProcessMemoryAllocator::~ProcessMemoryAllocator() noexcept
 {
-    AllocationNode* currentAlloc = allocHead_.load(std::memory_order_relaxed);
+    AllocationNode* currentAlloc = allocListHead_.load(std::memory_order_relaxed);
 
     while (currentAlloc != nullptr) {
         AllocationNode* nextAlloc = currentAlloc->next;
@@ -82,7 +82,12 @@ chevron::memory::MemoryRegion chevron::process::ProcessMemoryAllocator::acquire_
     // roll back and throw. A successful increment only means you may
     // attempt an OS allocation and nothing more.
 
-    // TODO: INCOMPLETE IMPLEMENTATION!!!
+    size_t previousAllocCount = chunkCount_.fetch_add(1, std::memory_order_acq_rel);
+
+    if (previousAllocCount >= maxAllocs_) {
+        chunkCount_.fetch_sub(1, std::memory_order_relaxed);
+        throw std::bad_alloc{};
+    }
 
     ///---------------------------------------------------------------------------------
     // ----->  PHASE 2 | Memory Acquisition  <------------------------------------------
@@ -91,7 +96,15 @@ chevron::memory::MemoryRegion chevron::process::ProcessMemoryAllocator::acquire_
     // chunk counter and rethrow. The tracking list is untouched and no
     // node was created, nor was a CAS attempted.
 
-    // TODO: INCOMPLETE IMPLEMENTATION!!!
+    void* newAllocBase = nullptr;
+
+    try {
+        newAllocBase = allocate_aligned_memory(size, alignment);
+    }
+    catch (...) {
+        chunkCount_.fetch_sub(1, std::memory_order_relaxed);
+        throw;
+    }
 
     ///---------------------------------------------------------------------------------
     // ----->  PHASE 3 | Acquisition Tracking  <----------------------------------------
@@ -101,7 +114,10 @@ chevron::memory::MemoryRegion chevron::process::ProcessMemoryAllocator::acquire_
     // is pushed onto the list because no thread can observe a partially
     // constructed node.
 
-    // TODO: INCOMPLETE IMPLEMENTATION!!!
+    AllocationNode* newAllocNode_ptr = new AllocationNode{
+        memory::ChunkDescriptor{newAllocBase, alignment, size},
+        nullptr
+    };
 
     ///---------------------------------------------------------------------------------
     // ----->  PHASE 4 | Publish Acquisition  <-----------------------------------------
@@ -113,9 +129,18 @@ chevron::memory::MemoryRegion chevron::process::ProcessMemoryAllocator::acquire_
     // and updates node->next to the new head automatically for another
     // try.
 
-    // TODO: INCOMPLETE IMPLEMENTATION!!!
+    newAllocNode_ptr->next = allocListHead_.load(std::memory_order_acquire);
 
-    return memory::MemoryRegion{nullptr, 0, units::Bytes{0}};
+    while (
+        !allocListHead_.compare_exchange_weak(
+            newAllocNode_ptr->next,      ///< Expected current head
+            newAllocNode_ptr,            ///< New head to install if expected still present
+            std::memory_order_release,   ///< Success: publish node writes to other threads
+            std::memory_order_relaxed    ///< Failure: retry with corrected next pointer
+        )
+    ) { /* CAS-loop */ }
+
+    return memory::MemoryRegion{newAllocBase, alignment, size};
 }
 
 
