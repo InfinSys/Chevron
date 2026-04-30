@@ -13,7 +13,7 @@
 #include "chevron/utility/bits/alignment.hpp"
 #include "chevron/utility/bits/powers.hpp"
 
-int main(int argc, char* argv[])
+int main([[maybe_unused]] int argc, [[maybe_unused]] char* argv[])
 {
     //\\//
     //
