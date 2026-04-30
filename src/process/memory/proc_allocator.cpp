@@ -74,8 +74,10 @@ chevron::memory::MemoryRegion chevron::process::ProcessMemoryAllocator::acquire_
     units::Bytes size, size_t alignment
 )
 {
+    // BE AWARE: Concurrent Zone Below
+
     ///---------------------------------------------------------------------------------
-    // ----->  PHASE 1 | Budget Gate  <-------------------------------------------------
+    // ----->  PHASE 1 | (Budget Gate)  <-----------------------------------------------
     // 
     // Atomically increment the chunk count to reserve permission for a
     // new acquisition. If the incremented value exceeds the ceiling,
@@ -90,7 +92,7 @@ chevron::memory::MemoryRegion chevron::process::ProcessMemoryAllocator::acquire_
     }
 
     ///---------------------------------------------------------------------------------
-    // ----->  PHASE 2 | Memory Acquisition  <------------------------------------------
+    // ----->  PHASE 2 | (Memory Acquisition)  <----------------------------------------
     // 
     // Request aligned memory from the OS. If this fails, roll back the
     // chunk counter and rethrow. The tracking list is untouched and no
@@ -107,12 +109,12 @@ chevron::memory::MemoryRegion chevron::process::ProcessMemoryAllocator::acquire_
     }
 
     ///---------------------------------------------------------------------------------
-    // ----->  PHASE 3 | Acquisition Tracking  <----------------------------------------
+    // ----->  PHASE 3 | (Acquisition Tracking)  <--------------------------------------
     // 
     // Allocate a tracking node via regular new and populate it with the
     // chunk's descriptor data. The node is fully initialized before it
-    // is pushed onto the list because no thread can observe a partially
-    // constructed node.
+    // is pushed onto the list because there should be no thread that
+    // observes a partially constructed node.
 
     AllocationNode* newAllocNode_ptr = new AllocationNode{
         memory::ChunkDescriptor{newAllocBase, alignment, size},
@@ -120,7 +122,7 @@ chevron::memory::MemoryRegion chevron::process::ProcessMemoryAllocator::acquire_
     };
 
     ///---------------------------------------------------------------------------------
-    // ----->  PHASE 4 | Publish Acquisition  <-----------------------------------------
+    // ----->  PHASE 4 | (Publish Acquisition)  <---------------------------------------
     // 
     // Prepend the node to the list head via compare-and-swap. Read the
     // current head into the node's next pointer. Attempt to swap the
@@ -135,8 +137,8 @@ chevron::memory::MemoryRegion chevron::process::ProcessMemoryAllocator::acquire_
         !allocListHead_.compare_exchange_weak(
             newAllocNode_ptr->next,      ///< Expected current head
             newAllocNode_ptr,            ///< New head to install if expected still present
-            std::memory_order_release,   ///< Success: publish node writes to other threads
-            std::memory_order_relaxed    ///< Failure: retry with corrected next pointer
+            std::memory_order_release,   ///< Success: publish node write to other threads
+            std::memory_order_relaxed    ///< Failure: retry with corrected expectation
         )
     ) { /* CAS-loop */ }
 

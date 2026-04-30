@@ -57,10 +57,16 @@ class ProcessMemoryAllocator {
 
     /*!
      * @brief
-     * TODO: INCOMPLETE DOCUMENTATION!!!
+     * Atomic OS allocation tracking list pointer.
      * 
      * @details
-     * TODO: INCOMPLETE DOCUMENTATION!!!
+     * Points to the first node in the singly-linked list of
+     * acquired memory chunks. Nodes are prepended via CAS on
+     * acquisition and the list is walked sequentially at
+     * destruction for cleanup. No tagged pointer is needed
+     * because nodes are only ever pushed during runtime, never
+     * removed. So the ABA precondition is not a concern in this
+     * circumstance.
      */
     using AllocListHead = std::atomic<AllocationNode*>;
     
@@ -72,6 +78,9 @@ public:
      * @brief
      * Construct process memory allocator with maximum allocation
      * count.
+     * 
+     * @throws std::invalid_argument
+     * if maximum OS memory acquisitions is zero.
      */
     explicit ProcessMemoryAllocator(const size_t maxAllocs);
 
@@ -95,31 +104,40 @@ public:
 
     /*!
      * @brief
-     * TODO: INCOMPLETE DOCUMENTATION!!!
+     * Returns number of memory chunks currently acquired from OS.
      * 
      * @return
-     * TODO: INCOMPLETE DOCUMENTATION!!!
+     * Current count of successful memory acquisitions
      */
     [[nodiscard]] size_t acquisition_count() const noexcept;
 
     /*!
      * @brief
-     * TODO: INCOMPLETE DOCUMENTATION!!!
+     * Returns maximum number of memory chunks that may be acquired.
      * 
      * @return
-     * TODO: INCOMPLETE DOCUMENTATION!!!
+     * OS memory acquisition limit
      */
     [[nodiscard]] size_t max_acquisition_count() const noexcept;
 
     /*!
      * @brief
-     * TODO: INCOMPLETE DOCUMENTATION!!!
+     * Acquires new memory chunk from OS and records it for cleanup
+     * later.
      * 
      * @details
-     * TODO: INCOMPLETE DOCUMENTATION!!!
+     * Atomically increments the chunk counter to reserve the
+     * permission for a new chunk. If the budget is exceeded, rolls
+     * back and throws. Otherwise, acquires aligned memory from the
+     * OS, constructs a tracking node, and CAS-pushes it onto the
+     * tracking list.
      * 
      * @return
-     * TODO: INCOMPLETE DOCUMENTATION!!!
+     * Memory region structure describing the acquired chunk
+     * 
+     * @throws std::bad_alloc
+     * if the budget ceiling has been reached or the OS refuses the
+     * allocation.
      */
     [[nodiscard]] memory::MemoryRegion acquire_chunk(units::Bytes size, size_t alignment);
 
@@ -133,25 +151,24 @@ private:
 
     /*!
      * @brief
-     * TODO: INCOMPLETE DOCUMENTATION!!!
+     * Platform-specific aligned memory acquisition from OS.
      * 
      * @details
-     * TODO: INCOMPLETE DOCUMENTATION!!!
+     * Acquires a contiguous region of at least the requested size
+     * with the specified alignment guarantee on its starting
+     * address.
      * 
      * @return
-     * TODO: INCOMPLETE DOCUMENTATION!!!
+     * Raw pointer to acquired region of memory
+     * 
+     * @throws std::bad_alloc
+     * when the OS refuses the allocation.
      */
     [[nodiscard]] void* allocate_aligned_memory(units::Bytes size, size_t alignment);
 
     /*!
      * @brief
-     * TODO: INCOMPLETE DOCUMENTATION!!!
-     * 
-     * @details
-     * TODO: INCOMPLETE DOCUMENTATION!!!
-     * 
-     * @return
-     * TODO: INCOMPLETE DOCUMENTATION!!!
+     * Platform-specific memory release back to OS.
      */
     void deallocate_aligned_memory(const memory::ChunkDescriptor& chunk) noexcept;
 };
