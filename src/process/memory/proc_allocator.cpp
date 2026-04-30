@@ -74,7 +74,9 @@ chevron::memory::MemoryRegion chevron::process::ProcessMemoryAllocator::acquire_
     units::Bytes size, size_t alignment
 )
 {
+    //
     // BE AWARE: Concurrent Zone Below
+    //
 
     ///---------------------------------------------------------------------------------
     // ----->  PHASE 1 | (Budget Gate)  <-----------------------------------------------
@@ -113,13 +115,24 @@ chevron::memory::MemoryRegion chevron::process::ProcessMemoryAllocator::acquire_
     // 
     // Allocate a tracking node via regular new and populate it with the
     // chunk's descriptor data. The node is fully initialized before it
-    // is pushed onto the list because there should be no thread that
-    // observes a partially constructed node.
+    // is pushed onto the list because there should be no thread that is
+    // able to observe a partially constructed node.
 
-    AllocationNode* newAllocNode_ptr = new AllocationNode{
-        memory::ChunkDescriptor{newAllocBase, alignment, size},
-        nullptr
-    };
+    AllocationNode* newAllocNode_ptr = nullptr;
+
+    try {
+        newAllocNode_ptr = new AllocationNode{
+            memory::ChunkDescriptor{newAllocBase, alignment, size},
+            nullptr
+        };
+    }
+    catch (...) {
+        deallocate_aligned_memory(
+            memory::ChunkDescriptor{newAllocBase, alignment, size}
+        );
+        chunkCount_.fetch_sub(1, std::memory_order_relaxed);
+        throw;
+    }
 
     ///---------------------------------------------------------------------------------
     // ----->  PHASE 4 | (Publish Acquisition)  <---------------------------------------
