@@ -8,7 +8,8 @@
  * @file proc_mem_pool.hpp
  *
  * @brief
- * Declaration of process-wide fixed-size memory block pool.
+ * Process-wide fixed-size block pool with lock-free
+ * allocation.
  *
  * @author
  * Jamon T. Bailey
@@ -20,6 +21,10 @@
 #define CHEVRON_LIB_PROCESS_MEMORY_POOL_H_
 
 #include "chevron/process/memory/mem_pool_config.hpp"
+#include "chevron/process/memory/proc_allocator.hpp"
+#include "chevron/memory/memory_defs.hpp"
+#include "chevron/memory/chunk_descriptor.hpp"
+#include "chevron/memory/region.hpp"
 
 namespace chevron::process
 {
@@ -27,11 +32,236 @@ namespace chevron::process
 /*!
  * @brief
  * Process-wide fixed-size memory block pool.
+ * 
+ * @note
+ * The API and internals of this class are thread-safe. All
+ * allocation and deallocation operations are lock-free.
  *
  * @details
- * N/a
+ * This class is the mechanical core of Chevron's memory
+ * hierarchy. It manages a lock-free embedded free list
+ * of fixed-size blocks, backed by chunks acquired through
+ * a composed memory allocator. Downstream consumers receive
+ * blocks from this pool and build their own allocation
+ * strategies on top of them.
+ * 
+ * This class is not used directly by downstream consumers.
+ * It is composed as a member of `MemoryCore`, which provides
+ * the policy surface (*preallocation*, *acquire/release
+ * interface*) on top of the pool's mechanical operations.
  */
-class ProcessMemoryPool { /* TODO : INCOMPLETE IMPLEMENTATION!!! */ };
+class ProcessMemoryPool {
+    // ===================================================================================== //
+    //      <> chevron::process::ProcessMemoryPool | [PRIVATE] NESTED TYPES
+    // ===================================================================================== //
+
+    /*!
+     * @brief
+     * TODO: INCOMPLETE DOCUMENTATION!!!
+     * 
+     * @details
+     * TODO: INCOMPLETE DOCUMENTATION!!!
+     */
+    struct ThreadLocalMemoryCache {
+        memory::FreeRegionNode* free_list_head;
+        size_t cached_blocks;
+        size_t batch_size;
+        ProcessMemoryPool* proc_pool;
+
+        // Continue...
+    };
+
+    /*!
+     * @brief
+     * TODO: INCOMPLETE DOCUMENTATION!!!
+     */
+    using FreeListHead = memory::AtomicFreeListHead;
+
+    using atomic_size_t = std::atomic<size_t>;
+
+	// ===================================================================================== //
+    //      <> chevron::process::ProcessMemoryPool | CONSTRUCTORS / DESTRUCTOR
+    // ===================================================================================== //
+public:
+    /*!
+     * @brief
+     * Construct process memory pool with provided configuration.
+     */
+    explicit ProcessMemoryPool(const MemoryPoolConfig& config);
+
+    ProcessMemoryPool(const ProcessMemoryPool&) = delete;
+
+    ProcessMemoryPool(ProcessMemoryPool&&) = delete;
+
+    ~ProcessMemoryPool() noexcept;
+
+    // ===================================================================================== //
+    //      <> chevron::process::ProcessMemoryPool | [PUBLIC] MEMBER METHODS
+    // ===================================================================================== //
+
+    /*!
+     * @brief
+     * TODO: INCOMPLETE DOCUMENTATION!!!
+     * 
+     * @return
+     * TODO: INCOMPLETE DOCUMENTATION!!!
+     */
+    [[nodiscard]] units::Bytes distribution_size() const noexcept;
+
+    /*!
+     * @brief
+     * TODO: INCOMPLETE DOCUMENTATION!!!
+     *
+     * @return
+     * TODO: INCOMPLETE DOCUMENTATION!!!
+     */
+    [[nodiscard]] units::Bytes acquisition_size() const noexcept;
+
+    /*!
+     * @brief
+     * TODO: INCOMPLETE DOCUMENTATION!!!
+     *
+     * @return
+     * TODO: INCOMPLETE DOCUMENTATION!!!
+     */
+    [[nodiscard]] size_t alignment_guarantee() const noexcept;
+
+    /*!
+     * @brief
+     * TODO: INCOMPLETE DOCUMENTATION!!!
+     *
+     * @return
+     * TODO: INCOMPLETE DOCUMENTATION!!!
+     */
+    [[nodiscard]] size_t chunk_count() const noexcept;
+
+    /*!
+     * @brief
+     * TODO: INCOMPLETE DOCUMENTATION!!!
+     *
+     * @return
+     * TODO: INCOMPLETE DOCUMENTATION!!!
+     */
+    [[nodiscard]] size_t max_chunk_count() const noexcept;
+
+    /*!
+     * @brief
+     * TODO: INCOMPLETE DOCUMENTATION!!!
+     *
+     * @return
+     * TODO: INCOMPLETE DOCUMENTATION!!!
+     */
+    [[nodiscard]] units::Bytes bytes_in_possession() const noexcept;
+
+    // ===================================================================================== //
+    //      <> chevron::process::ProcessMemoryPool | OPERATORS
+    // ===================================================================================== //
+
+    ProcessMemoryPool& operator=(const ProcessMemoryPool&) = delete;
+
+    ProcessMemoryPool& operator=(ProcessMemoryPool&&) = delete;
+
+    // ===================================================================================== //
+    //      <> chevron::process::ProcessMemoryPool | [PRIVATE] ATTRIBUTES
+    // ===================================================================================== //
+private:
+    FreeListHead free_list_head_;        ///< Head of the embedded free list (ABA-safe)
+    atomic_size_t bytes_acquired_;       ///< Total bytes currently occupied from OS
+    size_t blocks_per_chunk_;            ///< Number of blocks carved from each chunk
+    MemoryPoolConfig config_;            ///< Process memory pool configuration
+    ProcessMemoryAllocator allocator_;   ///< Process memory allocator
+
+    // ===================================================================================== //
+    //      <> chevron::process::ProcessMemoryPool | [PRIVATE] MEMBER METHODS
+    // ===================================================================================== //
+
+    // -------------------------------------------------------------------------------------
+    //      > chevron::process::ProcessMemoryPool | Constructor Helpers
+
+    /*!
+     * @brief
+     * TODO: INCOMPLETE DOCUMENTATION!!!
+     */
+    void compute_effective_block_geometry();
+
+    /*!
+     * @brief
+     * TODO: INCOMPLETE DOCUMENTATION!!!
+     */
+    void compute_effective_chunk_geometry();
+
+    /*!
+     * @brief
+     * TODO: INCOMPLETE DOCUMENTATION!!!
+     */
+    void validate_budget_constraints();
+
+    /*!
+     * @brief
+     * TODO: INCOMPLETE DOCUMENTATION!!!
+     */
+    void reinit_memory_allocator();
+
+    /*!
+     * @brief
+     * TODO: INCOMPLETE DOCUMENTATION!!!
+     */
+    void init_thread_cache_configuration();
+    
+    // -------------------------------------------------------------------------------------
+    //      > chevron::process::ProcessMemoryPool | Operations
+
+    /*!
+     * @brief
+     * TODO: INCOMPLETE DOCUMENTATION!!!
+     * 
+     * @details
+     * TODO: INCOMPLETE DOCUMENTATION!!!
+     */
+    void carve_and_link(const memory::MemoryRegion& chunk);
+
+    /*!
+     * @brief
+     * TODO: INCOMPLETE DOCUMENTATION!!!
+     * 
+     * @details
+     * TODO: INCOMPLETE DOCUMENTATION!!!
+     */
+    void push_batch(memory::FreeRegionNode* head, memory::FreeRegionNode* tail);
+
+    /*!
+     * @brief
+     * TODO: INCOMPLETE DOCUMENTATION!!!
+     * 
+     * @details
+     * TODO: INCOMPLETE DOCUMENTATION!!!
+     * 
+     * @return
+     * TODO: INCOMPLETE DOCUMENTATION!!!
+     */
+    memory::FreeRegionNode* pop_batch(size_t batch_size);
+
+    /*!
+     * @brief
+     * TODO: INCOMPLETE DOCUMENTATION!!!
+     * 
+     * @return
+     * TODO: INCOMPLETE DOCUMENTATION!!!
+     */
+    ThreadLocalMemoryCache& get_current_thread_cache();
+
+    /*!
+     * @brief
+     * TODO: INCOMPLETE DOCUMENTATION!!!
+     */
+    void expand_memory();
+
+    // ===================================================================================== //
+    //      <> chevron::process::ProcessMemoryPool | COMPILE-TIME GUARANTEES
+    // ===================================================================================== //
+
+    // Start...
+};
 
 }
 
