@@ -18,6 +18,7 @@
 
 #include <exception>
 #include "chevron/process/memory/proc_allocator.hpp"
+#include "chevron/utility/scope/scope_guard.hpp"
 #include "chevron/common/macro_defs.h"
 
 #if CHEVRON_WINDOWS
@@ -35,7 +36,7 @@ chevron::process::ProcessMemoryAllocator::ProcessMemoryAllocator(const size_t ma
 {
     if (maxAllocs == 0) {
         throw std::invalid_argument{
-            "ProcessMemoryAllocator: OS bound allocation limit cannot be zero."
+            "ProcessMemoryAllocator: OS-bound allocation limit cannot be zero."
         };
     }
 }
@@ -78,6 +79,8 @@ chevron::memory::MemoryRegion chevron::process::ProcessMemoryAllocator::acquire_
     // BE AWARE: Concurrent Zone Below
     //
 
+    using chevron::utility::ScopeGuard;
+
     ///---------------------------------------------------------------------------------
     // ----->  PHASE 1 | (Budget Gate)  <-----------------------------------------------
     // 
@@ -88,10 +91,15 @@ chevron::memory::MemoryRegion chevron::process::ProcessMemoryAllocator::acquire_
 
     size_t previousAllocCount = chunkCount_.fetch_add(1, std::memory_order_acq_rel);
 
-    if (previousAllocCount >= maxAllocs_) {
-        chunkCount_.fetch_sub(1, std::memory_order_relaxed);
+    // Decrement allocation count on failure beyond this point
+    ScopeGuard allocIncrementGuard{
+        [&] {
+            chunkCount_.fetch_sub(1, std::memory_order_relaxed);
+        }
+    };
+
+    if (previousAllocCount >= maxAllocs_)
         throw std::bad_alloc{};
-    }
 
     ///---------------------------------------------------------------------------------
     // ----->  PHASE 2 | (Memory Acquisition)  <----------------------------------------
@@ -100,15 +108,16 @@ chevron::memory::MemoryRegion chevron::process::ProcessMemoryAllocator::acquire_
     // chunk counter and rethrow. The tracking list is untouched and no
     // node was created, nor was a CAS attempted.
 
-    void* newAllocBase = nullptr;
+    void* newAllocBase = allocate_aligned_memory(size, alignment);
 
-    try {
-        newAllocBase = allocate_aligned_memory(size, alignment);
-    }
-    catch (...) {
-        chunkCount_.fetch_sub(1, std::memory_order_relaxed);
-        throw;
-    }
+    // Deallocate acquired memory on failure beyond this point
+    ScopeGuard allocLeakGuard{
+        [&] {
+            deallocate_aligned_memory(
+                memory::ChunkDescriptor{newAllocBase, alignment, size}
+            );
+        }
+    };
 
     ///---------------------------------------------------------------------------------
     // ----->  PHASE 3 | (Acquisition Tracking)  <--------------------------------------
@@ -118,21 +127,10 @@ chevron::memory::MemoryRegion chevron::process::ProcessMemoryAllocator::acquire_
     // is pushed onto the list because there should be no thread that is
     // able to observe a partially constructed node.
 
-    AllocationNode* newAllocNode_ptr = nullptr;
-
-    try {
-        newAllocNode_ptr = new AllocationNode{
-            memory::ChunkDescriptor{newAllocBase, alignment, size},
-            nullptr
-        };
-    }
-    catch (...) {
-        deallocate_aligned_memory(
-            memory::ChunkDescriptor{newAllocBase, alignment, size}
-        );
-        chunkCount_.fetch_sub(1, std::memory_order_relaxed);
-        throw;
-    }
+    AllocationNode* newAllocNode_ptr = new AllocationNode{
+        memory::ChunkDescriptor{newAllocBase, alignment, size},
+        nullptr
+    };
 
     ///---------------------------------------------------------------------------------
     // ----->  PHASE 4 | (Publish Acquisition)  <---------------------------------------
@@ -153,11 +151,13 @@ chevron::memory::MemoryRegion chevron::process::ProcessMemoryAllocator::acquire_
             std::memory_order_release,   ///< Success: publish node write to other threads
             std::memory_order_relaxed    ///< Failure: retry with corrected expectation
         )
-    ) { /* CAS-loop */ }
+    ) {/* CAS-Loop */}
+
+    allocLeakGuard.dismiss();
+    allocIncrementGuard.dismiss();
 
     return memory::MemoryRegion{newAllocBase, alignment, size};
 }
-
 
 // ===================================================================================== //
 //      <> chevron::process::ProcessMemoryAllocator | [PRIVATE] MEMBER METHODS

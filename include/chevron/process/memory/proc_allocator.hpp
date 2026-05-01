@@ -149,6 +149,10 @@ private:
     std::atomic<size_t> chunkCount_;   ///< Count of chunks currently acquired
     size_t maxAllocs_;                 ///< Maximum OS memory acquisitions
 
+    // ===================================================================================== //
+    //      <> chevron::process::ProcessMemoryAllocator | [PRIVATE] MEMBER METHODS
+    // ===================================================================================== //
+
     /*!
      * @brief
      * Platform-specific aligned memory acquisition from OS.
