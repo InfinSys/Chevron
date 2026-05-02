@@ -63,12 +63,39 @@ class ProcessMemoryPool {
      * TODO: INCOMPLETE DOCUMENTATION!!!
      */
     struct ThreadLocalMemoryCache {
-        memory::FreeRegionNode* free_list_head;
-        size_t cached_blocks;
-        size_t batch_size;
-        ProcessMemoryPool* proc_pool;
+        memory::FreeRegionNode* free_list_head;   ///< Head of thread-local free block chain
+        size_t cached_blocks;                     ///< Number of blocks currently in local cache
+        size_t batch_size;                        ///< Batch size for next trip to shared memory pool
+        ProcessMemoryPool* shared_pool;           ///< Process-level shared memory pool
 
-        // Continue...
+        /*!
+         * @brief
+         * TODO: INCOMPLETE DOCUMENTATION!!!
+         * 
+         * @details
+         * TODO: INCOMPLETE DOCUMENTATION!!!
+         */
+        size_t compute_growth_batch() const noexcept;
+
+        /*!
+         * @brief
+         * TODO: INCOMPLETE DOCUMENTATION!!!
+         * 
+         * @details
+         * TODO: INCOMPLETE DOCUMENTATION!!!
+         */
+        size_t compute_shrink_batch() const noexcept;
+
+        /*!
+         * @brief
+         * TODO: INCOMPLETE DOCUMENTATION!!!
+         * 
+         * @details
+         * TODO: INCOMPLETE DOCUMENTATION!!!
+         */
+        void drain_cache() const noexcept;
+
+        ~ThreadLocalMemoryCache() noexcept;
     };
 
     /*!
