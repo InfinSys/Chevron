@@ -32,7 +32,7 @@ namespace chevron::utility
  * TODO: INCOMPLETE DOCUMENTATION!!!
  */
 template <typename T>
-struct TaggedPointer {
+struct alignas(16) TaggedPointer {
 	T* ptr;           ///< Pointer to `T`
 	uint64_t swaps;   ///< Monotonically increasing operation counter
 };
