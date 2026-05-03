@@ -9,6 +9,7 @@ target_sources(
     PUBLIC
     "${CMAKE_CURRENT_SOURCE_DIR}/memory/mem_pool_config.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/memory/proc_allocator.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/memory/thread_mem_cache.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/memory/proc_mem_pool.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/memory/memory_core.cpp"
 
