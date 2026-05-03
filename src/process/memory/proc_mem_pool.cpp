@@ -16,6 +16,7 @@
  * @date 04-14-2026
  */
 
+#include <thread>
 #include "chevron/process/memory/proc_mem_pool.hpp"
 #include "chevron/utility/bits/alignment.hpp"
 #include "chevron/utility/scope/scope_guard.hpp"
@@ -92,6 +93,84 @@ Bytes ProcessMemoryPool::bytes_in_possession() const noexcept
 	return Bytes{bytes_acquired_.load(std::memory_order_relaxed)};
 }
 
+MemoryRegion ProcessMemoryPool::allocate()
+{
+	// ----->  (Fast Path)  <-----------------------------------------------------------
+	// 
+	// Attempt to source memory from thread local memory cache, avoiding the
+	// need for thread synchronization on allocation requests.
+
+	ThreadLocalMemoryCache& localMemory = get_current_thread_cache();
+
+	if (localMemory.has_memory_free()) {
+		FreeRegionNode* block = localMemory.free_list_head;
+		localMemory.free_list_head = static_cast<FreeRegionNode*>(block->next);
+		localMemory.free_blocks--;
+		return MemoryRegion{block, config_.block_alignment, config_.block_size};
+	}
+
+	// ----->  (Slow Path)  <-----------------------------------------------------------
+	// 
+	// Attempt to source memory from the process-wide shared free list to refill
+	// this thread local memory cache. This path of execution requires thread
+	// synchronization to successfully acquire memory.
+
+	const size_t blockBatchSize = localMemory.compute_growth_batch(); // NOTE: This can't be zero
+	FreeRegionNode* batchAllocChain = pop_batch(blockBatchSize);
+
+	// ----->  (Extremely Slow Path)  <-------------------------------------------------
+	// 
+	// Attempt to source memory from the operating system since both the thread
+	// local memory cache and process-wide shared free list are exhausted. This
+	// path of execution will require further thread synchronization and possibly
+	// a momentary surrender of control to the kernel. In this circumstance, you
+	// are refilling both the process shared free list and this thread local
+	// memory.
+
+	if (batchAllocChain == nullptr) {
+		expand_memory();
+		batchAllocChain = pop_batch(blockBatchSize);
+
+		if (batchAllocChain == nullptr)
+			throw std::bad_alloc{};
+	}
+
+	// ----->  (Thread Memory Refill)  <------------------------------------------------
+
+	FreeRegionNode* block = batchAllocChain;
+	localMemory.free_list_head = static_cast<FreeRegionNode*>(block->next);
+	localMemory.cached_blocks += blockBatchSize;
+	localMemory.free_blocks += blockBatchSize - 1;
+	return MemoryRegion{block, config_.block_alignment, config_.block_size};
+}
+
+void ProcessMemoryPool::deallocate(const MemoryRegion& block) noexcept
+{
+	ThreadLocalMemoryCache& localMemory = get_current_thread_cache();
+	FreeRegionNode* returnedBlock = static_cast<FreeRegionNode*>(block.base());
+
+	returnedBlock->next = localMemory.free_list_head;
+	localMemory.free_list_head = returnedBlock;
+	localMemory.free_blocks++;
+
+	if (localMemory.cached_blocks > config_.max_thread_blocks) {
+		const size_t drainCount = localMemory.compute_shrink_batch();
+
+		FreeRegionNode* returnChainHead = localMemory.free_list_head;
+		FreeRegionNode* returnChainTail = returnChainHead;
+
+		for (size_t i = 1; i < drainCount; i++)
+			returnChainTail = static_cast<FreeRegionNode*>(returnChainTail->next);
+
+		localMemory.free_list_head = static_cast<FreeRegionNode*>(returnChainTail->next);
+
+		returnChainTail->next = nullptr;
+		localMemory.free_blocks -= drainCount;
+		localMemory.cached_blocks -= drainCount;
+		push_batch(returnChainHead, returnChainTail);
+	}
+}
+
 // ===================================================================================== //
 //      <> chevron::process::ProcessMemoryPool | [PRIVATE] MEMBER METHODS
 // ===================================================================================== //
@@ -142,6 +221,18 @@ void ProcessMemoryPool::reinit_memory_allocator()
 void ProcessMemoryPool::init_thread_cache_configuration()
 {
 	// ON HOLD (no use found)
+}
+
+ProcessMemoryPool::ThreadLocalMemoryCache& ProcessMemoryPool::get_current_thread_cache() noexcept
+{
+	thread_local ThreadLocalMemoryCache threadCache{
+		.free_list_head = nullptr,
+		.cached_blocks = 0,
+		.batch_size = config_.initial_thread_blocks,
+		.shared_pool = this
+	};
+
+	return threadCache;
 }
 
 void ProcessMemoryPool::carve_and_link(const MemoryRegion& chunk)
@@ -243,7 +334,38 @@ void ProcessMemoryPool::expand_memory()
 	//
 
 	///---------------------------------------------------------------------------------
-    // ----->  PHASE 1 | (Occupancy Budget Gate)  <-------------------------------------
+    // ----->  PHASE 1 | (Concurrent Expansion Gate)  <---------------------------------
+    // 
+	// Atomically claim exclusive ownership of the expansion path. Only
+	// one thread may perform OS memory acquisition at a time. The first
+	// thread to arrive transitions the gate from idle to expanding and
+	// proceeds. All other threads yield until that expansion completes,
+	// then return to a replinished process-wide free list.
+
+	ExpansionState expectedState = ExpansionState::IDLE;
+	const ExpansionState attemptState = ExpansionState::EXPANDING;
+	const bool expansionOwner = expansion_state_.compare_exchange_strong(
+		expectedState,
+		attemptState,
+		std::memory_order_acquire,
+		std::memory_order_relaxed
+	);
+
+	if (!expansionOwner) {
+		while (expansion_state_.load(std::memory_order_acquire) == attemptState)
+			std::this_thread::yield();
+		return; // Memory is now available
+	}
+
+	// Restore idle expansion state on scope exit beyond this point
+	[[maybe_unused]] ScopeGuard expansionStateRestore{
+		[&]() {
+			expansion_state_.store(ExpansionState::IDLE, std::memory_order_release);
+		}
+	};
+
+	///---------------------------------------------------------------------------------
+    // ----->  PHASE 2 | (Occupancy Budget Gate)  <-------------------------------------
     // 
 	// Atomically increment the number of bytes acquired by the chunk size.
 	// If the result exceeds the budget ceiling, roll back and throw. This
@@ -268,7 +390,7 @@ void ProcessMemoryPool::expand_memory()
 		throw std::bad_alloc{};
 
 	///---------------------------------------------------------------------------------
-	// ----->  PHASE 2 | (Chunk Acquisition)  <-----------------------------------------
+	// ----->  PHASE 3 | (Chunk Acquisition)  <-----------------------------------------
 	// 
 	// Delegate to the allocator for the OS allocation. If this fails,
 	// roll back the byte budget and rethrow. The allocator independently
@@ -280,7 +402,7 @@ void ProcessMemoryPool::expand_memory()
 	);
 
 	///---------------------------------------------------------------------------------
-	// ----->  PHASE 3 | (Chunk Integration)  <-----------------------------------------
+	// ----->  PHASE 4 | (Chunk Integration)  <-----------------------------------------
 	// 
 	// Carve the acquired chunk into blocks, thread them into a chain, and
 	// prepend the chain onto the shared free list.

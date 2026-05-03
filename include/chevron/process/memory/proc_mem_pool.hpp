@@ -64,9 +64,19 @@ class ProcessMemoryPool {
      */
     struct ThreadLocalMemoryCache {
         memory::FreeRegionNode* free_list_head;   ///< Head of thread-local free block chain
-        size_t cached_blocks;                     ///< Number of blocks currently in local cache
+        size_t free_blocks;                       ///< Number of blocks currently free in local cache
+        size_t cached_blocks;                     ///< Number of blocks in local cache possession
         size_t batch_size;                        ///< Batch size for next trip to shared memory pool
         ProcessMemoryPool* shared_pool;           ///< Process-level shared memory pool
+
+        /*!
+         * @brief
+         * TODO: INCOMPLETE DOCUMENTATION!!!
+         * 
+         * @details
+         * TODO: INCOMPLETE DOCUMENTATION!!!
+         */
+        bool has_memory_free() const noexcept;
 
         /*!
          * @brief
@@ -93,10 +103,28 @@ class ProcessMemoryPool {
          * @details
          * TODO: INCOMPLETE DOCUMENTATION!!!
          */
-        void drain_cache() const noexcept;
+        void drain_cache() noexcept;
 
         ~ThreadLocalMemoryCache() noexcept;
     };
+
+    /*!
+     * @brief
+     * State of pool's memory expansion execution path.
+     * 
+     * @details
+     * Used as a CAS-based gate to ensure only one thread
+     * performs OS memory acquisition at a time, preventing
+     * redundant chunk allocations that could consume
+     * significant system memory.
+     */
+    enum ExpansionState : size_t { IDLE, EXPANDING };
+
+    /*!
+     * @brief
+     * TODO: INCOMPLETE DOCUMENTATION!!!
+     */
+    using ExpandState = std::atomic<ExpansionState>;
 
     /*!
      * @brief
@@ -180,6 +208,24 @@ public:
      */
     [[nodiscard]] units::Bytes bytes_in_possession() const noexcept;
 
+    /*!
+     * @brief
+     * TODO: INCOMPLETE DOCUMENTATION!!!
+     *
+     * @return
+     * TODO: INCOMPLETE DOCUMENTATION!!!
+     */
+    [[nodiscard]] memory::MemoryRegion allocate();
+
+    /*!
+     * @brief
+     * TODO: INCOMPLETE DOCUMENTATION!!!
+     *
+     * @return
+     * TODO: INCOMPLETE DOCUMENTATION!!!
+     */
+    [[nodiscard]] void deallocate(const memory::MemoryRegion& block) noexcept;
+
     // ===================================================================================== //
     //      <> chevron::process::ProcessMemoryPool | OPERATORS
     // ===================================================================================== //
@@ -197,6 +243,7 @@ private:
     size_t blocks_per_chunk_;            ///< Number of blocks carved from each chunk
     MemoryPoolConfig config_;            ///< Process memory pool configuration
     ProcessMemoryAllocator allocator_;   ///< Process memory allocator
+    ExpandState expansion_state_;        ///< Current state of memory expansion execution
 
     // ===================================================================================== //
     //      <> chevron::process::ProcessMemoryPool | [PRIVATE] MEMBER METHODS
@@ -242,6 +289,15 @@ private:
      * @brief
      * TODO: INCOMPLETE DOCUMENTATION!!!
      * 
+     * @return
+     * TODO: INCOMPLETE DOCUMENTATION!!!
+     */
+    ThreadLocalMemoryCache& get_current_thread_cache() noexcept;
+
+    /*!
+     * @brief
+     * TODO: INCOMPLETE DOCUMENTATION!!!
+     * 
      * @details
      * TODO: INCOMPLETE DOCUMENTATION!!!
      */
@@ -271,15 +327,6 @@ private:
     /*!
      * @brief
      * TODO: INCOMPLETE DOCUMENTATION!!!
-     * 
-     * @return
-     * TODO: INCOMPLETE DOCUMENTATION!!!
-     */
-    ThreadLocalMemoryCache& get_current_thread_cache();
-
-    /*!
-     * @brief
-     * TODO: INCOMPLETE DOCUMENTATION!!!
      */
     void expand_memory();
 
@@ -287,7 +334,12 @@ private:
     //      <> chevron::process::ProcessMemoryPool | COMPILE-TIME GUARANTEES
     // ===================================================================================== //
 
-    // Start...
+    // static_assert(
+    //     std::atomic<utility::TaggedPointer<void>>::is_always_lock_free,
+    //     "ProcessMemoryPool requires lock-free 16-byte atomics. "
+    //     "The target platform does not support lock-free std::atomic<TaggedPointer>."
+    // );
+
 };
 
 }
