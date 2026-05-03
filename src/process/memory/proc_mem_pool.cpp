@@ -20,19 +20,16 @@
 #include "chevron/process/memory/proc_mem_pool.hpp"
 #include "chevron/utility/bits/alignment.hpp"
 #include "chevron/utility/scope/scope_guard.hpp"
-#include "chevron/common/macro_defs.h"
+
+#if CHEVRON_MSVC
+  #include <intrin.h>
+#endif
 
 using chevron::process::ProcessMemoryPool;
 using chevron::memory::FreeRegionNode;
 using chevron::memory::MemoryRegion;
 using chevron::utility::ScopeGuard;
 using chevron::units::Bytes;
-
-/*!
- * @brief
- * TODO: INCOMPLETE DOCUMENTATION!!!
- */
-using TaggedPointer = chevron::utility::TaggedPointer<void>;
 
 // ===================================================================================== //
 //      <> chevron::process::ProcessMemoryPool | CONSTRUCTORS / DESTRUCTOR
@@ -52,6 +49,7 @@ ProcessMemoryPool::ProcessMemoryPool(const MemoryPoolConfig& config)
 	validate_budget_constraints();
 	init_thread_cache_configuration();
 	reinit_memory_allocator();
+	is_lock_free_or_throw();
 }
 
 ProcessMemoryPool::~ProcessMemoryPool() noexcept
@@ -141,6 +139,7 @@ MemoryRegion ProcessMemoryPool::allocate()
 	localMemory.free_list_head = static_cast<FreeRegionNode*>(block->next);
 	localMemory.cached_blocks += blockBatchSize;
 	localMemory.free_blocks += blockBatchSize - 1;
+	block->next = nullptr;
 	return MemoryRegion{block, config_.block_alignment, config_.block_size};
 }
 
@@ -223,6 +222,17 @@ void ProcessMemoryPool::init_thread_cache_configuration()
 	// ON HOLD (no use found)
 }
 
+void ProcessMemoryPool::is_lock_free_or_throw()
+{
+	if (!bytes_acquired_.is_lock_free() || !expansion_state_.is_lock_free())
+		throw std::bad_exception{}; // NOTE: This exception type is not it cheif...
+
+#if CHEVRON_CLANG || CHEVRON_GCC
+	if (!free_list_head_.is_lock_free())
+		throw std::bad_exception{}; // NOTE: This exception type is not it cheif...
+#endif
+}
+
 ProcessMemoryPool::ThreadLocalMemoryCache& ProcessMemoryPool::get_current_thread_cache() noexcept
 {
 	thread_local ThreadLocalMemoryCache threadCache{
@@ -270,19 +280,39 @@ void ProcessMemoryPool::push_batch(FreeRegionNode* head, FreeRegionNode* tail)
 	//
 
 	bool swapSuccess = false;
-	TaggedPointer currentHead = free_list_head_.load(std::memory_order_acquire);
 	TaggedPointer newHead{head};
+
+#if CHEVRON_MSVC
+	TaggedPointer currentHead{nullptr, 0};
+	_InterlockedCompareExchange128(
+		reinterpret_cast<volatile int64_t*>(&free_list_head_),
+		0,
+		0,
+		reinterpret_cast<int64_t*>(&currentHead)
+	);
+#else
+	TaggedPointer currentHead = free_list_head_.load(std::memory_order_acquire);
+#endif
 
 	do {
 		tail->next = currentHead.ptr;
 		newHead.swaps = currentHead.swaps + 1;
 
+#if CHEVRON_MSVC
+		swapSuccess = _InterlockedCompareExchange128(
+			reinterpret_cast<volatile int64_t*>(&free_list_head_),
+			static_cast<int64_t>(newHead.swaps),
+			reinterpret_cast<int64_t>(newHead.ptr),
+			reinterpret_cast<int64_t*>(&currentHead)
+		) == 1;
+#else
 		swapSuccess = free_list_head_.compare_exchange_weak(
 			currentHead,                 ///< Expected current head
 			newHead,                     ///< New head to install if expected still present
 			std::memory_order_release,   ///< Success: publish node write to other threads
 			std::memory_order_acquire    ///< Failure: acquire updated head for next attempt
 		);
+#endif
 	} while (!swapSuccess/* CAS-Loop */);
 }
 
@@ -296,7 +326,18 @@ FreeRegionNode* ProcessMemoryPool::pop_batch(size_t batch_size)
 	size_t grabCount = 0;
 	FreeRegionNode* batchHead = nullptr;
 	FreeRegionNode* batchTail = nullptr;
+
+#if CHEVRON_MSVC
+	TaggedPointer currentHead{nullptr, 0};
+	_InterlockedCompareExchange128(
+		reinterpret_cast<volatile int64_t*>(&free_list_head_),
+		0,
+		0,
+		reinterpret_cast<int64_t*>(&currentHead)
+	);
+#else
 	TaggedPointer currentHead = free_list_head_.load(std::memory_order_acquire);
+#endif
 
 	do {
 		if (currentHead.ptr == nullptr) return nullptr;
@@ -313,12 +354,21 @@ FreeRegionNode* ProcessMemoryPool::pop_batch(size_t batch_size)
 
 		TaggedPointer newHead{batchTail->next, currentHead.swaps + 1};
 
+#if CHEVRON_MSVC
+		swapSuccess = _InterlockedCompareExchange128(
+			reinterpret_cast<volatile int64_t*>(&free_list_head_),
+			static_cast<int64_t>(newHead.swaps),
+			reinterpret_cast<int64_t>(newHead.ptr),
+			reinterpret_cast<int64_t*>(&currentHead)
+		) == 1;
+#else
 		swapSuccess = free_list_head_.compare_exchange_weak(
 			currentHead,                 ///< Expected current head
 			newHead,                     ///< New head to install if expected still present
 			std::memory_order_release,   ///< Success: publish node write to other threads
 			std::memory_order_acquire    ///< Failure: acquire updated head for next attempt
 		);
+#endif
 	} while (!swapSuccess/* CAS-Loop */);
 
 	batchTail->next = nullptr;

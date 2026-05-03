@@ -25,6 +25,7 @@
 #include "chevron/memory/memory_defs.hpp"
 #include "chevron/memory/chunk_descriptor.hpp"
 #include "chevron/memory/region.hpp"
+#include "chevron/common/macro_defs.h"
 
 namespace chevron::process
 {
@@ -76,25 +77,25 @@ class ProcessMemoryPool {
          * @details
          * TODO: INCOMPLETE DOCUMENTATION!!!
          */
-        bool has_memory_free() const noexcept;
+        [[nodiscard]] bool has_memory_free() const noexcept;
 
         /*!
          * @brief
          * TODO: INCOMPLETE DOCUMENTATION!!!
-         * 
+         *
          * @details
          * TODO: INCOMPLETE DOCUMENTATION!!!
          */
-        size_t compute_growth_batch() const noexcept;
+        [[nodiscard]] size_t compute_growth_batch() const noexcept;
 
         /*!
          * @brief
          * TODO: INCOMPLETE DOCUMENTATION!!!
-         * 
+         *
          * @details
          * TODO: INCOMPLETE DOCUMENTATION!!!
          */
-        size_t compute_shrink_batch() const noexcept;
+        [[nodiscard]] size_t compute_shrink_batch() const noexcept;
 
         /*!
          * @brief
@@ -130,7 +131,21 @@ class ProcessMemoryPool {
      * @brief
      * TODO: INCOMPLETE DOCUMENTATION!!!
      */
-    using FreeListHead = memory::AtomicFreeListHead;
+    using TaggedPointer = chevron::utility::TaggedPointer<void>;
+
+#if CHEVRON_MSVC
+    /*!
+     * @brief
+     * TODO: INCOMPLETE DOCUMENTATION!!!
+     */
+    using FreeListHead = TaggedPointer;
+#else
+    /*!
+     * @brief
+     * TODO: INCOMPLETE DOCUMENTATION!!!
+     */
+    using FreeListHead = std::atomic<TaggedPointer>;
+#endif
 
     using atomic_size_t = std::atomic<size_t>;
 
@@ -224,7 +239,7 @@ public:
      * @return
      * TODO: INCOMPLETE DOCUMENTATION!!!
      */
-    [[nodiscard]] void deallocate(const memory::MemoryRegion& block) noexcept;
+    void deallocate(const memory::MemoryRegion& block) noexcept;
 
     // ===================================================================================== //
     //      <> chevron::process::ProcessMemoryPool | OPERATORS
@@ -281,6 +296,12 @@ private:
      * TODO: INCOMPLETE DOCUMENTATION!!!
      */
     void init_thread_cache_configuration();
+
+    /*!
+     * @brief
+     * TODO: INCOMPLETE DOCUMENTATION!!!
+     */
+    void is_lock_free_or_throw();
     
     // -------------------------------------------------------------------------------------
     //      > chevron::process::ProcessMemoryPool | Operations
@@ -292,7 +313,7 @@ private:
      * @return
      * TODO: INCOMPLETE DOCUMENTATION!!!
      */
-    ThreadLocalMemoryCache& get_current_thread_cache() noexcept;
+    [[nodiscard]] ThreadLocalMemoryCache& get_current_thread_cache() noexcept;
 
     /*!
      * @brief
@@ -322,7 +343,7 @@ private:
      * @return
      * TODO: INCOMPLETE DOCUMENTATION!!!
      */
-    memory::FreeRegionNode* pop_batch(size_t batch_size);
+    [[nodiscard]] memory::FreeRegionNode* pop_batch(size_t batch_size);
 
     /*!
      * @brief
