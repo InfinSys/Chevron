@@ -140,7 +140,7 @@ private:
 
 /*! @details Lambda deduction guide. */
 template <typename LambdaT>
-ScopeGuard(LambdaT) -> chevron::utility::ScopeGuard<std::decay_t<LambdaT>>;
+ScopeGuard(LambdaT) -> ScopeGuard<std::decay_t<LambdaT>>;
 
 }
 
