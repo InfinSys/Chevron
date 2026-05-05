@@ -154,13 +154,10 @@ constexpr bool isPowerOfTen(UIntT value) noexcept {
 	while (value > 1) {
 		const bool multipleOfTen = value % 10 != 0;
 
-		switch (multipleOfTen) {
-		case true:
-			return false;
-
-		default:
-			value /= 10;
-		}
+		if (multipleOfTen)
+		    return false;
+		else
+		    value /= 10;
 	}
 
 	return true;
