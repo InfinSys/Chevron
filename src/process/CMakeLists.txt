@@ -16,3 +16,13 @@ target_sources(
     PUBLIC
     "${CMAKE_CURRENT_SOURCE_DIR}/thread/thread_engine.cpp"
 )
+
+if(CHEVRON_CXX_GCC OR CHEVRON_CXX_CLANG)
+    target_compile_options(
+        ${CHEVRON_MAIN_BINARY_NAME}
+
+        PUBLIC
+          -march=native  # Optimize for the host CPU
+          -mcx16         # Enable 128-bit atomic CAS (x86-64)
+    )
+endif()
