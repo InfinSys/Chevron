@@ -22,7 +22,7 @@
 
 #include "chevron/process/memory/mem_pool_config.hpp"
 #include "chevron/process/memory/proc_allocator.hpp"
-#include "chevron/memory/memory_defs.hpp"
+#include "chevron/memory/atomic_free_list.hpp"
 #include "chevron/memory/chunk_descriptor.hpp"
 #include "chevron/memory/region.hpp"
 
@@ -244,7 +244,7 @@ public:
     //      <> chevron::process::ProcessMemoryPool | [PRIVATE] ATTRIBUTES
     // ===================================================================================== //
 private:
-    FreeListHead free_list_head_;        ///< Head of the embedded free list (ABA-safe)
+    memory::AtomicFreeList free_list_;   ///< Embedded free list
     atomic_size_t bytes_acquired_;       ///< Total bytes currently occupied from OS
     size_t blocks_per_chunk_;            ///< Number of blocks carved from each chunk
     MemoryPoolConfig config_;            ///< Process memory pool configuration
@@ -341,19 +341,6 @@ private:
      * TODO: INCOMPLETE DOCUMENTATION!!!
      */
     void expand_memory();
-
-    // ===================================================================================== //
-    //      <> chevron::process::ProcessMemoryPool | COMPILE-TIME GUARANTEES
-    // ===================================================================================== //
-
-    static_assert(
-        sizeof(FreeListHead) == alignof(FreeListHead) &&
-        alignof(FreeListHead) == 16,
-        "ProcessMemoryPool requires lock-free 16-byte atomics for a free "
-        "list pointer. The FreeListHead type must not exceed 16-bytes in "
-        "size and must be aligned to an address that is a multiple of 16."
-    );
-
 };
 
 }

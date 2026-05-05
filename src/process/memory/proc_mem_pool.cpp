@@ -50,13 +50,14 @@ using chevron::units::Bytes;
 // ===================================================================================== //
 
 ProcessMemoryPool::ProcessMemoryPool(const MemoryPoolConfig& config)
-	: free_list_head_{TaggedPointer{nullptr, 0}},
+	: free_list_{},
 	bytes_acquired_{0},
 	blocks_per_chunk_{0},
 	config_{config},
 	allocator_{1},  // Placeholder
 	expansion_state_{ExpansionState::IDLE}
 {
+	is_lock_free_or_throw();
 	config_.isValidOrThrow();
 
 	compute_effective_block_geometry();
@@ -64,7 +65,6 @@ ProcessMemoryPool::ProcessMemoryPool(const MemoryPoolConfig& config)
 	validate_budget_constraints();
 	init_thread_cache_configuration();
 	reinit_memory_allocator();
-	is_lock_free_or_throw();
 }
 
 ProcessMemoryPool::~ProcessMemoryPool() noexcept
@@ -254,7 +254,7 @@ void ProcessMemoryPool::is_lock_free_or_throw()
 	__cpuid(cpuFeatureInfo, 1);
 	
 	// Bit 13 indicates support for double-width atomics
-	if (!cpuFeatureInfo[ECX_REGISTER] & (1 << 13)))
+	if (!(cpuFeatureInfo[ECX_REGISTER] & (1 << 13)))
 	    DOES_NOT_SUPPORT_CMPXCHG16B;
 #endif
 }
@@ -305,67 +305,7 @@ void ProcessMemoryPool::push_batch(FreeRegionNode* head, FreeRegionNode* tail)
 	// BE AWARE: Concurrent Zone Below
 	//
 
-	bool swapSuccess = false;
-	TaggedPointer newHead{head};
-	TaggedPointer currentHead{nullptr, 0};
-
-#if CHEVRON_MSVC
-	_InterlockedCompareExchange128(
-		reinterpret_cast<volatile int64_t*>(&free_list_head_),
-		0,
-		0,
-		reinterpret_cast<int64_t*>(&currentHead)
-	);
-#elif CHEVRON_GCC
-	{
-		__int128_t currentHeadRaw = __sync_val_compare_and_swap(
-			reinterpret_cast<__int128*>(&free_list_head_),
-			0,
-			0
-		);
-		memcpy(&currentHead, &currentHeadRaw, sizeof(currentHead));
-	}
-#elif CHEVRON_CLANG
-    __atomic_load(&free_list_head_, &currentHead, __ATOMIC_ACQUIRE);
-#endif
-
-	do {
-		tail->next = currentHead.ptr;
-		newHead.swaps = currentHead.swaps + 1;
-
-#if CHEVRON_MSVC
-		swapSuccess = _InterlockedCompareExchange128(
-			reinterpret_cast<volatile int64_t*>(&free_list_head_),
-			static_cast<int64_t>(newHead.swaps),
-			reinterpret_cast<int64_t>(newHead.ptr),
-			reinterpret_cast<int64_t*>(&currentHead)
-		) == 1;
-#elif CHEVRON_GCC
-        {
-			__int128_t currentHeadRaw = __sync_val_compare_and_swap(
-				reinterpret_cast<__int128*>(&free_list_head_),   ///< CAS target base address
-				*reinterpret_cast<__int128*>(&currentHead),      ///< Expected current head
-				*reinterpret_cast<__int128*>(&newHead)           ///< New head if expected still present
-			);
-
-			swapSuccess = (
-				currentHeadRaw == *reinterpret_cast<__int128*>(&currentHead)
-			);
-
-			if (!swapSuccess) // Acquire updated head for next attempt
-			    memcpy(&currentHead, &currentHeadRaw, sizeof(currentHead));
-		}
-#elif CHEVRON_CLANG
-		swapSuccess = __atomic_compare_exchange(
-			&free_list_head_,   ///< CAS target base address
-			&currentHead,       ///< Expected current head
-			&newHead,           ///< New head to install if expected still present
-			true,               ///< Use weak compare exchange
-			__ATOMIC_RELEASE,   ///< Success: publish node write to other threads
-			__ATOMIC_ACQUIRE    ///< Failure: acquire updated head for next attempt
-		);
-#endif
-	} while (!swapSuccess/* CAS-Loop */);
+	free_list_.push(head, tail);
 }
 
 FreeRegionNode* ProcessMemoryPool::pop_batch(size_t batch_size)
@@ -374,84 +314,7 @@ FreeRegionNode* ProcessMemoryPool::pop_batch(size_t batch_size)
 	// BE AWARE: Concurrent Zone Below
 	//
 
-	bool swapSuccess = false;
-	size_t grabCount = 0;
-	FreeRegionNode* batchHead = nullptr;
-	FreeRegionNode* batchTail = nullptr;
-
-	TaggedPointer currentHead{nullptr, 0};
-
-#if CHEVRON_MSVC
-	_InterlockedCompareExchange128(
-		reinterpret_cast<volatile int64_t*>(&free_list_head_),
-		0,
-		0,
-		reinterpret_cast<int64_t*>(&currentHead)
-	);
-#elif CHEVRON_GCC
-	{
-		__int128_t currentHeadRaw = __sync_val_compare_and_swap(
-			reinterpret_cast<__int128*>(&free_list_head_),
-			0,
-			0
-		);
-		memcpy(&currentHead, &currentHeadRaw, sizeof(currentHead));
-	}
-#elif CHEVRON_CLANG
-	__atomic_load(&free_list_head_, &currentHead, __ATOMIC_ACQUIRE);
-#endif
-
-	do {
-		if (currentHead.ptr == nullptr) return nullptr;
-		batchHead = static_cast<FreeRegionNode*>(currentHead.ptr);
-		batchTail = batchHead;
-
-		grabCount = 1;
-
-		while (grabCount < batch_size) {
-			batchTail = static_cast<FreeRegionNode*>(batchTail->next);
-			if (batchTail == nullptr) return nullptr;
-			grabCount++;
-		}
-
-		TaggedPointer newHead{batchTail->next, currentHead.swaps + 1};
-
-#if CHEVRON_MSVC
-		swapSuccess = _InterlockedCompareExchange128(
-			reinterpret_cast<volatile int64_t*>(&free_list_head_),
-			static_cast<int64_t>(newHead.swaps),
-			reinterpret_cast<int64_t>(newHead.ptr),
-			reinterpret_cast<int64_t*>(&currentHead)
-		) == 1;
-#elif CHEVRON_GCC
-        {
-			__int128_t currentHeadRaw = __sync_val_compare_and_swap(
-				reinterpret_cast<__int128*>(&free_list_head_),   ///< CAS target base address
-				*reinterpret_cast<__int128*>(&currentHead),      ///< Expected current head
-				*reinterpret_cast<__int128*>(&newHead)           ///< New head if expected still present
-			);
-
-			swapSuccess = (
-				currentHeadRaw == *reinterpret_cast<__int128*>(&currentHead)
-			);
-
-			if (!swapSuccess) // Acquire updated head for next attempt
-			    memcpy(&currentHead, &currentHeadRaw, sizeof(currentHead));
-		}
-#elif CHEVRON_CLANG
-		swapSuccess = __atomic_compare_exchange(
-			&free_list_head_,   ///< CAS target base address
-			&currentHead,       ///< Expected current head
-			&newHead,           ///< New head to install if expected still present
-			true,               ///< Use weak compare exchange
-			__ATOMIC_RELEASE,   ///< Success: publish node write to other threads
-			__ATOMIC_ACQUIRE    ///< Failure: acquire updated head for next attempt
-		);
-#endif
-	} while (!swapSuccess/* CAS-Loop */);
-
-	batchTail->next = nullptr;
-	return batchHead;
+	return free_list_.pop(batch_size);
 }
 
 void ProcessMemoryPool::expand_memory()
