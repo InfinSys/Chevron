@@ -25,7 +25,6 @@
 #include "chevron/memory/memory_defs.hpp"
 #include "chevron/memory/chunk_descriptor.hpp"
 #include "chevron/memory/region.hpp"
-#include "chevron/common/macro_defs.h"
 
 namespace chevron::process
 {
@@ -133,19 +132,11 @@ class ProcessMemoryPool {
      */
     using TaggedPointer = chevron::utility::TaggedPointer<void>;
 
-#if CHEVRON_MSVC
     /*!
      * @brief
      * TODO: INCOMPLETE DOCUMENTATION!!!
      */
     using FreeListHead = TaggedPointer;
-#else
-    /*!
-     * @brief
-     * TODO: INCOMPLETE DOCUMENTATION!!!
-     */
-    using FreeListHead = std::atomic<TaggedPointer>;
-#endif
 
     using atomic_size_t = std::atomic<size_t>;
 
@@ -355,11 +346,13 @@ private:
     //      <> chevron::process::ProcessMemoryPool | COMPILE-TIME GUARANTEES
     // ===================================================================================== //
 
-    // static_assert(
-    //     std::atomic<utility::TaggedPointer<void>>::is_always_lock_free,
-    //     "ProcessMemoryPool requires lock-free 16-byte atomics. "
-    //     "The target platform does not support lock-free std::atomic<TaggedPointer>."
-    // );
+    static_assert(
+        sizeof(FreeListHead) == alignof(FreeListHead) &&
+        alignof(FreeListHead) == 16,
+        "ProcessMemoryPool requires lock-free 16-byte atomics for a free "
+        "list pointer. The FreeListHead type must not exceed 16-bytes in "
+        "size and must be aligned to an address that is a multiple of 16."
+    );
 
 };
 
