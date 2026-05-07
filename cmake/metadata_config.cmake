@@ -14,8 +14,14 @@ set_metadata(UUID "ISJTB-CXX-XL20260108-000003" DESCRIPTION "Product unique iden
 set_metadata(LICENSE_TYPE "GPLv3" DESCRIPTION "Product license type")
 set_metadata(FULL_NAME "Chevron" DESCRIPTION "Product name")
 set_metadata(SHORT_NAME "Chevron" DESCRIPTION "Product short name")
-set_metadata(MAIN_BINARY_NAME "chevron" DESCRIPTION "Main binary")
 set_metadata(META_NAMESPACE "CHEVRON" DESCRIPTION "Project metadata namespace")
+
+# If Windows platform, append major version to binary name
+if(CHEVRON_OS_WINDOWS)
+    set_metadata(MAIN_BINARY_NAME "chevron${CMAKE_PROJECT_VERSION_MAJOR}" DESCRIPTION "Main binary")
+else()
+    set_metadata(MAIN_BINARY_NAME "chevron" DESCRIPTION "Main binary")
+endif()
 
 # Temporarily cached variables for code generation
 create_template_reference(SFTW_PUBLISHER    PUBLISHER)
