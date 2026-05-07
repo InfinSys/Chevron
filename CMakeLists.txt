@@ -27,6 +27,8 @@ project(
 
 # Declare project CMake options
 include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/utility/options.cmake")
+# Define platform architecture identifiers
+include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/platform/detective.cmake")
 
 if (${CMAKE_PROJECT_NAME}_IS_TOP_LEVEL)
     # Export compilation commands to build dir
