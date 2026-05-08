@@ -45,9 +45,6 @@ set(CHEVRON_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
 set(CHEVRON_CMAKE_MODULES_DIR "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 set(CHEVRON_LIBS_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/lib/include")
 
-# Declare project CMake options
-include("${CHEVRON_CMAKE_MODULES_DIR}/utility/options.cmake")
-
 # Include dependency setup helpers
 include("${CHEVRON_CMAKE_MODULES_DIR}/utility/dependencies.cmake")
 setup_dependencies()  # Prepare library dependency targets

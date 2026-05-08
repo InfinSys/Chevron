@@ -10,7 +10,7 @@ target_link_libraries(
     devexe
 
     PRIVATE
-    chevron
+      ${CHEVRON_MAIN_BINARY_NAME}
 )
 
 if(${CHEVRON_CXX_GCC})
