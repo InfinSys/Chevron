@@ -124,6 +124,15 @@ public:
 	 */
 	[[nodiscard]] bool isAlignedTo(const size_t alignment) const noexcept;
 
+	/*!
+	 * @brief
+	 * TODO: INCOMPLETE DOCUMENTATION!!!
+	 *
+	 * @return
+	 * TODO: INCOMPLETE DOCUMENTATION!!!
+	 */
+	void clear() noexcept;
+
 	// ===================================================================================== //
 	//      <> chevron::memory::MemoryDescription | [PRIVATE] ATTRIBUTES
     // ===================================================================================== //
