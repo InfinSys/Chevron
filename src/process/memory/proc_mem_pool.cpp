@@ -63,7 +63,6 @@ ProcessMemoryPool::ProcessMemoryPool(const MemoryPoolConfig& config)
 	compute_effective_block_geometry();
 	compute_effective_chunk_geometry();
 	validate_budget_constraints();
-	init_thread_cache_configuration();
 	reinit_memory_allocator();
 }
 
@@ -93,7 +92,7 @@ size_t ProcessMemoryPool::alignment_guarantee() const noexcept
 
 size_t ProcessMemoryPool::chunk_count() const noexcept
 {
-	return bytes_acquired_.load(std::memory_order_relaxed) / config_.chunk_size.size_t_bytes();
+	return allocator_.acquisition_count();
 }
 
 size_t ProcessMemoryPool::max_chunk_count() const noexcept
@@ -137,7 +136,7 @@ MemoryRegion ProcessMemoryPool::allocate()
 	// local memory cache and process-wide shared free list are exhausted. This
 	// path of execution will require further thread synchronization and possibly
 	// a momentary surrender of control to the kernel. In this circumstance, you
-	// are refilling both the process shared free list and this thread local
+	// are refilling both the process-wide shared free list and this threads local
 	// memory.
 
 	if (batchAllocChain == nullptr) {
@@ -158,7 +157,7 @@ MemoryRegion ProcessMemoryPool::allocate()
 	return MemoryRegion{block, config_.block_alignment, config_.block_size};
 }
 
-void ProcessMemoryPool::deallocate(const MemoryRegion& block) noexcept
+void ProcessMemoryPool::deallocate(MemoryRegion& block) noexcept
 {
 	ThreadLocalMemoryCache& localMemory = get_current_thread_cache();
 	FreeRegionNode* returnedBlock = static_cast<FreeRegionNode*>(block.base());
@@ -183,6 +182,8 @@ void ProcessMemoryPool::deallocate(const MemoryRegion& block) noexcept
 		localMemory.cached_blocks -= drainCount;
 		push_batch(returnChainHead, returnChainTail);
 	}
+
+	block.invalidate();
 }
 
 // ===================================================================================== //
@@ -230,11 +231,6 @@ void ProcessMemoryPool::reinit_memory_allocator()
 	const size_t maxAllocs = config_.budget_ceiling / config_.chunk_size;
 	allocator_.~ProcessMemoryAllocator();
 	new (&allocator_) ProcessMemoryAllocator{maxAllocs};
-}
-
-void ProcessMemoryPool::init_thread_cache_configuration()
-{
-	// ON HOLD (no use found)
 }
 
 void ProcessMemoryPool::is_lock_free_or_throw()

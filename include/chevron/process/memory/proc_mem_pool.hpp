@@ -57,10 +57,18 @@ class ProcessMemoryPool {
 
     /*!
      * @brief
-     * TODO: INCOMPLETE DOCUMENTATION!!!
+     * Thread-local memory cache.
      * 
      * @details
-     * TODO: INCOMPLETE DOCUMENTATION!!!
+     * Each thread that interacts with the pool maintains one of
+     * these in thread-local storage. Allocation requests are
+     * served from this cache first to mitigate atomic contention
+     * on the process-level shared free list. When the cache is
+     * empty, a batch of blocks is pulled from the shared pool to
+     * refill local memory. When the cache exceeds its capacity,
+     * excess blocks are drained back to the shared pool for other
+     * threads to use. On thread exit, the destructor returns all
+     * remaining blocks to the shared list.
      */
     struct ThreadLocalMemoryCache {
         memory::FreeRegionNode* free_list_head;   ///< Head of thread-local free block chain
@@ -69,74 +77,78 @@ class ProcessMemoryPool {
         size_t batch_size;                        ///< Batch size for next trip to shared memory pool
         ProcessMemoryPool* shared_pool;           ///< Process-level shared memory pool
 
+        /*! @brief Thread-local memory cache destructor. */
+        ~ThreadLocalMemoryCache() noexcept;
+
         /*!
          * @brief
-         * TODO: INCOMPLETE DOCUMENTATION!!!
+         * Checks whether this cache has blocks available for
+         * allocation.
          * 
-         * @details
-         * TODO: INCOMPLETE DOCUMENTATION!!!
+         * @return
+         * True if local free list is not empty
          */
         [[nodiscard]] bool has_memory_free() const noexcept;
 
         /*!
          * @brief
-         * TODO: INCOMPLETE DOCUMENTATION!!!
+         * Determines how many blocks to cache from shared pool.
          *
-         * @details
-         * TODO: INCOMPLETE DOCUMENTATION!!!
+         * @return
+         * Desired number of blocks to locally cache
          */
         [[nodiscard]] size_t compute_growth_batch() const noexcept;
 
         /*!
          * @brief
-         * TODO: INCOMPLETE DOCUMENTATION!!!
+         * Determines how many blocks to return to shared pool.
          *
-         * @details
-         * TODO: INCOMPLETE DOCUMENTATION!!!
+         * @return
+         * Number of blocks to return
          */
         [[nodiscard]] size_t compute_shrink_batch() const noexcept;
 
+    private:
         /*!
          * @brief
-         * TODO: INCOMPLETE DOCUMENTATION!!!
+         * Returns all thread local memory to shared pool.
          * 
          * @details
-         * TODO: INCOMPLETE DOCUMENTATION!!!
+         * Walks the thread local free list to the tail and pushes
+         * the entire chain back to the process-level shared pool.
+         * This method is invoked by the `ThreadLocalMemoryCache`
+         * destructor to return all thread local memory.
          */
         void drain_cache() noexcept;
-
-        ~ThreadLocalMemoryCache() noexcept;
     };
 
     /*!
      * @brief
-     * State of pool's memory expansion execution path.
+     * State of memory expansion execution path.
      * 
      * @details
-     * Used as a CAS-based gate to ensure only one thread
-     * performs OS memory acquisition at a time, preventing
-     * redundant chunk allocations that could consume
-     * significant system memory.
+     * Binary state set that articulates the status of the process
+     * memory pool's expansion via an OS-bound memory allocation.
+     * It is either the case that the expansion execution path is
+     * `IDLE` (no OS-bound allocation is currently occurring), or
+     * it is `EXPANDING` (currently fetching more memory from the
+     * OS).
      */
     enum ExpansionState : size_t { IDLE, EXPANDING };
 
     /*!
      * @brief
-     * TODO: INCOMPLETE DOCUMENTATION!!!
+     * Atomic memory pool expansion state.
+     * 
+     * @details
+     * This is used in a CAS-based gate that ensure only one thread
+     * performs an OS memory acquisition, preventing redundant chunk
+     * allocations that could consume significant system memory. The
+     * gate does not necessarily intend to serialize the expansion
+     * path, but rather prevent 'expansion races' in concurrent
+     * environments.
      */
-    using ExpandState = std::atomic<ExpansionState>;
-
-    /*!
-     * @brief
-     * TODO: INCOMPLETE DOCUMENTATION!!!
-     */
-    using TaggedPointer = chevron::utility::TaggedPointer<void>;
-
-    /*!
-     * @brief
-     * TODO: INCOMPLETE DOCUMENTATION!!!
-     */
-    using FreeListHead = TaggedPointer;
+    using AtomicExpandState = std::atomic<ExpansionState>;
 
     using atomic_size_t = std::atomic<size_t>;
 
@@ -162,75 +174,77 @@ public:
 
     /*!
      * @brief
-     * TODO: INCOMPLETE DOCUMENTATION!!!
+     * Returns size of memory block distributed to consumers.
      * 
      * @return
-     * TODO: INCOMPLETE DOCUMENTATION!!!
+     * Effective block size after alignment adjustment
      */
     [[nodiscard]] units::Bytes distribution_size() const noexcept;
 
     /*!
      * @brief
-     * TODO: INCOMPLETE DOCUMENTATION!!!
+     * Returns size of individual OS memory allocation chunk.
      *
      * @return
-     * TODO: INCOMPLETE DOCUMENTATION!!!
+     * Effective chunk size after adjustment
      */
     [[nodiscard]] units::Bytes acquisition_size() const noexcept;
 
     /*!
      * @brief
-     * TODO: INCOMPLETE DOCUMENTATION!!!
+     * Returns alignment guarantee for distributed blocks.
      *
      * @return
-     * TODO: INCOMPLETE DOCUMENTATION!!!
+     * Maximum alignment all blocks satisfy
      */
     [[nodiscard]] size_t alignment_guarantee() const noexcept;
 
     /*!
      * @brief
-     * TODO: INCOMPLETE DOCUMENTATION!!!
+     * Returns number of chunks currently acquired from OS.
      *
      * @return
-     * TODO: INCOMPLETE DOCUMENTATION!!!
+     * Total number of OS allocations
      */
     [[nodiscard]] size_t chunk_count() const noexcept;
 
     /*!
      * @brief
-     * TODO: INCOMPLETE DOCUMENTATION!!!
+     * Returns maximum number of chunks acquirable from OS.
      *
      * @return
-     * TODO: INCOMPLETE DOCUMENTATION!!!
+     * Maximum number of OS allocations
      */
     [[nodiscard]] size_t max_chunk_count() const noexcept;
 
     /*!
      * @brief
-     * TODO: INCOMPLETE DOCUMENTATION!!!
+     * Returns total bytes currently acquired from OS.
      *
      * @return
-     * TODO: INCOMPLETE DOCUMENTATION!!!
+     * Total bytes reserved from OS
      */
     [[nodiscard]] units::Bytes bytes_in_possession() const noexcept;
 
     /*!
      * @brief
-     * TODO: INCOMPLETE DOCUMENTATION!!!
+     * Acquire single block of memory from process-level pool.
      *
      * @return
-     * TODO: INCOMPLETE DOCUMENTATION!!!
+     * Allocated memory region
      */
     [[nodiscard]] memory::MemoryRegion allocate();
 
     /*!
      * @brief
-     * TODO: INCOMPLETE DOCUMENTATION!!!
+     * Return block of memory to pool.
      *
-     * @return
-     * TODO: INCOMPLETE DOCUMENTATION!!!
+     * @details
+     * The block is pushed onto the calling thread's local cache.
+     * If the cache exceeds its capacity, a batch of blocks is
+     * drained back to the shared free list.
      */
-    void deallocate(const memory::MemoryRegion& block) noexcept;
+    void deallocate(memory::MemoryRegion& block) noexcept;
 
     // ===================================================================================== //
     //      <> chevron::process::ProcessMemoryPool | OPERATORS
@@ -247,9 +261,9 @@ private:
     memory::AtomicFreeList free_list_;   ///< Embedded free list
     atomic_size_t bytes_acquired_;       ///< Total bytes currently occupied from OS
     size_t blocks_per_chunk_;            ///< Number of blocks carved from each chunk
-    MemoryPoolConfig config_;            ///< Process memory pool configuration
+    MemoryPoolConfig config_;            ///< Process memory pool configuration 
     ProcessMemoryAllocator allocator_;   ///< Process memory allocator
-    ExpandState expansion_state_;        ///< Current state of memory expansion execution
+    AtomicExpandState expansion_state_;  ///< Current state of memory expansion execution
 
     // ===================================================================================== //
     //      <> chevron::process::ProcessMemoryPool | [PRIVATE] MEMBER METHODS
@@ -260,37 +274,43 @@ private:
 
     /*!
      * @brief
-     * TODO: INCOMPLETE DOCUMENTATION!!!
+     * Adjusts block size for alignment and minimum size constraints.
      */
     void compute_effective_block_geometry();
 
     /*!
      * @brief
-     * TODO: INCOMPLETE DOCUMENTATION!!!
+     * Adjusts chunk size to a clean multiple of block size.
      */
     void compute_effective_chunk_geometry();
 
     /*!
      * @brief
-     * TODO: INCOMPLETE DOCUMENTATION!!!
+     * Validates memory pool budget constraints.
      */
     void validate_budget_constraints();
 
     /*!
      * @brief
-     * TODO: INCOMPLETE DOCUMENTATION!!!
+     * Reconstructs process memory allocator with effective geometry
+     * values.
+     * 
+     * @details
+     * Uses placement new to reconstruct the allocator in-place because
+     * its construction parameters depend on effective geometry values
+     * that are not available at initializer list time.
      */
     void reinit_memory_allocator();
 
     /*!
      * @brief
-     * TODO: INCOMPLETE DOCUMENTATION!!!
-     */
-    void init_thread_cache_configuration();
-
-    /*!
-     * @brief
-     * TODO: INCOMPLETE DOCUMENTATION!!!
+     * Verifies memory pool is lock-free on current hardware.
+     * 
+     * @details
+     * Checks that all atomic members are lock-free and that the CPU
+     * supports a 16-byte atomic CAS instruction for the pool's free
+     * list. Throws immediately if any check fails to prevent the
+     * pool from operating without its lock-free guarantees.
      */
     void is_lock_free_or_throw();
     
@@ -299,46 +319,58 @@ private:
 
     /*!
      * @brief
-     * TODO: INCOMPLETE DOCUMENTATION!!!
+     * Retrieves calling thread's memory cache.
      * 
      * @return
-     * TODO: INCOMPLETE DOCUMENTATION!!!
+     * Calling thread's local memory cache
      */
     [[nodiscard]] ThreadLocalMemoryCache& get_current_thread_cache() noexcept;
 
     /*!
      * @brief
-     * TODO: INCOMPLETE DOCUMENTATION!!!
+     * Carves provided memory chunk into chain of blocks and integrate
+     * it into free list.
      * 
      * @details
-     * TODO: INCOMPLETE DOCUMENTATION!!!
+     * Walks the provided chunk from base to end in block-sized steps,
+     * writing embedded free region nodes into each block to form a
+     * singly-linked chain. The chain is then pushed onto the shared
+     * free list in a single batch operation.
      */
     void carve_and_link(const memory::MemoryRegion& chunk);
 
     /*!
      * @brief
-     * TODO: INCOMPLETE DOCUMENTATION!!!
-     * 
-     * @details
-     * TODO: INCOMPLETE DOCUMENTATION!!!
+     * Return chain of memory blocks to pool.
      */
     void push_batch(memory::FreeRegionNode* head, memory::FreeRegionNode* tail);
 
     /*!
      * @brief
-     * TODO: INCOMPLETE DOCUMENTATION!!!
-     * 
-     * @details
-     * TODO: INCOMPLETE DOCUMENTATION!!!
+     * Retrieves specified number of memory blocks from free list.
      * 
      * @return
-     * TODO: INCOMPLETE DOCUMENTATION!!!
+     * Chain of free memory blocks
      */
     [[nodiscard]] memory::FreeRegionNode* pop_batch(size_t batch_size);
 
     /*!
      * @brief
-     * TODO: INCOMPLETE DOCUMENTATION!!!
+     * Acquires new memory chunk from OS and integrates it into
+     * pool's shared free list.
+     * 
+     * @details
+     * Conducts an OS allocation to refill process-level memory. This
+     * method prevents multiple threads from expanding the process
+     * memory pool simultaneously. Concurrent callers yeild until the
+     * expansion owner completes the process. The other threads of
+     * execution then return without touching the expansion path. At
+     * that point, the process-level shared pool would be refilled and
+     * ready for a second `batch_pop()` attempt. There would be no
+     * reason for another thread to trigger another OS-level allocation
+     * if the memory configuration is properly tailored to the downstream
+     * project's needs. The first thread to arrive at the expansion
+     * execution path is the expansion owner.
      */
     void expand_memory();
 };
