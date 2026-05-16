@@ -28,10 +28,21 @@ namespace chevron::process
 
 /*!
  * @brief
- * Process-wide lock-free OS memory aquisition.
+ * Process-wide lock-free OS memory acquisition.
+ * 
+ * @note
+ * This allocator automatically cleans up any memory allocated
+ * from the operating system on destruction.
  *
  * @details
- * TODO: INCOMPLETE DOCUMENTATION!!!
+ * Owns the relationship between Chevron's process-level memory
+ * pool and the operating system. Acquires aligned chunks on
+ * demand, tracks them in a lock-free linked list for cleanup,
+ * and enforces an acquisition count ceiling. Chunk size and
+ * alignment are supplied per-call rather than stored, allowing
+ * the allocator to serve varying chunk geometries over its
+ * lifetime. All acquired memory is released back to the OS at
+ * destruction.
  */
 class ProcessMemoryAllocator {
     // ===================================================================================== //
