@@ -8,7 +8,7 @@
  * @file description.hpp
  *
  * @brief
- * TODO: INCOMPLETE DOCUMENTATION!!!
+ * Base contiguous memory segment description type.
  *
  * @author
  * Jamon T. Bailey
@@ -28,10 +28,14 @@ namespace chevron::memory
 
 /*!
  * @brief
- * TODO: INCOMPLETE DOCUMENTATION!!!
+ * Description of a contiguous segment of memory.
  * 
  * @details
- * TODO: INCOMPLETE DOCUMENTATION!!!
+ * This class exist as a common base for types that describe
+ * a segment of memory. It holds a base address, alignment
+ * guarantee, and capacity. It also provides shared query
+ * operations for bounds checking, address containment, and
+ * alignment verification.
  */
 class CHEVRON_API MemoryDescription {
 	// ===================================================================================== //
@@ -57,7 +61,7 @@ public:
 	 * Returns starting address of memory segment.
 	 *
 	 * @return
-	 * TODO: INCOMPLETE DOCUMENTATION!!!
+	 * Memory segment base address
 	 */
 	[[nodiscard]] void* base() const noexcept;
 
@@ -66,7 +70,7 @@ public:
 	 * Returns address alignment guarantee.
 	 *
 	 * @return
-	 * TODO: INCOMPLETE DOCUMENTATION!!!
+	 * Address alignment
 	 */
 	[[nodiscard]] size_t alignment() const noexcept;
 
@@ -75,7 +79,7 @@ public:
 	 * Returns size of memory segment in bytes.
 	 *
 	 * @return
-	 * TODO: INCOMPLETE DOCUMENTATION!!!
+	 * Segment capacity as digital size
 	 */
 	[[nodiscard]] units::Bytes size() const noexcept;
 
@@ -84,62 +88,67 @@ public:
 	 * Returns byte count of memory segment.
 	 *
 	 * @return
-	 * TODO: INCOMPLETE DOCUMENTATION!!!
+	 * Segment capacity raw count
 	 */
 	[[nodiscard]] size_t length() const noexcept;
 
 	/*!
 	 * @brief
-	 * TODO: INCOMPLETE DOCUMENTATION!!!
+	 * Returns byte pointer to start of memory segment.
 	 *
 	 * @return
-	 * TODO: INCOMPLETE DOCUMENTATION!!!
+	 * Byte pointer to start of segment
 	 */
 	[[nodiscard]] std::byte* begin() const noexcept;
 
 	/*!
 	 * @brief
-	 * TODO: INCOMPLETE DOCUMENTATION!!!
+	 * Returns byte pointer one past end of memory segment.
 	 *
 	 * @return
-	 * TODO: INCOMPLETE DOCUMENTATION!!!
+	 * Byte pointer one past end of segment
 	 */
 	[[nodiscard]] std::byte* end() const noexcept;
 
 	/*!
 	 * @brief
-	 * TODO: INCOMPLETE DOCUMENTATION!!!
+	 * Checks whether given address falls within memory segment
+	 * bounds.
 	 *
 	 * @return
-	 * TODO: INCOMPLETE DOCUMENTATION!!!
+	 * True if given address lies within this memory segment
 	 */
 	[[nodiscard]] bool containsAddress(const void* ptr) const noexcept;
 
 	/*!
 	 * @brief
-	 * TODO: INCOMPLETE DOCUMENTATION!!!
+	 * Checks whether base address satisfies a given alignment.
 	 *
 	 * @return
-	 * TODO: INCOMPLETE DOCUMENTATION!!!
+	 * True if base address is a multiple of given alignment
 	 */
 	[[nodiscard]] bool isAlignedTo(const size_t alignment) const noexcept;
 
 	/*!
 	 * @brief
-	 * TODO: INCOMPLETE DOCUMENTATION!!!
+	 * Invalidate this description of a memory segment.
 	 *
-	 * @return
-	 * TODO: INCOMPLETE DOCUMENTATION!!!
+	 * @details
+	 * Sets base address, alignment, and capacity to default values.
+	 * This method does not affect the memory being described, only
+	 * the description itself is cleared. After returning from this
+	 * call, the description no longer refers to any valid memory
+	 * segment.
 	 */
-	void clear() noexcept;
+	void invalidate() noexcept;
 
 	// ===================================================================================== //
 	//      <> chevron::memory::MemoryDescription | [PRIVATE] ATTRIBUTES
     // ===================================================================================== //
 private:
-	void* baseAddress_;
-	size_t alignment_;
-	size_t capacity_;
+	void* baseAddress_;   ///< Base address of described memory region
+	size_t alignment_;    ///< Alignment of described memory region
+	size_t capacity_;     ///< Capacity of described memory region
 };
 
 }

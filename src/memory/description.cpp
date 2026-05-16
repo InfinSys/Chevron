@@ -75,7 +75,7 @@ bool chevron::memory::MemoryDescription::isAlignedTo(const size_t alignment) con
 	return (reinterpret_cast<uintptr_t>(baseAddress_) % alignment) == 0;
 }
 
-void chevron::memory::MemoryDescription::clear() noexcept
+void chevron::memory::MemoryDescription::invalidate() noexcept
 {
 	baseAddress_ = nullptr;
 	alignment_ = 0;
