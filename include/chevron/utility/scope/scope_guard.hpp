@@ -23,26 +23,35 @@
 #include <type_traits>
 #include "chevron/common/macro_defs.h"
 
-#if CHEVRON_WINDOWS
+#if CHEVRON_MSVC
   #define NO_UNIQUE_ADDRESS [[msvc::no_unique_address]]
-#elif CHEVRON_LINUX || CHEVRON_MACOS
+#elif CHEVRON_GCC || CHEVRON_CLANG
   #define NO_UNIQUE_ADDRESS [[no_unique_address]]
 #endif
 
 namespace chevron::utility
 {
 
-// TODO: NEED TO ENFORCE VOID RETURN LAMBDA HERE!!!!!!!!!!!!!!!!!!!!!!!!
+// TODO: NEED TO ENFORCE VOID RETURN LAMBDA HERE!!!
 
 /*!
  * @brief
- * TODO: INCOMPLETE DOCUMENTATION!!!
+ * RAII scope guard that invokes a callable on scope exit.
  * 
  * @warning
- * TODO: INCOMPLETE DOCUMENTATION!!!
+ * Marked `[[nodiscard]]` to prevent unnamed temporaries
+ * that would execute immediately on construction and
+ * destruction, defeating the purpose of guarding a scope.
  * 
  * @details
- * TODO: INCOMPLETE DOCUMENTATION!!!
+ * Holds an unnamed callable and an active flag. If the flag
+ * still indicates active status on scope exit, the provided
+ * unnamed callable is invoked within the destructor of this
+ * type. This automates scope-exiting tasks. The execution of
+ * the provided callable can be disarmed by calling `dismiss()`
+ * before the scope that defined the guard exits. The move
+ * constructor transfers the obligation to a new guard and
+ * disarms the original source.
  */
 template <typename LambdaT>
 class [[nodiscard]] ScopeGuard {
@@ -69,7 +78,10 @@ public:
 	 * Transfer scope guard obligation to another scope guard.
 	 * 
 	 * @details
-	 * TODO: INCOMPLETE DOCUMENTATION!!!
+	 * Moves the provided scope guards active state to this new
+	 * scope guard while also disarming and invalidating the
+	 * original source to ensure the provided unnamed callable
+	 * is invoked only once.
 	 */
 	ScopeGuard(ScopeGuard<LambdaT>&& other)
 		noexcept(std::is_nothrow_constructible_v<LambdaT>)
@@ -83,10 +95,13 @@ public:
 
 	/*!
 	 * @brief
-	 * TODO: INCOMPLETE DOCUMENTATION!!!
+	 * Execute scope exit task if guard is still active.
 	 * 
 	 * @details
-	 * TODO: INCOMPLETE DOCUMENTATION!!!
+	 * Invokes the stored unnamed callable only if the guard
+	 * has not been dismissed or moved from. Given that the
+	 * callable is invoked within a destructor, it must not
+	 * throw.
 	 */
 	~ScopeGuard() noexcept
 	{
@@ -103,7 +118,8 @@ public:
 	 * Relieve scope guard of its obligation.
 	 * 
 	 * @details
-	 * TODO: INCOMPLETE DOCUMENTATION!!!
+	 * Disarms the guard so the callable is not invoked on
+	 * scope exit.
 	 */
 	void dismiss() noexcept
 	{
@@ -130,8 +146,8 @@ public:
     //      <> chevron::utility::ScopeGuard | [PRIVATE] ATTRIBUTES
     // ===================================================================================== //
 private:
-	NO_UNIQUE_ADDRESS LambdaT task_;   ///< Lambda invoked on scope exit
-	bool active_;                      ///< Indicates if we should do scope exit task
+	NO_UNIQUE_ADDRESS LambdaT task_;   ///< Scope exit task callable
+	bool active_;                      ///< Scope exit task executaion flag
 };
 
 // ===================================================================================== //
