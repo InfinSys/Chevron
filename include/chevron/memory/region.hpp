@@ -8,7 +8,7 @@
  * @file region.hpp
  *
  * @brief
- * TODO: INCOMPLETE DOCUMENTATION!!!
+ * Distributable memory region handle.
  *
  * @author
  * Jamon T. Bailey
@@ -26,10 +26,14 @@ namespace chevron::memory
 
 /*!
  * @brief
- * TODO: INCOMPLETE DOCUMENTATION!!!
+ * Description of a contiguous memory region.
  *
  * @details
- * TODO: INCOMPLETE DOCUMENTATION!!!
+ * Lightweight handle used as the currency for memory transfer
+ * across Chevron's memory hierarchy. This can be used for
+ * describing whole blocks, subsets within blocks, or arbitrary
+ * regions of managed memory. This type is freely copyable and
+ * carries no ownership semantics.
  */
 class CHEVRON_API MemoryRegion : public MemoryDescription {
 	// ===================================================================================== //

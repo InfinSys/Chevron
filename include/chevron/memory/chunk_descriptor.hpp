@@ -8,7 +8,8 @@
  * @file chunk_descriptor.hpp
  *
  * @brief
- * TODO: INCOMPLETE DOCUMENTATION!!!
+ * Non-copyable chunk descriptor for OS allocation
+ * tracking.
  *
  * @author
  * Jamon T. Bailey
@@ -26,10 +27,14 @@ namespace chevron::memory
 
 /*!
  * @brief
- * TODO: INCOMPLETE DOCUMENTATION!!!
+ * Description of an OS allocation.
  * 
  * @details
- * TODO: INCOMPLETE DOCUMENTATION!!!
+ * Records a chunk of memory acquired from the OS for
+ * tracking and eventual cleanup. Lives exclusively
+ * within allocator tracking structures and does not
+ * travel elsewhere. This type enforces single-location
+ * residency.
  */
 class ChunkDescriptor : public MemoryDescription {
 	// ===================================================================================== //
