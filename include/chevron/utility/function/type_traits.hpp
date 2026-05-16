@@ -38,11 +38,16 @@ struct callable_signature : callable_signature<decltype(&T::operator())> { };
  */
 template <typename ClassType, typename ReturnT, typename... ArgsT>
 struct callable_signature<ReturnT (ClassType::*)(ArgsT...)> {
-    using ReturnType   = ReturnT;
-    using ArgsTuple    = std::tuple<ArgsT...>;
-    using FuncType     = ReturnT (ClassType::*)(ArgsT...);
-    using Class        = ClassType;
-    using IsNoexcept_t = std::false_type;
+    using ReturnType = ReturnT;
+    using ArgsTuple  = std::tuple<ArgsT...>;
+    using FuncType   = ReturnT (ClassType::*)(ArgsT...);
+    using Class      = ClassType;
+
+    using IsNoexcept_t     = std::false_type;
+    using IsMemberMethod_t = std::true_type;
+
+    static constexpr bool is_noexcept_v      = IsNoexcept_t::value;
+    static constexpr bool is_member_method_v = IsMemberMethod_t::value;
 };
 
 /*!
@@ -51,11 +56,16 @@ struct callable_signature<ReturnT (ClassType::*)(ArgsT...)> {
  */
 template <typename ClassType, typename ReturnT, typename... ArgsT>
 struct callable_signature<ReturnT (ClassType::*)(ArgsT...) noexcept> {
-    using ReturnType   = ReturnT;
-    using ArgsTuple    = std::tuple<ArgsT...>;
-    using FuncType     = ReturnT (ClassType::*)(ArgsT...) noexcept;
-    using Class        = ClassType;
-    using IsNoexcept_t = std::true_type;
+    using ReturnType = ReturnT;
+    using ArgsTuple  = std::tuple<ArgsT...>;
+    using FuncType   = ReturnT (ClassType::*)(ArgsT...) noexcept;
+    using Class      = ClassType;
+
+    using IsNoexcept_t     = std::true_type;
+    using IsMemberMethod_t = std::true_type;
+
+    static constexpr bool is_noexcept_v      = IsNoexcept_t::value;
+    static constexpr bool is_member_method_v = IsMemberMethod_t::value;
 };
 
 /*!
@@ -64,13 +74,16 @@ struct callable_signature<ReturnT (ClassType::*)(ArgsT...) noexcept> {
  */
 template <typename ClassType, typename ReturnT, typename... ArgsT>
 struct callable_signature<ReturnT (ClassType::*)(ArgsT...) const> {
-    using ReturnType   = ReturnT;
-    using ArgsTuple    = std::tuple<ArgsT...>;
-    using FuncType     = ReturnT (ClassType::*)(ArgsT...) const;
-    using Class        = ClassType;
-    using IsNoexcept_t = std::false_type;
+    using ReturnType = ReturnT;
+    using ArgsTuple  = std::tuple<ArgsT...>;
+    using FuncType   = ReturnT (ClassType::*)(ArgsT...) const;
+    using Class      = ClassType;
 
-    static constexpr bool IsNoexcept_v = IsNoexcept_t::value;
+    using IsNoexcept_t     = std::false_type;
+    using IsMemberMethod_t = std::true_type;
+
+    static constexpr bool is_noexcept_v      = IsNoexcept_t::value;
+    static constexpr bool is_member_method_v = IsMemberMethod_t::value;
 };
 
 /*!
@@ -79,13 +92,16 @@ struct callable_signature<ReturnT (ClassType::*)(ArgsT...) const> {
  */
 template <typename ClassType, typename ReturnT, typename... ArgsT>
 struct callable_signature<ReturnT (ClassType::*)(ArgsT...) const noexcept> {
-    using ReturnType   = ReturnT;
-    using ArgsTuple    = std::tuple<ArgsT...>;
-    using FuncType     = ReturnT (ClassType::*)(ArgsT...) const noexcept;
-    using Class        = ClassType;
-    using IsNoexcept_t = std::true_type;
+    using ReturnType = ReturnT;
+    using ArgsTuple  = std::tuple<ArgsT...>;
+    using FuncType   = ReturnT (ClassType::*)(ArgsT...) const noexcept;
+    using Class      = ClassType;
 
-    static constexpr bool IsNoexcept_v = IsNoexcept_t::value;
+    using IsNoexcept_t     = std::true_type;
+    using IsMemberMethod_t = std::true_type;
+
+    static constexpr bool is_noexcept_v      = IsNoexcept_t::value;
+    static constexpr bool is_member_method_v = IsMemberMethod_t::value;
 };
 
 /*!
@@ -94,12 +110,15 @@ struct callable_signature<ReturnT (ClassType::*)(ArgsT...) const noexcept> {
  */
 template <typename ReturnT, typename... ArgsT>
 struct callable_signature<ReturnT (*)(ArgsT...)> {
-    using ReturnType   = ReturnT;
-    using ArgsTuple    = std::tuple<ArgsT...>;
-    using FuncType     = ReturnT (*)(ArgsT...);
-    using IsNoexcept_t = std::false_type;
+    using ReturnType = ReturnT;
+    using ArgsTuple  = std::tuple<ArgsT...>;
+    using FuncType   = ReturnT (*)(ArgsT...);
 
-    static constexpr bool IsNoexcept_v = IsNoexcept_t::value;
+    using IsNoexcept_t     = std::false_type;
+    using IsMemberMethod_t = std::false_type;
+
+    static constexpr bool is_noexcept_v      = IsNoexcept_t::value;
+    static constexpr bool is_member_method_v = IsMemberMethod_t::value;
 };
 
 /*!
@@ -108,12 +127,15 @@ struct callable_signature<ReturnT (*)(ArgsT...)> {
  */
 template <typename ReturnT, typename... ArgsT>
 struct callable_signature<ReturnT (*)(ArgsT...) noexcept> {
-    using ReturnType   = ReturnT;
-    using ArgsTuple    = std::tuple<ArgsT...>;
-    using FuncType     = ReturnT (*)(ArgsT...) noexcept;
-    using IsNoexcept_t = std::true_type;
+    using ReturnType = ReturnT;
+    using ArgsTuple  = std::tuple<ArgsT...>;
+    using FuncType   = ReturnT (*)(ArgsT...) noexcept;
 
-    static constexpr bool IsNoexcept_v = IsNoexcept_t::value;
+    using IsNoexcept_t     = std::true_type;
+    using IsMemberMethod_t = std::false_type;
+
+    static constexpr bool is_noexcept_v      = IsNoexcept_t::value;
+    static constexpr bool is_member_method_v = IsMemberMethod_t::value;
 };
 
 } // namespace chevron::func::traits
