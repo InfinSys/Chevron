@@ -47,7 +47,7 @@ AtomicFreeList::AtomicFreeList(AtomicFreeList&& other) noexcept
 //      <> chevron::memory::AtomicFreeList | [PUBLIC] MEMBER METHODS
 // ===================================================================================== //
 
-FreeRegionNode* AtomicFreeList::peek()
+const FreeRegionNode* AtomicFreeList::peek()
 {
 	//
 	// BE AWARE: Concurrent Zone Below

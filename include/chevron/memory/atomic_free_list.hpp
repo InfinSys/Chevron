@@ -8,7 +8,26 @@
  * @file atomic_free_list.hpp
  *
  * @brief
- * TODO: INCOMPLETE DOCUMENTATION!!!
+ * Lock-free embedded free list with platform-specific
+ * 16-byte CAS.
+ * 
+ * @details
+ * Provides a shared lock-free free list implementation
+ * used across Chevron's memory hierarchy. Operations
+ * are backed by platform-specific atomic intrinsics
+ * to guarantee inline double-width compare-and-swap.
+ * 
+ * @note
+ * To achieve 16-byte atomics on the x86-64 architecture
+ * with GCC, we are using `__sync_val_compare_and_swap`
+ * rather than `__atomic_compare_exchange` because GCC
+ * dispatches __atomic_* for 16-byte types through
+ * libatomic rather than inlining the lock cmpxchg16b
+ * instruction. The __sync_* family inlines the instruction
+ * directly with the `-mcx16` flag, providing a verifiable
+ * lock-free guarantee. The decision was made to take this
+ * route to allow independent verification of the pool's
+ * lock-free capabilities via assembly output.
  *
  * @author
  * Jamon T. Bailey
@@ -27,10 +46,14 @@ namespace chevron::memory
 
 /*!
  * @brief
- * TODO: INCOMPLETE DOCUMENTATION!!!
+ * Lock-free embedded memory block free list.
  * 
  * @details
- * TODO: INCOMPLETE DOCUMENTATION!!!
+ * Manages a singly-linked list of free region nodes
+ * through an ABA-safe tagged pointer head. Push and
+ * pop operations use platform-specific atomic
+ * intrinsics to guarantee lock-free behavior without
+ * relying on std::atomic for 16-byte types.
  */
 class AtomicFreeList {
 	// ===================================================================================== //
@@ -39,7 +62,12 @@ class AtomicFreeList {
 
 	/*!
 	 * @brief
-	 * TODO: INCOMPLETE DOCUMENTATION!!!
+	 * ABA-safe cyclic count pointer.
+	 * 
+	 * @warning
+	 * This is not an explicit atomic type, it is
+	 * implicitly treated as such within the confines
+	 * of this class.
 	 */
 	using ListHead = utility::TaggedPointer<void>;
 
@@ -63,30 +91,47 @@ public:
 
 	/*!
 	 * @brief
-	 * TODO: INCOMPLETE DOCUMENTATION!!!
+	 * Returns current head node without removing it
+	 * from list.
 	 * 
 	 * @details
-	 * TODO: INCOMPLETE DOCUMENTATION!!!
+	 * Returns a non-mutable reference to the free lists
+	 * head. While this has no effect on the state of the
+	 * free list, it certainly does require synchronization
+	 * to retrieve the up-to-date head of the list.
+	 * 
+	 * @return
+	 * Pointer to front node or nullptr if empty
 	 */
-	[[nodiscard]] FreeRegionNode* peek();
+	[[nodiscard]] const FreeRegionNode* peek();
 
 	/*!
 	 * @brief
-	 * TODO: INCOMPLETE DOCUMENTATION!!!
+	 * Pushes a chain of free region nodes onto list
+	 * head.
 	 *
 	 * @details
-	 * TODO: INCOMPLETE DOCUMENTATION!!!
+	 * Links provided chain's tail to current head and
+	 * atomically installs chain's first node as new
+	 * head via platform-specific CAS.
 	 */
 	void push(FreeRegionNode* begin_node, FreeRegionNode* end_node);
 
 	/*!
 	 * @brief
-	 * TODO: INCOMPLETE DOCUMENTATION!!!
+	 * Pops a chain of free region nodes from list
+	 * head.
 	 *
 	 * @details
-	 * TODO: INCOMPLETE DOCUMENTATION!!!
+	 * Walks list to find Nth node, then atomically
+	 * detaches entire chain via platform-specific
+	 * CAS. Returns nullptr if insufficient nodes
+	 * are available.
+	 * 
+	 * @return
+	 * Head of detached chain or nullptr if insufficient nodes
 	 */
-	FreeRegionNode* pop(size_t quantity);
+	[[nodiscard]] FreeRegionNode* pop(size_t quantity);
 
 	// ===================================================================================== //
     //      <> chevron::memory::AtomicFreeList | OPERATORS
@@ -108,10 +153,14 @@ private:
 
 	/*!
 	 * @brief
-	 * TODO: INCOMPLETE DOCUMENTATION!!!
+	 * Atomically loads current list head value.
 	 *
 	 * @details
-	 * TODO: INCOMPLETE DOCUMENTATION!!!
+	 * Uses platform-specific intrinsics to perform
+	 * an atomic 16-byte read of the tagged pointer.
+	 * 
+	 * @return
+	 * Free list head
 	 */
 	[[nodiscard]] ListHead atomic_load();
 
