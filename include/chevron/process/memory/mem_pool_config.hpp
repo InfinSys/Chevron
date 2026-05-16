@@ -30,7 +30,12 @@ namespace chevron::process
  * Configuration parameters for process-wide memory pool.
  *
  * @details
- * TODO: INCOMPLETE DOCUMENTATION!!!
+ * Defines how process-level memory is shaped, budgeted, and
+ * distributed to threads. This type is submitted to the pool
+ * at construction time as the single point of control over the
+ * pool's allocation behavior. Some values may be adjusted by
+ * the pool during construction to satisfy alignment and sizing
+ * constraints before accepting the configuration.
  */
 struct CHEVRON_API MemoryPoolConfig {
 	/*!
