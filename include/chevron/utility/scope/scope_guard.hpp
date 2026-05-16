@@ -22,6 +22,7 @@
 
 #include <type_traits>
 #include "chevron/common/macro_defs.h"
+#include "chevron/utility/function/concepts.hpp"
 
 #if CHEVRON_MSVC
   #define NO_UNIQUE_ADDRESS [[msvc::no_unique_address]]
@@ -31,8 +32,6 @@
 
 namespace chevron::utility
 {
-
-// TODO: NEED TO ENFORCE VOID RETURN LAMBDA HERE!!!
 
 /*!
  * @brief
@@ -53,7 +52,7 @@ namespace chevron::utility
  * constructor transfers the obligation to a new guard and
  * disarms the original source.
  */
-template <typename LambdaT>
+template <func::concepts::void_return_call LambdaT>
 class [[nodiscard]] ScopeGuard {
 	// ===================================================================================== //
     //      <> chevron::utility::ScopeGuard | CONSTRUCTORS / DESTRUCTOR
