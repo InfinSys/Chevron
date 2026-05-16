@@ -8,7 +8,8 @@
   * @file memory_defs.hpp
   *
   * @brief
-  * TODO: INCOMPLETE DOCUMENTATION!!!
+  * Core type definitions for Chevron's memory
+  * infrastructure.
   *
   * @author
   * Jamon T. Bailey
@@ -21,30 +22,23 @@
 
 #include <cstdint>
 #include <atomic>
-#include "chevron/thread/utility/tagged_ptr.hpp"
 
 namespace chevron::memory
 {
 
 /*!
  * @brief
- * TODO: INCOMPLETE DOCUMENTATION!!!
+ * Embedded free list node for overlaying on free memory
+ * blocks.
  * 
  * @details
- * TODO: INCOMPLETE DOCUMENTATION!!!
+ * When a block of memory is free, its first bytes are
+ * reinterpreted as this structure, threading it into a
+ * free list.
  */
 struct FreeRegionNode {
 	void* next;   ///< Pointer to next free block
 };
-
-/*!
- * @brief
- * TODO: INCOMPLETE DOCUMENTATION!!!
- * 
- * @details
- * TODO: INCOMPLETE DOCUMENTATION!!!
- */
-using AtomicFreeListHead = std::atomic<utility::TaggedPointer<void>>;
 
 }
 
