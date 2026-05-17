@@ -28,7 +28,7 @@ else()
     message(
         FATAL_ERROR
         "Chevron: unrecognized target operating system (CMAKE_SYSTEM_NAME='"
-        "${CMAKE_SYSTEM_NAME}'). Extend cmake/platform/os.cmake with a "
-        "matching pattern."
+        "${CMAKE_SYSTEM_NAME}'). Extend cmake/platform/operating_sys.cmake "
+        "with an associated handler."
     )
 endif()
