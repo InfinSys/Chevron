@@ -239,19 +239,20 @@ void ProcessMemoryPool::is_lock_free_or_throw()
 	if (!bytes_acquired_.is_lock_free() || !expansion_state_.is_lock_free())
 		throw std::runtime_error{NON_LOCK_FREE_ERROR_MSG};
 	
-#if CHEVRON_CLANG && CHEVRON_X86_64_BASED
-    if (!__builtin_cpu_supports("cx16"))
-	    DOES_NOT_SUPPORT_CMPXCHG16B;
-#elif CHEVRON_GCC && CHEVRON_X86_64_BASED
-	if (!__builtin_cpu_supports("cmpxchg16b"))
+#if (CHEVRON_GCC || CHEVRON_CLANG) && CHEVRON_X86_64_BASED
+    uint32_t eax, ebx, ecx, edx;
+	__get_cpuid(1, &eax, &ebx, &ecx, &edx);
+
+	// Bit 13 indicates support for double-width atomics
+	if (!((ecx >> 13) & 1))
 	    DOES_NOT_SUPPORT_CMPXCHG16B;
 #elif CHEVRON_MSVC && CHEVRON_X86_64_BASED
-    const int ECX_REGISTER = 2;
-	int cpuFeatureInfo[4];
-	__cpuid(cpuFeatureInfo, 1);
+    const int ECX = 2;
+	int cpuInfoRegisters[4];
+	__cpuid(cpuInfoRegisters, 1);
 	
 	// Bit 13 indicates support for double-width atomics
-	if (!(cpuFeatureInfo[ECX_REGISTER] & (1 << 13)))
+	if (!(cpuInfoRegisters[ECX] & (1 << 13)))
 	    DOES_NOT_SUPPORT_CMPXCHG16B;
 #endif
 }
