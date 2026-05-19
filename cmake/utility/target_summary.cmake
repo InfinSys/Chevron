@@ -30,9 +30,9 @@ endif()
 # ------------------------------------------------
 
 message(STATUS "")
-message(STATUS "[ Chevron Platform Detection ]")
-message(STATUS "  Architecture: ${CHEVRON_ARCH_NAME} (${_chevron_summary_bitness}, ${_chevron_summary_endianness})")
-message(STATUS "  OS: ${CHEVRON_OS_NAME}${_chevron_summary_os_suffix}")
+message(STATUS "[Chevron Platform Detection]")
+message(STATUS "\tArchitecture: ${CHEVRON_ARCH_NAME} (${_chevron_summary_bitness}, ${_chevron_summary_endianness})")
+message(STATUS "\tOS: ${CHEVRON_OS_NAME}${_chevron_summary_os_suffix}")
 message(STATUS "")
 
 # ------------------------------------------------
