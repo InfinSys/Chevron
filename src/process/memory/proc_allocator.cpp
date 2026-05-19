@@ -7,9 +7,6 @@
 /*!
  * @file proc_allocator.cpp
  *
- * @brief
- * TODO: INCOMPLETE DOCUMENTATION!!!
- *
  * @author
  * Jamon T. Bailey
  *

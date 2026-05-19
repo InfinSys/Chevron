@@ -107,7 +107,6 @@ constexpr UIntT powerOfTwoFloor(UIntT value) {
 	}
 
 	return std::bit_floor(value);
-	// TODO: Are we really going to throw over this? Think about this.
 }
 
 // ===================================================================================== //

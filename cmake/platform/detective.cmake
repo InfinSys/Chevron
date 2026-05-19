@@ -11,6 +11,6 @@ include(cmake/platform/operating_sys.cmake)
 include(cmake/platform/cpu_features.cmake)
 
 # Output summary of build target platform
-macro(output_host_summary)
+macro(output_target_platform_summary)
     include(cmake/utility/target_summary.cmake)
 endmacro()

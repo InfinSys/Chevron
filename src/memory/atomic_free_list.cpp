@@ -7,9 +7,6 @@
 /*!
  * @file atomic_free_list.cpp
  *
- * @brief
- * TODO: INCOMPLETE DOCUMENTATION!!!
- *
  * @author
  * Jamon T. Bailey
  *

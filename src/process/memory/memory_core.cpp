@@ -7,9 +7,6 @@
 /*!
  * @file memory_core.cpp
  *
- * @brief
- * TODO: INCOMPLETE DOCUMENTATION!!!
- *
  * @author
  * Jamon T. Bailey
  *
