@@ -34,6 +34,8 @@ if (${CMAKE_PROJECT_NAME}_IS_TOP_LEVEL)
     # Export compilation commands to build dir
     set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+    output_host_summary()
+
     # Include root CML helper module
     include(cmake/utility/root_setup.cmake)
     setup_testing_dependencies()
