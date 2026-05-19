@@ -14,7 +14,7 @@ target_sources(
       "${CMAKE_CURRENT_SOURCE_DIR}/memory/memory_core.cpp"
 
     PUBLIC
-      "${CMAKE_CURRENT_SOURCE_DIR}/thread/thread_engine.cpp"
+      "${CMAKE_CURRENT_SOURCE_DIR}/thread/threading_core.cpp"
 )
 
 if(CHEVRON_ARCH_X86 AND (CHEVRON_CXX_GCC OR CHEVRON_CXX_CLANG))
