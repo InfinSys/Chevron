@@ -7,9 +7,6 @@
 /*!
  * @file thread_mem_cache.cpp
  *
- * @brief
- * TODO: INCOMPLETE DOCUMENTATION!!!
- *
  * @author
  * Jamon T. Bailey
  *

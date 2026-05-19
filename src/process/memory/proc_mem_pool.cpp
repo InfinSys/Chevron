@@ -7,9 +7,6 @@
 /*!
  * @file proc_mem_pool.cpp
  *
- * @brief
- * TODO: INCOMPLETE DOCUMENTATION!!!
- *
  * @author
  * Jamon T. Bailey
  *
@@ -38,6 +35,10 @@
 		"instruction. The pool requires 16-byte compare-and-swap " \
 		"for its lock-free free list." \
 	}
+
+#define NON_LOCK_FREE_ERROR_MSG \
+    "ProcessMemoryPool: Failed to achieve lock-free atomics on " \
+    "supporting free list members." \
 
 using chevron::process::ProcessMemoryPool;
 using chevron::memory::FreeRegionNode;
@@ -236,7 +237,7 @@ void ProcessMemoryPool::reinit_memory_allocator()
 void ProcessMemoryPool::is_lock_free_or_throw()
 {
 	if (!bytes_acquired_.is_lock_free() || !expansion_state_.is_lock_free())
-		throw std::runtime_error{"TODO: INCOMPLETE EXCEPTION MESSAGE!!!"};
+		throw std::runtime_error{NON_LOCK_FREE_ERROR_MSG};
 	
 #if CHEVRON_CLANG && CHEVRON_X86_64_BASED
     if (!__builtin_cpu_supports("cx16"))

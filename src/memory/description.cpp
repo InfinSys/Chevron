@@ -7,9 +7,6 @@
 /*!
  * @file description.cpp
  *
- * @brief
- * TODO: INCOMPLETE DOCUMENTATION!!!
- *
  * @author
  * Jamon T. Bailey
  *

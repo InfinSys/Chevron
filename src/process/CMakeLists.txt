@@ -18,7 +18,6 @@ target_sources(
 )
 
 if(CHEVRON_ARCH_X86 AND (CHEVRON_CXX_GCC OR CHEVRON_CXX_CLANG))
-    # TODO: Ask if this CPU supports DW-CAS before continuing...
     target_compile_options(
         ${CHEVRON_MAIN_BINARY_NAME}
 

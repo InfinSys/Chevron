@@ -7,9 +7,6 @@
 /*!
  * @file chunk_descriptor.cpp
  *
- * @brief
- * TODO: INCOMPLETE DOCUMENTATION!!!
- *
  * @author
  * Jamon T. Bailey
  *
