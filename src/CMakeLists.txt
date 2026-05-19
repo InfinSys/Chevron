@@ -31,6 +31,7 @@ target_include_directories(
 
 # Source directories
 add_subdirectory(process)
+add_subdirectory(memory)
 
 # Conditionally link against compiler configuration
 if(${CHEVRON_CXX_GCC})

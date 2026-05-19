@@ -27,10 +27,14 @@ project(
 
 # Declare project CMake options
 include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/utility/options.cmake")
+# Define platform architecture identifiers
+include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/platform/detective.cmake")
 
 if (${CMAKE_PROJECT_NAME}_IS_TOP_LEVEL)
     # Export compilation commands to build dir
     set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+    output_target_platform_summary()
 
     # Include root CML helper module
     include(cmake/utility/root_setup.cmake)
@@ -42,9 +46,6 @@ endif()
 set(CHEVRON_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
 set(CHEVRON_CMAKE_MODULES_DIR "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 set(CHEVRON_LIBS_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/lib/include")
-
-# Declare project CMake options
-include("${CHEVRON_CMAKE_MODULES_DIR}/utility/options.cmake")
 
 # Include dependency setup helpers
 include("${CHEVRON_CMAKE_MODULES_DIR}/utility/dependencies.cmake")
