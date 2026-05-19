@@ -35,9 +35,9 @@ target_compile_options(
 
     INTERFACE
         # Compiler warning flags
-        "-Wall"
-        "-Wextra"
-        "-Wpedantic"
+        -Wall
+        -Wextra
+        -Wpedantic
 )
 
 # Conditionally add more aggressive warnings
