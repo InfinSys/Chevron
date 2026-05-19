@@ -5,7 +5,7 @@
 // [ISJTB-CXX-XL20260108-000003]
 
 /*!
- * @file thread_engine.cpp
+ * @file threading_core.cpp
  *
  * @author
  * Jamon T. Bailey
@@ -13,6 +13,6 @@
  * @date 03-29-2026
  */
 
-#include "chevron/process/thread/thread_engine.hpp"
+#include "chevron/process/thread/threading_core.hpp"
 
  // TODO : INCOMPLETE IMPLEMENTATION!!!
