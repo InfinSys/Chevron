@@ -46,10 +46,10 @@ if(CHEVRON_STRICT_CXX_WARNINGS)
         CHEVRON_clang_cxx_warnings
 
         INTERFACE
-            "-Werror"
-            "-Wshadow"
-            "-Wdouble-promotion"
-            "-Wformat=2"
+            -Werror
+            -Wshadow
+            -Wdouble-promotion
+            -Wformat=2
     )
 endif()
 
@@ -60,12 +60,12 @@ target_compile_options(
     INTERFACE
         # Disable optimization on debug
         $<$<CONFIG:Debug>:
-            "-O0"
+            -O0
         >
 
         # High optimization on release
         $<$<CONFIG:Release>:
-            "-O2"
+            -O2
         >
 )
 
