@@ -59,7 +59,7 @@
 <hr></br>
 
 <div>
-    <h1>Planned GUI Framework Support</h1>
+    <h2>Planned GUI Framework Support</h2>
     <h3><a href="https://wxwidgets.org/">wxWidgets</a> | <a href="https://www.qt.io/development/qt-framework">Qt Framework</a></h3>
 </div></br>
 
