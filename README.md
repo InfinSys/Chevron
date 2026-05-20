@@ -54,7 +54,6 @@
         picks exactly one GUI framework, includes it directly, and writes GUI code similar to how they typically would. What changes is the structural environment that code lives
         inside (<em>the parts of the application that aren't about the GUI but are around it</em>).
     </p>
-    <p> [ ...graph visually conveying Chevron's relationship to a GUI framework... ] </p>
 </div></br>
 
 <hr></br>
