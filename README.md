@@ -38,14 +38,32 @@
 
 > [!WARNING] <!--| GitHub Notice: Early Development |-->
 > <h3>
->    Chevron is in active early development. The API is unstable and breaking changes should be expected. This library is not yet suitable for production code.
+>    Chevron is in active early development. The API is unstable and breaking changes should be expected. This library is not yet suitable for production code!
 > </h3>
 
 </br>
 
-<hr>
+<div>
+    <h1>What Chevron is <em><strong>NOT</strong></em></h1>
+    <h3>
+        <strong>Chevron is GUI application <em>infrastructure</em>, NOT a GUI framework abstraction</strong>
+    </h3>
+    <p>
+        It does not unify GUI frameworks behind a portable interface and it does not introduce an explicit widget layer of its own. A Chevron user picks exactly one GUI framework, includes
+        it directly, and writes GUI code as they typically would. What changes is the structural environment that code lives inside (<em>the parts of the application that aren't about the
+        GUI but are around it</em>).
+    </p>
+    <p> [ ...graph visually conveying Chevron's relationship to a GUI framework... ] </p>
+</div></br>
 
-</br>
+<hr></br>
+
+<div>
+    <h1>Planned GUI Framework Support</h1>
+    <h3><a href="https://wxwidgets.org/">wxWidgets</a> | <a href="https://www.qt.io/development/qt-framework">Qt Framework</a></h3>
+</div></br>
+
+<hr></br>
 
 <div align="center">
     <h3>( <em><strong>...This README is still in progress...</strong></em> )</h3>
