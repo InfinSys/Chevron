@@ -33,8 +33,8 @@
         Chevron is a C++20 GUI application infrastructure library that owns the mechanics of a modern GUI application (<em>process lifetime, window scaffolding, dynamic view handling,
         thread infrastructure, etc.</em>) so user code can focus on the application itself, written directly against the GUI framework the user chose.
         </strong>
-    </p>
-    <img width="3334" height="2500" alt="Access_Stack_001" src="https://github.com/user-attachments/assets/0bfa5d57-52ec-455a-8084-5ba634a51a8a" />
+    </p></br>
+    <img width="3334" height="2500" alt="Access_Stack_002" src="https://github.com/user-attachments/assets/b0459a17-192f-45e0-8633-443bf4221a66" />
 </div></br>
 
 > [!WARNING] <!--| GitHub Notice: Early Development |-->
