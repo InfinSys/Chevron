@@ -34,7 +34,7 @@
         thread infrastructure, etc.</em>) so user code can focus on the application itself, written directly against the GUI framework the user chose.
         </strong>
     </p>
-    <p> [ ...graphic visually conveying components Chevron provides downstream applications... ] </p>
+    <img width="3334" height="2500" alt="Access_Stack_001" src="https://github.com/user-attachments/assets/0bfa5d57-52ec-455a-8084-5ba634a51a8a" />
 </div></br>
 
 > [!WARNING] <!--| GitHub Notice: Early Development |-->
