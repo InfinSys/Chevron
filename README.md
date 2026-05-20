@@ -34,6 +34,7 @@
         memory/thread infrastructure, etc.</em>) so user code can focus on the application itself, written directly against the GUI framework the user chose.
         </strong>
     </p>
+    <p> [ ...graphic visually conveying components Chevron provides downstream applications... ] </p>
 </div></br>
 
 > [!WARNING] <!--| GitHub Notice: Early Development |-->
