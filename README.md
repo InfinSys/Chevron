@@ -34,7 +34,7 @@
         thread infrastructure, etc.</em>) so user code can focus on the application itself, written directly against the GUI framework the user chose.
         </strong>
     </p></br>
-    <img width="3334" height="2500" alt="Access_Stack_002" src="https://github.com/user-attachments/assets/b0459a17-192f-45e0-8633-443bf4221a66" />
+    <img width="3334" height="2500" alt="Access_Stack_003" src="https://github.com/user-attachments/assets/ad409c73-c30b-4079-bc2c-0fb326e4b647" />
 </div></br>
 
 > [!WARNING] <!--| GitHub Notice: Early Development |-->
