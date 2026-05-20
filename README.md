@@ -23,7 +23,7 @@
 </div></br>
 
 <div>
-    <h1>What is this?</h1>
+    <h1><em>What is this?</em></h1>
     <p>
         Every C++ GUI application has to settle the same foundational details before it can really begin: how memory is structured, how concurrent threads of execution are managed,
         how windows are managed, how UI views change at runtime, etc. None of this is the application itself, yet it is crucial to the applications functionality.
