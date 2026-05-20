@@ -8,10 +8,6 @@
 !.vscode/launch.json
 !.vscode/extensions.json
 
-# Ignore artifact output directories
-build/*
-install/*
-
 # Ignore Doxygen output directory
 docs/ref/doxygen/*
 docs/ref/index.html
@@ -22,3 +18,11 @@ ghidra/*
 # Ignore all draw.io metadata files
 docs/prj/*.bkp
 docs/prj/*.dtmp
+
+# Ignore artifact output directories
+build/*
+install/*
+
+# Ignore generated sources
+lib/include/chevron_meta/info.h
+lib/include/chevron_meta/version.h

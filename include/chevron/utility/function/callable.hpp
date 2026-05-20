@@ -181,9 +181,9 @@ Callable(ClassType*, ReturnT (ClassType::*)(ArgsT...) const)
 /*! @details Lambda and functor deduction guide. */
 template <typename Function>
 Callable(Function&&) -> Callable<
-    typename model::traits::callable_signature<std::decay_t<Function>>::ReturnType,
-    model::traits::to_funcargs_t<
-        typename model::traits::callable_signature<std::decay_t<Function>>::ArgsTuple>>;
+    typename func::traits::callable_signature<std::decay_t<Function>>::ReturnType,
+    func::traits::to_funcargs_t<
+        typename func::traits::callable_signature<std::decay_t<Function>>::ArgsTuple>>;
 
 // TODO: Lambda and functor deduction guide only works
 //       when directly naming `Callable` with it's fully

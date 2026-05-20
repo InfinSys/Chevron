@@ -7,5 +7,21 @@ target_sources(
     ${CHEVRON_MAIN_BINARY_NAME}
 
     PUBLIC
-    "${CMAKE_CURRENT_SOURCE_DIR}/program/runtime.cpp"
+      "${CMAKE_CURRENT_SOURCE_DIR}/memory/mem_pool_config.cpp"
+      "${CMAKE_CURRENT_SOURCE_DIR}/memory/proc_allocator.cpp"
+      "${CMAKE_CURRENT_SOURCE_DIR}/memory/thread_mem_cache.cpp"
+      "${CMAKE_CURRENT_SOURCE_DIR}/memory/proc_mem_pool.cpp"
+      "${CMAKE_CURRENT_SOURCE_DIR}/memory/memory_core.cpp"
+
+    PUBLIC
+      "${CMAKE_CURRENT_SOURCE_DIR}/thread/threading_core.cpp"
 )
+
+if(CHEVRON_ARCH_X86 AND (CHEVRON_CXX_GCC OR CHEVRON_CXX_CLANG))
+    target_compile_options(
+        ${CHEVRON_MAIN_BINARY_NAME}
+
+        PUBLIC
+          -mcx16  # Enable 128-bit atomic CAS instruction
+    )
+endif()
