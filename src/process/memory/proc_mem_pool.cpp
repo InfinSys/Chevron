@@ -235,9 +235,16 @@ void ProcessMemoryPool::reinit_memory_allocator()
 }
 
 void ProcessMemoryPool::is_lock_free_or_throw()
-{
-	if (!bytes_acquired_.is_lock_free() || !expansion_state_.is_lock_free())
-		throw std::runtime_error{NON_LOCK_FREE_ERROR_MSG};
+{	
+	static_assert(
+		atomic_size_t::is_always_lock_free,
+		"ProcessMemoryPool: Lock-free atomics required for budget tracking."
+	);
+
+	static_assert(
+		AtomicExpandState::is_always_lock_free,
+		"ProcessMemoryPool: Lock-free atomics required for expansion gate."
+	);
 	
 #if (CHEVRON_GCC || CHEVRON_CLANG) && CHEVRON_X86_64_BASED
     uint32_t eax, ebx, ecx, edx;
