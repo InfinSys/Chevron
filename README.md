@@ -29,8 +29,10 @@
         how windows are managed, how UI views change at runtime, etc. None of this is the application itself, yet it is crucial to the applications functionality.
     </p>
     <p>
+        <strong>
         Chevron is a C++20 GUI application infrastructure library that owns the mechanics of a modern GUI application (<em>process lifetime, window scaffolding, dynamic view handling,
         memory/thread infrastructure, etc.</em>) so user code can focus on the application itself, written directly against the GUI framework the user chose.
+        </strong>
     </p>
 </div></br>
 
