@@ -19,7 +19,7 @@
 <br/>
 
 <div align="center">
-    <img width="5334" height="2667" alt="Chevron_GitHub_Social_Preview_ren001" src="https://github.com/user-attachments/assets/195c25b4-0ab0-48e3-a2eb-989d31d702a0" />
+    <img width="5334" height="2667" alt="Chevron_GitHub_Social_Preview_ren002" src="https://github.com/user-attachments/assets/ae03bd22-b48a-4cb0-83e7-afae662bd171" />
 </div></br>
 
 <div align="center">
