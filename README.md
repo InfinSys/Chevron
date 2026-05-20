@@ -19,5 +19,9 @@
 <br/>
 
 <div align="center">
+    <img width="5334" height="2667" alt="Chevron_GitHub_Social_Preview_ren001" src="https://github.com/user-attachments/assets/195c25b4-0ab0-48e3-a2eb-989d31d702a0" />
+</div></br>
+
+<div align="center">
     <h3>( <em><strong>Nothing here yet, come back soon!</strong></em> )</h3>
 </div>
