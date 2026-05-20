@@ -36,6 +36,17 @@
     </p>
 </div></br>
 
+> [!WARNING] <!--| GitHub Notice: Early Development |-->
+> <h3>
+>    Chevron is in active early development. The API is unstable and breaking changes should be expected. This library is not yet suitable for production code.
+> </h3>
+
+</br>
+
+<hr>
+
+</br>
+
 <div align="center">
     <h3>( <em><strong>...This README is still in progress...</strong></em> )</h3>
 </div>
