@@ -49,9 +49,9 @@
         <strong>Chevron is GUI application <em>infrastructure</em>, NOT a GUI framework abstraction</strong>
     </h3>
     <p>
-        It does not unify GUI frameworks behind a portable interface and it does not introduce an explicit widget layer of its own. A Chevron user picks exactly one GUI framework, includes
-        it directly, and writes GUI code as they typically would. What changes is the structural environment that code lives inside (<em>the parts of the application that aren't about the
-        GUI but are around it</em>).
+        It <strong>does NOT unify GUI frameworks behind a portable interface</strong> and it <strong>does NOT introduce an explicit widget layer of its own</strong>. A Chevron user
+        picks exactly one GUI framework, includes it directly, and writes GUI code similar to how they typically would. What changes is the structural environment that code lives
+        inside (<em>the parts of the application that aren't about the GUI but are around it</em>).
     </p>
     <p> [ ...graph visually conveying Chevron's relationship to a GUI framework... ] </p>
 </div></br>
