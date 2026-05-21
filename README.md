@@ -34,7 +34,7 @@
         thread infrastructure, etc.</em>) so user code can focus on the application itself, written directly against the GUI framework the user chose.
         </strong>
     </p></br>
-    <img width="3334" height="2500" alt="Diagram visually conveying components Chevron provides downstream applications" src="https://github.com/user-attachments/assets/ad409c73-c30b-4079-bc2c-0fb326e4b647" />
+    <img width="3334" height="2500" alt="Diagram visually conveying components Chevron provides downstream applications" src="https://github.com/user-attachments/assets/517181f7-a682-4dee-876f-ebf96ee59403" />
     <p align="center"><em>( diagram showcasing components Chevron provides downstream applications )</em></p>
 </div></br>
 
