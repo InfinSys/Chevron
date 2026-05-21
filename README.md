@@ -93,6 +93,7 @@
 using chevron::AppProcess;
 using WxEngine = chevron::wx::Engine;
 
+using chevron::WindowFactory;
 using chevron::ProcessMemoryConfig;
 using chevron::ProcessThreadConfig;
 using chevron::ProcessExitReport;
@@ -102,8 +103,8 @@ using chevron::ProcessExitReport;
  * Application entry point (main method)
  */
 ENTRY_POINT_METHOD_SIGNATURE {
-    ProcessMemoryConfig memoryConfig = /*Configure process memory*/;
-    ProcessThreadConfig threadConfig = /*Configure process threads*/;
+    ProcessMemoryConfig memoryConfig = /*Configure process memory*/ ;
+    ProcessThreadConfig threadConfig = /*Configure process threads*/ ;
     
     AppProcess proc{memoryConfig, threadConfig};
     
@@ -111,7 +112,12 @@ ENTRY_POINT_METHOD_SIGNATURE {
     runtimeConfig.forwardCmdlArgs(ENTRY_POINT_ARG_VARS);
     
     auto guiEngine = std::make_unique<WxEngine>(runtimeConfig);
-    guiEngine->windowing().registerFactory( /*Callable that returns new wxFrame pointer*/ );
+    guiEngine->windowing().registerFactory(
+        WindowFactory{
+            /*Callable that returns new wxFrame pointer*/,
+            /*Window dispatch descriptor*/
+        }
+    );
     
     proc.commitGUIEngine(std::move(guiEngine));
     proc.initializeGUIEngine();
