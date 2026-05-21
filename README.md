@@ -64,6 +64,7 @@
 
 <div>
     <h1>Architecture Overview</h1>
+    <h2><em>Three-Tier-Lifetime Hierarchy</em></h2>
     <p>
         Chevron is organized as three nested lifetime tiers, each owned and bounded by the one above it. <code>AppProcess</code> opens the process lifetime and lives for the full
         duration of the application. Inside it, <code>GUIEngine</code> opens the GUI lifetime, governing framework initialization, the mainloop, and teardown. Inside that, each
