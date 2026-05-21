@@ -79,7 +79,7 @@
 <h1>Conceptual Chevron Usage</h1>
 
 ```cpp
-#include <chevron/entry.hpp>      // `ENTRY_POINT_METHOD_SIGNATURE` and `ENTRY_POINT_ARG_VARS` macros
+#include <chevron/entry.hpp>      // `ENTRY_POINT_METHOD_SIGNATURE` and `ENTRY_POINT_ARG_VARS` macro
 #include <chevron/process.hpp>    // Application process-level constructs
 #include <chevron/wx/runtime.hpp> // wxWidgets GUI framework engine
 
@@ -101,7 +101,7 @@ ENTRY_POINT_METHOD_SIGNATURE
     runtimeConfig.forwardCmdlArgs(ENTRY_POINT_ARG_VARS);
     
     auto guiEngine = std::make_unique<WxEngine>(runtimeConfig);
-    guiEngine->windowing().registerFactory( /*Callable that returns wxFrame pointer*/ );
+    guiEngine->windowing().registerFactory( /*Callable that returns new wxFrame pointer*/ );
     
     proc.commitGUIEngine(std::move(guiEngine));
     proc.initializeGUIEngine();
