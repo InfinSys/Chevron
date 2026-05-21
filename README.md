@@ -48,7 +48,10 @@
 <div>
     <h1>What Chevron is <em><strong>NOT</strong></em></h1>
     <h3>
-        <strong>Chevron is GUI application <em>infrastructure</em>, NOT a GUI framework abstraction</strong>
+        <strong>Chevron is GUI application <em>infrastructure</em>,</strong>
+    </h3>
+    <h3>
+        <strong>NOT a GUI framework abstraction</strong>
     </h3>
     <p>
         It <strong>does NOT unify GUI frameworks behind a portable interface</strong> and it <strong>does NOT introduce an explicit widget layer of its own</strong>. A Chevron user
@@ -58,6 +61,18 @@
 </div></br>
 
 <hr></br>
+
+<div>
+    <h1>Architecture Overview</h1>
+    <p>
+        Chevron is organized as three nested lifetime tiers, each owned and bounded by the one above it. <code>AppProcess</code> opens the process lifetime and lives for the full
+        duration of the application. Inside it, <code>GUIEngine</code> opens the GUI lifetime, governing framework initialization, the mainloop, and teardown. Inside that, each
+        live window is represented by a <code>WindowEnvelope</code>, created when a window is dispatched and destroyed when that window closes. Nothing in a tier may exist before
+        its enclosing tier has opened, and nothing may outlive its close. Every other piece of infrastructure in the library (<em>memory, threading, windowing, dynamic views</em>)
+        lives somewhere inside this nesting.
+    </p>
+    <img width="3334" height="1250" alt="Chevron three-tier-lifetime hierarchy diagram" src="https://github.com/user-attachments/assets/7564d895-1dd5-4503-8f4c-e578438c037c" />
+</div></br>
 
 <div>
     <h2>Planned GUI Framework Support</h2>
