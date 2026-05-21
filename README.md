@@ -115,10 +115,9 @@ ENTRY_POINT_METHOD_SIGNATURE {
     
     proc.commitGUIEngine(std::move(guiEngine));
     proc.initializeGUIEngine();
+    
     proc.mainloopEntry();
-    
     ProcessExitReport report = proc.shutdown();
-    
     return report.exitCode;
 }
 ```
