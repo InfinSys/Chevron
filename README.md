@@ -51,7 +51,7 @@
         <strong>Chevron is GUI application <em>infrastructure</em>,</strong>
     </h3>
     <h3>
-        <strong>NOT a GUI framework abstraction</strong>
+        <strong>not a GUI framework abstraction</strong>
     </h3>
     <p>
         It <strong>does NOT unify GUI frameworks behind a portable interface</strong> and it <strong>does NOT introduce an explicit widget layer of its own</strong>. A Chevron user
@@ -72,7 +72,7 @@
         its enclosing tier has opened, and nothing may outlive its close. Every other piece of infrastructure in the library (<em>memory, threading, windowing, dynamic views</em>)
         lives somewhere inside this nesting.
     </p>
-    <img width="3334" height="1250" alt="Chevron three-tier-lifetime hierarchy diagram" src="https://github.com/user-attachments/assets/7564d895-1dd5-4503-8f4c-e578438c037c" />
+    <img width="2917" height="1250" alt="Chevron three-tier-lifetime hierarchy diagram" src="https://github.com/user-attachments/assets/2febb3cf-b431-48dd-bd0e-d848cf322d89" />
     <p align="center"><em>( diagram showcasing major system component lifetime tiers )</em></p>
 </div></br>
 
