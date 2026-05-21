@@ -112,6 +112,7 @@ ENTRY_POINT_METHOD_SIGNATURE {
     runtimeConfig.forwardCmdlArgs(ENTRY_POINT_ARG_VARS);
     
     auto guiEngine = std::make_unique<WxEngine>(runtimeConfig);
+
     guiEngine->windowing().registerFactory(
         WindowFactory{
             /*Callable that returns new wxFrame pointer*/,
