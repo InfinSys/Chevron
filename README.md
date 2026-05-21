@@ -76,6 +76,53 @@
     <p align="center"><em>( diagram showcasing major system component lifetime tiers )</em></p>
 </div></br>
 
+<h1>Conceptual Chevron Usage</h1>
+
+```cpp
+#include <chevron/entry.hpp>      // `ENTRY_POINT_METHOD_SIGNATURE` and `ENTRY_POINT_ARG_VARS` macros
+#include <chevron/process.hpp>    // Application process-level constructs
+#include <chevron/wx/runtime.hpp> // wxWidgets GUI framework engine
+#include <chevron/units.hpp>      // Digital size units
+
+using chevron::AppProcess;
+using WxEngine = chevron::wx::Engine;
+
+using chevron::ProcessMemoryConfig;
+using chevron::ProcessThreadConfig;
+using chevron::ProcessExitReport;
+
+ENTRY_POINT_METHOD_SIGNATURE
+{
+    ProcessMemoryConfig memoryConfig = /*Configure process memory*/;
+    ProcessThreadConfig threadConfig = /*Configure process threads*/;
+    
+    AppProcess proc{memoryConfig, threadConfig};
+    
+    WxEngine::Configuration runtimeConfig;
+    runtimeConfig.forwardCmdlArgs(ENTRY_POINT_ARG_VARS);
+    
+    auto guiEngine = std::make_unique<WxEngine>(runtimeConfig);
+    guiEngine->windowing().registerFactory( /*Callable that returns wxFrame pointer*/ );
+    
+    proc.commitGUIEngine(std::move(guiEngine));
+    proc.initializeGUIEngine();
+    proc.mainloopEntry();
+    
+    ProcessExitReport report = proc.shutdown();
+    
+    return report.exitCode;
+}
+```
+<!--
+<p>
+    <strong>The user constructs an <code>AppProcess</code>, builds the concrete <code>GUIEngine</code> for their chosen framework, registers window factories through the engine's
+    windowing surface, commits the engine to the process, and runs. Everything else (<em>subsidiary windows, runtime dispatches, infrastructure access</em>) happens from inside
+    the application after the mainloop is running.</strong>
+</p>
+-->
+
+</br>
+
 <div>
     <h2>Planned GUI Framework Support</h2>
     <h3><a href="https://wxwidgets.org/">wxWidgets</a> | <a href="https://www.qt.io/development/qt-framework">Qt Framework</a></h3>
