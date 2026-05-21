@@ -82,7 +82,6 @@
 #include <chevron/entry.hpp>      // `ENTRY_POINT_METHOD_SIGNATURE` and `ENTRY_POINT_ARG_VARS` macros
 #include <chevron/process.hpp>    // Application process-level constructs
 #include <chevron/wx/runtime.hpp> // wxWidgets GUI framework engine
-#include <chevron/units.hpp>      // Digital size units
 
 using chevron::AppProcess;
 using WxEngine = chevron::wx::Engine;
