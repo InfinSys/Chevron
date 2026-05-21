@@ -79,6 +79,13 @@
 <h1>Conceptual Chevron Usage</h1>
 
 ```cpp
+/*!
+ * @file main.cpp
+ *
+ * @brief
+ * Conceptual GUI application launch sequence.
+ */
+
 #include <chevron/entry.hpp>      // `ENTRY_POINT_METHOD_SIGNATURE` and `ENTRY_POINT_ARG_VARS` macro
 #include <chevron/process.hpp>    // Application process-level constructs
 #include <chevron/wx/runtime.hpp> // wxWidgets GUI framework engine
@@ -90,8 +97,11 @@ using chevron::ProcessMemoryConfig;
 using chevron::ProcessThreadConfig;
 using chevron::ProcessExitReport;
 
-ENTRY_POINT_METHOD_SIGNATURE
-{
+/*!
+ * @brief
+ * Application entry point (main method)
+ */
+ENTRY_POINT_METHOD_SIGNATURE {
     ProcessMemoryConfig memoryConfig = /*Configure process memory*/;
     ProcessThreadConfig threadConfig = /*Configure process threads*/;
     
