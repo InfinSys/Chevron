@@ -72,7 +72,7 @@
         lives somewhere inside this nesting.
     </p>
     <img width="3334" height="1250" alt="Chevron three-tier-lifetime hierarchy diagram" src="https://github.com/user-attachments/assets/7564d895-1dd5-4503-8f4c-e578438c037c" />
-    <p align="center"><em>( diagram showcasing major system component lifetime progression )</em></p>
+    <p align="center"><em>( diagram showcasing major system component lifetime tiers )</em></p>
 </div></br>
 
 <div>
