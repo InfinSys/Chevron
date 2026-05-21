@@ -83,7 +83,7 @@
  * @file main.cpp
  *
  * @brief
- * Conceptual GUI application launch sequence.
+ * Conceptual portable GUI application launch sequence.
  */
 
 #include <chevron/entry.hpp>      // `ENTRY_POINT_METHOD_SIGNATURE` and `ENTRY_POINT_ARG_VARS` macro
