@@ -34,7 +34,7 @@
         thread infrastructure, etc.</em>) so user code can focus on the application itself, written directly against the GUI framework the user chose.
         </strong>
     </p></br>
-    <img width="3334" height="2500" alt="Diagram visually conveying components Chevron provides downstream applications" src="https://github.com/user-attachments/assets/517181f7-a682-4dee-876f-ebf96ee59403" />
+    <img width="3334" height="2500" alt="Diagram visually conveying components Chevron provides downstream applications" src="https://github.com/user-attachments/assets/d9de4367-a9ad-4a0b-ba03-d89f9c4af8a9" />
     <p align="center"><em>( diagram showcasing components Chevron provides downstream applications )</em></p>
 </div></br>
 
@@ -163,7 +163,15 @@
         lives somewhere inside this nesting.
     </p>
     <img width="2917" height="1250" alt="Chevron three-tier-lifetime hierarchy diagram" src="https://github.com/user-attachments/assets/2febb3cf-b431-48dd-bd0e-d848cf322d89" />
-    <p align="center"><em>( diagram showcasing major system component lifetime tiers )</em></p>
+    <p align="center"><em>( diagram showcasing major system component lifetime tiers )</em></p></br>
+    <h2><em>Chevron Application Structure</em></h2>
+    <p>
+        Every Chevron application is structured around a single <code>AppProcess</code> at its root. <code>AppProcess</code> owns the <code>GUIEngine</code>, an abstraction whose
+        concrete implementation matches the user's chosen GUI framework. The GUI engine hosts Chevron's windowing infrastructure: a dispatcher that creates windows, a coordinator
+        that manages them once they exist, and a windowing subsystem that surfaces these components together as a coherent user-facing API. Live windows are represented by
+        <code>WindowEnvelope</code> instances held by the coordinator, each carrying its own per-window infrastructure (<strong><em>PWI</em></strong>). The application's behavior
+        lives inside those windows, where the user writes code against the chosen GUI framework directly.
+    </p>
 </div></br>
 
 <h1>Conceptual Chevron Usage</h1>
