@@ -70,7 +70,7 @@
 <hr></br>
 
 <div>
-    <h1>Updates</h1>
+    <h1>Development Updates</h1>
     <h2><em>Subsystem Development Progress</em></h2>
     <table>
         <thead>
@@ -124,12 +124,12 @@
             <tr>
                 <td>Window Component System</td>
                 <td>Design</td>
-                <td>Pending further window facilities design and development</td>
+                <td>Incomplete design; Pending further window facilities design and development</td>
             </tr>
             <tr>
                 <td>Dynamic View System</td>
                 <td>Design</td>
-                <td>Pending further window facilities design and development</td>
+                <td>Incomplete design; Pending further window facilities design and development</td>
             </tr>
             <tr>
                 <td>Event Routing System</td>
