@@ -135,13 +135,10 @@ ENTRY_POINT_METHOD_SIGNATURE {
     return report.exitCode;
 }
 ```
-<!--
 <p>
-    <strong>The user constructs an <code>AppProcess</code>, builds the concrete <code>GUIEngine</code> for their chosen framework, registers window factories through the engine's
-    windowing surface, commits the engine to the process, and runs. Everything else (<em>subsidiary windows, runtime dispatches, infrastructure access</em>) happens from inside
-    the application after the mainloop is running.</strong>
+    <strong>The main method is always tasked with handling process-wide setup, it is not application code. The application itself lives downstream of this stage, in the windows and
+    infrastructure that come online during runtime.</strong>
 </p>
--->
 
 </br>
 
