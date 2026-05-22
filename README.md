@@ -77,6 +77,11 @@
 </div></br>
 
 <h1>Conceptual Chevron Usage</h1>
+<p>
+    Chevron applications are bootstrapped from the users own <code>main()</code> entry point. During this stage, the process is tailor configured to the applications profile, a GUI
+    engine is prepared for the users chosen framework, and window factories are registered to declare the application's window intent (<em>this is also the ideal opportunity to
+    conduct any necessary pre-launch work</em>).
+</p>
 
 ```cpp
 /*!
