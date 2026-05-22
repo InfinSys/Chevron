@@ -163,8 +163,6 @@ ENTRY_POINT_METHOD_SIGNATURE {
     </h3>
 </div></br>
 
-<hr></br>
-
 <div align="center">
     <h3>( <em><strong>...This README is still in progress...</strong></em> )</h3>
 </div>
