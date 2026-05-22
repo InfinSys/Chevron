@@ -60,6 +60,13 @@
     </p>
 </div></br>
 
+<div>
+    <h1>License</h1>
+    <h3>
+        Chevron is released under the GNU Affero GPLv3 license. See <a href="https://github.com/InfinSys/Chevron/blob/v0.x/LICENSE">LICENSE</a> for the full text.
+    </h3>
+</div></br>
+
 <hr></br>
 
 <div>
