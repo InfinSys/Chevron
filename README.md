@@ -80,7 +80,7 @@
 <h2><em>Bootstrapping / Application Launch</em></h2>
 <p>
     Chevron applications are bootstrapped from the users own <code>main()</code> entry point. During this stage, the process is tailor configured to the applications profile, a GUI
-    engine is prepared for the users chosen framework, and window factories are registered to declare window intent. Once setup work is completed on the established GUI engine, it
+    engine is prepared for the users chosen framework, and window factories are registered to declare window intent. Once setup work is complete on the established GUI engine, it
     can then be handed off to <code>AppProcess</code> to enter application runtime under Chevron's direction. The bootstrapping phase is also the ideal opportunity to conduct any
     necessary pre-launch work.
 </p>
