@@ -75,46 +75,46 @@
     <table>
         <thead>
             <tr>
-                <th>Subsystem</th>
-                <th>Status</th>
-                <th>Notes</th>
+                <th><strong>Subsystem</strong></th>
+                <th><strong>Status</strong></th>
+                <th><strong>Notes</strong></th>
             </tr>
         </thead>
         <tbody>
             <tr>
-                <td>Process Lifecycle</td>
+                <td><strong>Process Lifecycle</strong></td>
                 <td><em>Design</em></td>
                 <td><code>AppProcess</code> design still pending further library development</td>
             </tr>
             <tr>
-                <td>GUI Runtime</td>
+                <td><strong>GUI Runtime</strong></td>
                 <td><em>Design</em></td>
                 <td><code>GUIEngine</code> design still pending further library development</td>
             </tr>
             <tr>
-                <td>Memory Infrastructure</td>
+                <td><strong>Memory Infrastructure</strong></td>
                 <td><em>Design</em></td>
                 <td>
                     Process-level memory construct designs/implementations complete; Broader memory hierarchy still in-progress
                 </td>
             </tr>
             <tr>
-                <td>Thread Infrastructure</td>
+                <td><strong>Thread Infrastructure</strong></td>
                 <td><em>Design</em></td>
                 <td><code>ThreadCore</code> and related entity designs still incomplete</td>
             </tr>
             <tr>
-                <td>Host System Services</td>
+                <td><strong>Host System Services</strong></td>
                 <td><em>Not Started</em></td>
                 <td>N/a</td>
             </tr>
             <tr>
-                <td>Logging System</td>
+                <td><strong>Logging System</strong></td>
                 <td><em>Not Started</em></td>
                 <td>N/a</td>
             </tr>
             <tr>
-                <td>Windowing System</td>
+                <td><strong>Windowing System</strong></td>
                 <td><em>Design</em></td>
                 <td>
                     <code>WindowCoordinator</code> and <code>WindowDispatcher</code> designs nearly complete; <code>WindowEnvelope</code> and <code>WindowingSubsystem</code> still
@@ -122,27 +122,27 @@
                 </td>
             </tr>
             <tr>
-                <td>Window Component System</td>
+                <td><strong>Window Component System</strong></td>
                 <td><em>Design</em></td>
                 <td>Incomplete design; Pending further window facilities design and development</td>
             </tr>
             <tr>
-                <td>Dynamic View System</td>
+                <td><strong>Dynamic View System</strong></td>
                 <td><em>Design</em></td>
                 <td>Incomplete design; Pending further window facilities design and development</td>
             </tr>
             <tr>
-                <td>Event Routing System</td>
+                <td><strong>Event Routing System</strong></td>
                 <td><em>Not Started</em></td>
                 <td>N/a</td>
             </tr>
             <tr>
-                <td>Messaging Infrastructure</td>
+                <td><strong>Messaging Infrastructure</strong></td>
                 <td><em>Not Started</em></td>
                 <td>N/a</td>
             </tr>
             <tr>
-                <td>Telemetry Infrastructure</td>
+                <td><strong>Telemetry Infrastructure</strong></td>
                 <td><em>Not Started</em></td>
                 <td>N/a</td>
             </tr>
