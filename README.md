@@ -99,7 +99,7 @@
  * Conceptual portable GUI application launch sequence.
  */
 
-#include <chevron/entry.hpp>      // `ENTRY_POINT_METHOD_SIGNATURE` and `ENTRY_POINT_ARG_VARS` macro
+#include <chevron/entry.hpp>      // Entry point helpers and macros
 #include <chevron/process.hpp>    // Application process-level constructs
 #include <chevron/wx/runtime.hpp> // wxWidgets GUI framework engine
 
@@ -111,13 +111,17 @@ using chevron::ProcessMemoryConfig;
 using chevron::ProcessThreadConfig;
 using chevron::ProcessExitReport;
 
+// Note:
+// `ENTRY_POINT_METHOD_SIGNATURE` and `ENTRY_POINT_ARG_VARS` are
+// Chevron defined macros from <chevron/entry.hpp>.
+
 /*!
  * @brief
  * Application entry point (main method)
  */
 ENTRY_POINT_METHOD_SIGNATURE {
-    ProcessMemoryConfig memoryConfig = /*Configure process memory*/ ;
-    ProcessThreadConfig threadConfig = /*Configure process threads*/ ;
+    ProcessMemoryConfig memoryConfig{ /*Configure process memory*/ };
+    ProcessThreadConfig threadConfig{ /*Configure process threads*/ };
     
     AppProcess proc{memoryConfig, threadConfig};
     
@@ -146,7 +150,10 @@ ENTRY_POINT_METHOD_SIGNATURE {
 
 <div>
     <h2>Planned GUI Framework Support</h2>
-    <h3><a href="https://wxwidgets.org/">wxWidgets</a> | <a href="https://www.qt.io/development/qt-framework">Qt Framework</a></h3>
+    <h3>
+        <a href="https://wxwidgets.org/">wxWidgets</a> |
+        <a href="https://www.qt.io/development/qt-framework">Qt Framework</a>
+    </h3>
 </div></br>
 
 <hr></br>
