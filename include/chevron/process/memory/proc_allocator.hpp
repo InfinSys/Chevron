@@ -156,9 +156,9 @@ public:
     //      <> chevron::process::ProcessMemoryAllocator | [PRIVATE] ATTRIBUTES
     // ===================================================================================== //
 private:
-    AllocListHead allocListHead_;      ///< Head of allocation tracking list
-    std::atomic<size_t> chunkCount_;   ///< Count of chunks currently acquired
-    size_t maxAllocs_;                 ///< Maximum OS memory acquisitions
+    AllocListHead alloc_list_head_;    ///< Head of allocation tracking list
+    std::atomic<size_t> chunk_count_;  ///< Count of chunks currently acquired
+    size_t max_allocs_;                ///< Maximum OS memory acquisitions
 
     // ===================================================================================== //
     //      <> chevron::process::ProcessMemoryAllocator | [PRIVATE] MEMBER METHODS
