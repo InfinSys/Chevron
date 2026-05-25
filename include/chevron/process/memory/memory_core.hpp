@@ -19,6 +19,7 @@
 #ifndef CHEVRON_LIB_PROCESS_MEMORY_AUTHORITY_H_
 #define CHEVRON_LIB_PROCESS_MEMORY_AUTHORITY_H_
 
+#include "chevron/process/memory/proc_allocator.hpp"
 #include "chevron/process/memory/proc_mem_pool.hpp"
 
 namespace chevron::process
@@ -31,7 +32,16 @@ namespace chevron::process
  * @details
  * N/a
  */
-class MemoryCore { /* TODO : INCOMPLETE IMPLEMENTATION!!! */ };
+class MemoryCore {
+public:
+	MemoryCore(const MemoryPoolConfig& poolConfig) noexcept;
+
+	~MemoryCore() = default;
+
+private:
+	ProcessMemoryAllocator procAlloc_; ///< Process-wide memory allocator
+	ProcessMemoryPool procMemPool_;    ///< Process-wide memory pool
+};
 
 }
 

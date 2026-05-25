@@ -55,7 +55,6 @@ ProcessMemoryPool::ProcessMemoryPool(const MemoryPoolConfig& config)
 	bytes_acquired_{0},
 	blocks_per_chunk_{0},
 	config_{config},
-	allocator_{1},  // Placeholder
 	expansion_state_{ExpansionState::IDLE}
 {
 	is_lock_free_or_throw();
@@ -64,7 +63,6 @@ ProcessMemoryPool::ProcessMemoryPool(const MemoryPoolConfig& config)
 	compute_effective_block_geometry();
 	compute_effective_chunk_geometry();
 	validate_budget_constraints();
-	reinit_memory_allocator();
 }
 
 ProcessMemoryPool::~ProcessMemoryPool() noexcept
@@ -93,7 +91,7 @@ size_t ProcessMemoryPool::alignment_guarantee() const noexcept
 
 size_t ProcessMemoryPool::chunk_count() const noexcept
 {
-	return allocator_.acquisition_count();
+	return bytes_in_possession() / config_.chunk_size;
 }
 
 size_t ProcessMemoryPool::max_chunk_count() const noexcept
@@ -106,7 +104,7 @@ Bytes ProcessMemoryPool::bytes_in_possession() const noexcept
 	return Bytes{bytes_acquired_.load(std::memory_order_relaxed)};
 }
 
-MemoryRegion ProcessMemoryPool::allocate()
+MemoryRegion ProcessMemoryPool::allocate_block(ProcessMemoryAllocator& allocator)
 {
 	// ----->  (Fast Path)  <-----------------------------------------------------------
 	// 
@@ -141,7 +139,7 @@ MemoryRegion ProcessMemoryPool::allocate()
 	// memory.
 
 	if (batchAllocChain == nullptr) {
-		expand_memory();
+		expand_memory(allocator);
 		batchAllocChain = pop_batch(blockBatchSize);
 
 		if (batchAllocChain == nullptr)
@@ -158,7 +156,7 @@ MemoryRegion ProcessMemoryPool::allocate()
 	return MemoryRegion{block, config_.block_alignment, config_.block_size};
 }
 
-void ProcessMemoryPool::deallocate(MemoryRegion& block) noexcept
+void ProcessMemoryPool::deallocate_block(MemoryRegion& block) noexcept
 {
 	ThreadLocalMemoryCache& localMemory = get_current_thread_cache();
 	FreeRegionNode* returnedBlock = static_cast<FreeRegionNode*>(block.base());
@@ -225,13 +223,6 @@ void ProcessMemoryPool::validate_budget_constraints()
 		};
 	}
 #endif
-}
-
-void ProcessMemoryPool::reinit_memory_allocator()
-{
-	const size_t maxAllocs = config_.budget_ceiling / config_.chunk_size;
-	allocator_.~ProcessMemoryAllocator();
-	new (&allocator_) ProcessMemoryAllocator{maxAllocs};
 }
 
 void ProcessMemoryPool::is_lock_free_or_throw()
@@ -322,7 +313,7 @@ FreeRegionNode* ProcessMemoryPool::pop_batch(size_t batch_size)
 	return free_list_.pop(batch_size);
 }
 
-void ProcessMemoryPool::expand_memory()
+void ProcessMemoryPool::expand_memory(ProcessMemoryAllocator& allocator)
 {
 	//
 	// BE AWARE: Concurrent Zone Below
@@ -391,7 +382,7 @@ void ProcessMemoryPool::expand_memory()
 	// roll back the byte budget and rethrow. The allocator independently
 	// enforces its own acquisition count ceiling.
 
-	MemoryRegion newChunk = allocator_.acquire_chunk(
+	MemoryRegion newChunk = allocator.acquire_chunk(
 		config_.chunk_size,
 		config_.block_alignment
 	);

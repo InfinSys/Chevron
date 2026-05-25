@@ -15,4 +15,32 @@
 
 #include "chevron/process/memory/memory_core.hpp"
 
-// TODO : INCOMPLETE IMPLEMENTATION!!!
+using chevron::process::MemoryCore;
+using chevron::process::MemoryPoolConfig;
+
+static size_t effectiveAllocationLimit(const MemoryPoolConfig& poolConfig) noexcept;
+
+// ===================================================================================== //
+//      <> chevron::process::MemoryCore | CONSTRUCTORS / DESTRUCTOR
+// ===================================================================================== //
+
+MemoryCore::MemoryCore(const MemoryPoolConfig& poolConfig) noexcept
+	: procAlloc_{effectiveAllocationLimit(poolConfig)},
+	procMemPool_{poolConfig}
+{
+	//
+}
+
+// ===================================================================================== //
+//      <> chevron::process::MemoryCore | INTERNAL FUNCTIONS
+// ===================================================================================== //
+
+static size_t maximumPoolAllocations(const MemoryPoolConfig& poolConfig) noexcept
+{
+	return static_cast<size_t>(poolConfig.budget_ceiling / poolConfig.chunk_size);
+}
+
+static size_t effectiveAllocationLimit(const MemoryPoolConfig& poolConfig) noexcept
+{
+	return maximumPoolAllocations(poolConfig);
+}
