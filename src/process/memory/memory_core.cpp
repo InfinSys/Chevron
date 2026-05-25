@@ -35,11 +35,25 @@ MemoryCore::MemoryCore(const MemoryPoolConfig& poolConfig) noexcept
 //      <> chevron::process::MemoryCore | INTERNAL FUNCTIONS
 // ===================================================================================== //
 
+/*!
+ * @brief
+ * Calculates maximum OS-bound allocations memory pool can conduct.
+ * 
+ * @return
+ * Maximum memory pool OS allocation requests
+ */
 static size_t maximumPoolAllocations(const MemoryPoolConfig& poolConfig) noexcept
 {
 	return static_cast<size_t>(poolConfig.budget_ceiling / poolConfig.chunk_size);
 }
 
+/*!
+ * @brief
+ * Calculate process-wide OS memory allocation limit.
+ * 
+ * @return
+ * Maximum number of OS-bound memory allocation requests
+ */
 static size_t effectiveAllocationLimit(const MemoryPoolConfig& poolConfig) noexcept
 {
 	return maximumPoolAllocations(poolConfig);
