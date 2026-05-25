@@ -58,6 +58,30 @@ public:
 
 	/*!
 	 * @brief
+	 * Checks if this memory segment describes valid memory.
+	 * 
+	 * @note
+	 * This method does not check that the memory segment in
+	 * question is legitamte error-free memory, it simply
+	 * verifies that we point to something other than `nullptr`.
+	 * Hypothetically, a memory description could point to
+	 * freed memory and this method still returns true.
+	 * 
+	 * @details
+	 * Determines if the memory description is pointing to a
+	 * reachable segment of memory that has non-zero capacity
+	 * and alignment values. If a previously valid instance
+	 * of a `MemoryDescription` has `invalidate()` called on
+	 * it, following the invalidation side-effects this method
+	 * will return false.
+	 * 
+	 * @return
+	 * True if this describes a valid segment of memory
+	 */
+	[[nodiscard]] bool isValid() const noexcept;
+
+	/*!
+	 * @brief
 	 * Returns starting address of memory segment.
 	 *
 	 * @return
