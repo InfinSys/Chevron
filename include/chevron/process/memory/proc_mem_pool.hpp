@@ -71,11 +71,11 @@ class ProcessMemoryPool {
      * remaining blocks to the shared list.
      */
     struct ThreadLocalMemoryCache {
+        ProcessMemoryPool* shared_pool;           ///< Process-level shared memory pool
         memory::FreeRegionNode* free_list_head;   ///< Head of thread-local free block chain
         size_t free_blocks;                       ///< Number of blocks currently free in local cache
         size_t cached_blocks;                     ///< Number of blocks in local cache possession
         size_t batch_size;                        ///< Batch size for next trip to shared memory pool
-        ProcessMemoryPool* shared_pool;           ///< Process-level shared memory pool
 
         /*! @brief Thread-local memory cache destructor. */
         ~ThreadLocalMemoryCache() noexcept;

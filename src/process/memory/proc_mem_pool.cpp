@@ -258,10 +258,10 @@ void ProcessMemoryPool::is_lock_free_or_throw()
 ProcessMemoryPool::ThreadLocalMemoryCache& ProcessMemoryPool::get_current_thread_cache() noexcept
 {
 	thread_local ThreadLocalMemoryCache threadCache{
+		.shared_pool = this,
 		.free_list_head = nullptr,
 		.cached_blocks = 0,
-		.batch_size = config_.initial_thread_blocks,
-		.shared_pool = this
+		.batch_size = config_.initial_thread_blocks
 	};
 
 	return threadCache;
