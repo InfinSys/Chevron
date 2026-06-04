@@ -172,6 +172,8 @@
         <code>WindowEnvelope</code> instances held by the coordinator, each carrying its own per-window infrastructure (<strong><em>PWI</em></strong>). The application's behavior
         lives inside those windows, where the user writes code against the chosen GUI framework directly.
     </p>
+    <img width="3334" height="2500" alt="App_Structure_Relationship_003" src="https://github.com/user-attachments/assets/b612df88-4ea1-4a4a-9c02-22fe7c0356b3" />
+    <p align="center"><em>( diagram showcasing high-level GUI application structure )</em></p></br>
 </div></br>
 
 <h1>Conceptual Chevron Usage</h1>
