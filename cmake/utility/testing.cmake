@@ -25,6 +25,44 @@ include_guard(GLOBAL)
 
 include(GoogleTest)
 
+# ---> Establish GoogleTest interface target <------------------------
+add_library(googletest_external INTERFACE)
+
+target_include_directories(
+    googletest_external
+
+    INTERFACE
+      "${googletest_SOURCE_DIR}/googletest/include"
+)
+
+target_link_libraries(
+    googletest_external
+
+    INTERFACE
+      gtest
+      gtest_main
+)
+# --------------------------------------------------------------------
+
+# ---> Establish Google Benchmark interface target <------------------
+add_library(benchmark_external INTERFACE)
+
+target_include_directories(
+    benchmark_external
+
+    INTERFACE
+      "${benchmark_SOURCE_DIR}/include"
+)
+
+target_link_libraries(
+    benchmark_external
+
+    INTERFACE
+      benchmark
+      benchmark_main
+)
+# --------------------------------------------------------------------
+
 # Create test executable, apply common link dependencies, and register
 # the target with CTest via `gtest_discover_tests()`.
 function(_add_test_target_base)
@@ -102,8 +140,7 @@ function(add_unit_test_target)
           ${ARG_SOURCES}
 
         LINK
-          gtest
-          gtest_main
+          googletest_external
 
         LABELS
           unit
@@ -124,8 +161,7 @@ function(add_stress_test_target)
           ${ARG_SOURCES}
 
         LINK
-          gtest
-          gtest_main
+          googletest_external
 
         LABELS
           stress
