@@ -3,6 +3,8 @@
 #     /tests Directory Script
 #==================================
 
+include("${CHEVRON_CMAKE_MODULES_DIR}/utility/testing.cmake")
+
 if(CHEVRON_CLI_DEBUG)
     add_subdirectory(cli)
 endif()
