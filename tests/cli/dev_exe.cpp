@@ -7,6 +7,7 @@
 #include "chevron/common/macro_defs.h"
 #include "chevron/memory/chunk_descriptor.hpp"
 #include "chevron/memory/region.hpp"
+#include "chevron/memory/scope.hpp"
 #include "chevron/process/thread/threading_core.hpp"
 #include "chevron/process/memory/memory_core.hpp"
 #include "chevron/process/memory/proc_allocator.hpp"
@@ -50,6 +51,20 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char* argv[])
     }
 
     //
+
+    using chevron::process::MemoryCore;
+    using chevron::process::ProcessMemoryAllocator;
+    using chevron::process::ProcessMemoryPool;
+    using chevron::memory::MemoryRegion;
+    using chevron::memory::MemoryScope;
+
+    MemoryCore memoryCore{config};
+
+    //
+
+    MemoryScope memScope{
+        MemoryScope::Config{ .acquire_size = 16_MiB, .distribute_size = 4_MiB }
+    };
 
     //
     //\\//
