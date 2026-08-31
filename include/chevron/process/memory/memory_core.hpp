@@ -8,7 +8,7 @@
  * @file memory_core.hpp
  *
  * @brief
- * // TODO: INCOMPLETE DOC STRING!!!
+ * TODO: INCOMPLETE DOCUMENTATION!!!
  *
  * @author
  * Jamon T. Bailey
@@ -27,10 +27,10 @@ namespace chevron::process
 
 /*!
  * @brief
- * Process memory authority.
+ * TODO: INCOMPLETE DOCUMENTATION!!!
  *
  * @details
- * N/a
+ * TODO: INCOMPLETE DOCUMENTATION!!!
  */
 class MemoryCore {
 public:
@@ -41,6 +41,15 @@ public:
 private:
 	ProcessMemoryAllocator procAlloc_; ///< Process-wide memory allocator
 	ProcessMemoryPool procMemPool_;    ///< Process-wide memory pool
+
+	/*!
+	 * @brief
+	 * TODO: INCOMPLETE DOCUMENTATION!!!
+	 * 
+	 * @details
+	 * TODO: INCOMPLETE DOCUMENTATION!!!
+	 */
+	void init_memory_hierarchy();
 };
 
 }
