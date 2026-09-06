@@ -27,11 +27,23 @@ permission:
     "tail *": allow
     "echo *": allow
     "cat *": allow
+    "wc *": allow
 
     "sort *": allow
     "sort *-o*": deny
     "sort *--output*": deny
     "sort *--compress-program*": deny
+
+    "find *": allow
+    "find *-delete*": deny
+    "find *-exec *": deny
+    "find *-execdir *": deny
+    "find *-ok *": deny
+    "find *-okdir *": deny
+    "find *-fprint *": deny
+    "find *-fprint0 *": deny
+    "find *-fprintf *": deny
+    "find *-fls *": deny
 
     "rg *": allow
     "rg *--pre*": deny
