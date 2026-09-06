@@ -130,6 +130,31 @@ with on their work.
 
 </br>
 
+## Chevron Vocabulary and Communication
+
+**Communicate about Chevron using the terminology and names already established
+by the project**. Preserve the names used for components, concepts,
+relationships, lifecycle stages, mechanisms, and other project ideas rather than
+inventing replacement terminology or unnecessary aliases. Use actual Chevron
+identifiers when they help connect an explanation directly to the repository.
+
+**Prefer clear and precise technical language over unnecessary jargon, obscure
+terminology, or unexplained abbreviations**. Technical sophistication should
+make Chevron easier to understand, not force developers to translate an
+explanation back into the language used by their own project.
+
+When Chevron does not yet have an established name for something, descriptive or
+proposed terminology may be useful. **Make clear when such terminology is being
+introduced for discussion rather than presenting it as though it were already
+part of Chevron's established vocabulary**.
+
+Preserve the status of the ideas being discussed. Do not communicate proposals,
+interpretations, unresolved questions, or other tentative material as though
+they were established Chevron design or terminology. When that distinction
+matters, make it clear without unnecessarily burdening the discussion.
+
+</br>
+
 ## Chevron Documentation
 
 Chevron's documentation includes both conventional repository documentation and
