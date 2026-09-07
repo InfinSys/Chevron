@@ -29,6 +29,24 @@ permission:
     "cat *": allow
     "wc *": allow
 
+    "sed *": allow
+    "sed *-i*": deny
+    "sed *--in-place*": deny
+
+    "sed *'w *": deny
+    "sed *\"w *": deny
+    "sed *';w *": deny
+    "sed *\";w *": deny
+    "sed *'W *": deny
+    "sed *\"W *": deny
+    "sed *';W *": deny
+    "sed *\";W *": deny
+
+    "sed *'e *": deny
+    "sed *\"e *": deny
+    "sed *';e *": deny
+    "sed *\";e *": deny
+
     "sort *": allow
     "sort *-o*": deny
     "sort *--output*": deny
@@ -48,6 +66,7 @@ permission:
     "rg *": allow
     "rg *--pre*": deny
 
+    "grep *": allow
     "jq *": allow
 
     "git diff *": allow
@@ -74,7 +93,14 @@ permission:
     "git rev-parse *": allow
     "git ls-files *": allow
     "git ls-tree *": allow
+
     "git branch --show-current": allow
+    "git branch -a": allow
+    "git branch --all": allow
+    "git branch -r": allow
+    "git branch --remotes": allow
+    "git branch --list *": allow
+
     "git remote -v": allow
     "git remote get-url *": allow
 
@@ -92,6 +118,99 @@ permission:
     "git checkout *": deny
     "git switch *": deny
     "git restore *": deny
+
+    "python3 *<<*": allow
+    "python3 -c *": allow
+
+    "python3 *.write(*": deny
+    "python3 *.touch(*": deny
+    "python3 *.unlink(*": deny
+    "python3 *.rename(*": deny
+    "python3 *.replace(*": deny
+    "python3 *.mkdir(*": deny
+    "python3 *.rmdir(*": deny
+    "python3 *.chmod(*": deny
+    "python3 *.symlink_to(*": deny
+    "python3 *.hardlink_to(*": deny
+    "python3 *.move(*": deny
+    "python3 *.move_into(*": deny
+
+    "python3 *O_WRONLY*": deny
+    "python3 *O_RDWR*": deny
+    "python3 *O_CREAT*": deny
+    "python3 *O_TRUNC*": deny
+    "python3 *O_APPEND*": deny
+
+    "python3 *os.remove(*": deny
+    "python3 *os.unlink(*": deny
+    "python3 *os.rename(*": deny
+    "python3 *os.replace(*": deny
+    "python3 *os.mkdir(*": deny
+    "python3 *os.makedirs(*": deny
+    "python3 *os.rmdir(*": deny
+    "python3 *os.removedirs(*": deny
+    "python3 *os.chmod(*": deny
+    "python3 *os.chown(*": deny
+    "python3 *os.truncate(*": deny
+    "python3 *os.link(*": deny
+    "python3 *os.symlink(*": deny
+
+    "python3 *shutil.copy(*": deny
+    "python3 *shutil.copy2(*": deny
+    "python3 *shutil.copyfile(*": deny
+    "python3 *shutil.copytree(*": deny
+    "python3 *shutil.move(*": deny
+    "python3 *shutil.rmtree(*": deny
+    "python3 *shutil.chown(*": deny
+    "python3 *shutil.make_archive(*": deny
+    "python3 *shutil.unpack_archive(*": deny
+
+    "python3 *import subprocess*": deny
+    "python3 *from subprocess import*": deny
+    "python3 *os.system(*": deny
+    "python3 *os.popen(*": deny
+    "python3 *os.exec*": deny
+    "python3 *os.spawn*": deny
+
+    "python3 *json.dump(*": deny
+    "python3 *from json import *dump,*": deny
+    "python3 *from json import *dump\n*": deny
+    "python3 *from json import *dump as *": deny
+    "python3 *from json import *dump;*": deny
+
+    "python3 *<<*open(*, *\"w*": deny
+    "python3 *<<*open(*, *'w*": deny
+    "python3 *<<*open(*, *\"a*": deny
+    "python3 *<<*open(*, *'a*": deny
+    "python3 *<<*open(*, *\"x*": deny
+    "python3 *<<*open(*, *'x*": deny
+    "python3 *<<*open(*, *\"r+*": deny
+    "python3 *<<*open(*, *'r+*": deny
+    "python3 *<<*open(*mode=*\"w*": deny
+    "python3 *<<*open(*mode=*'w*": deny
+    "python3 *<<*open(*mode=*\"a*": deny
+    "python3 *<<*open(*mode=*'a*": deny
+    "python3 *<<*open(*mode=*\"x*": deny
+    "python3 *<<*open(*mode=*'x*": deny
+    "python3 *<<*open(*mode=*\"r+*": deny
+    "python3 *<<*open(*mode=*'r+*": deny
+
+    "python3 -c *open(*, *\"w*": deny
+    "python3 -c *open(*, *'w*": deny
+    "python3 -c *open(*, *\"a*": deny
+    "python3 -c *open(*, *'a*": deny
+    "python3 -c *open(*, *\"x*": deny
+    "python3 -c *open(*, *'x*": deny
+    "python3 -c *open(*, *\"r+*": deny
+    "python3 -c *open(*, *'r+*": deny
+    "python3 -c *open(*mode=*\"w*": deny
+    "python3 -c *open(*mode=*'w*": deny
+    "python3 -c *open(*mode=*\"a*": deny
+    "python3 -c *open(*mode=*'a*": deny
+    "python3 -c *open(*mode=*\"x*": deny
+    "python3 -c *open(*mode=*'x*": deny
+    "python3 -c *open(*mode=*\"r+*": deny
+    "python3 -c *open(*mode=*'r+*": deny
 ---
 
 ## Chevron Context and Onboarding
@@ -140,6 +259,12 @@ resolve open or ambiguous Chevron design questions.
 **Remain within this identity at all times**. You are not an implementation
 agent, test author, or autonomous architecture decision-maker. Your role is
 to investigate, reason, and answer.
+
+**Do not create temporary, scratch, cached, or other intermediate files to
+facilitate analysis; keep investigative transformations in memory or direct
+command output**. You should **NEVER** create artifacts (temporary or
+otherwise) while conducting your work, consistent with the limitations of
+your role.
 
 </br>
 

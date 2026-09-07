@@ -32,6 +32,24 @@ permission:
     "cat *": allow
     "wc *": allow
 
+    "sed *": allow
+    "sed *-i*": deny
+    "sed *--in-place*": deny
+
+    "sed *'w *": deny
+    "sed *\"w *": deny
+    "sed *';w *": deny
+    "sed *\";w *": deny
+    "sed *'W *": deny
+    "sed *\"W *": deny
+    "sed *';W *": deny
+    "sed *\";W *": deny
+
+    "sed *'e *": deny
+    "sed *\"e *": deny
+    "sed *';e *": deny
+    "sed *\";e *": deny
+
     "sort *": allow
     "sort *-o*": deny
     "sort *--output*": deny
@@ -51,6 +69,7 @@ permission:
     "rg *": allow
     "rg *--pre*": deny
 
+    "grep *": allow
     "jq *": allow
 
     "git diff *": allow
@@ -77,7 +96,14 @@ permission:
     "git rev-parse *": allow
     "git ls-files *": allow
     "git ls-tree *": allow
+
     "git branch --show-current": allow
+    "git branch -a": allow
+    "git branch --all": allow
+    "git branch -r": allow
+    "git branch --remotes": allow
+    "git branch --list *": allow
+
     "git remote -v": allow
     "git remote get-url *": allow
 
@@ -95,6 +121,99 @@ permission:
     "git checkout *": deny
     "git switch *": deny
     "git restore *": deny
+
+    "python3 *<<*": allow
+    "python3 -c *": allow
+
+    "python3 *.write(*": ask
+    "python3 *.touch(*": ask
+    "python3 *.unlink(*": ask
+    "python3 *.rename(*": ask
+    "python3 *.replace(*": ask
+    "python3 *.mkdir(*": ask
+    "python3 *.rmdir(*": ask
+    "python3 *.chmod(*": ask
+    "python3 *.symlink_to(*": ask
+    "python3 *.hardlink_to(*": ask
+    "python3 *.move(*": ask
+    "python3 *.move_into(*": ask
+
+    "python3 *O_WRONLY*": ask
+    "python3 *O_RDWR*": ask
+    "python3 *O_CREAT*": ask
+    "python3 *O_TRUNC*": ask
+    "python3 *O_APPEND*": ask
+
+    "python3 *os.remove(*": ask
+    "python3 *os.unlink(*": ask
+    "python3 *os.rename(*": ask
+    "python3 *os.replace(*": ask
+    "python3 *os.mkdir(*": ask
+    "python3 *os.makedirs(*": ask
+    "python3 *os.rmdir(*": ask
+    "python3 *os.removedirs(*": ask
+    "python3 *os.chmod(*": ask
+    "python3 *os.chown(*": ask
+    "python3 *os.truncate(*": ask
+    "python3 *os.link(*": ask
+    "python3 *os.symlink(*": ask
+
+    "python3 *shutil.copy(*": ask
+    "python3 *shutil.copy2(*": ask
+    "python3 *shutil.copyfile(*": ask
+    "python3 *shutil.copytree(*": ask
+    "python3 *shutil.move(*": ask
+    "python3 *shutil.rmtree(*": ask
+    "python3 *shutil.chown(*": ask
+    "python3 *shutil.make_archive(*": ask
+    "python3 *shutil.unpack_archive(*": ask
+
+    "python3 *import subprocess*": ask
+    "python3 *from subprocess import*": ask
+    "python3 *os.system(*": ask
+    "python3 *os.popen(*": ask
+    "python3 *os.exec*": ask
+    "python3 *os.spawn*": ask
+
+    "python3 *json.dump(*": ask
+    "python3 *from json import *dump,*": ask
+    "python3 *from json import *dump\n*": ask
+    "python3 *from json import *dump as *": ask
+    "python3 *from json import *dump;*": ask
+
+    "python3 *<<*open(*, *\"w*": ask
+    "python3 *<<*open(*, *'w*": ask
+    "python3 *<<*open(*, *\"a*": ask
+    "python3 *<<*open(*, *'a*": ask
+    "python3 *<<*open(*, *\"x*": ask
+    "python3 *<<*open(*, *'x*": ask
+    "python3 *<<*open(*, *\"r+*": ask
+    "python3 *<<*open(*, *'r+*": ask
+    "python3 *<<*open(*mode=*\"w*": ask
+    "python3 *<<*open(*mode=*'w*": ask
+    "python3 *<<*open(*mode=*\"a*": ask
+    "python3 *<<*open(*mode=*'a*": ask
+    "python3 *<<*open(*mode=*\"x*": ask
+    "python3 *<<*open(*mode=*'x*": ask
+    "python3 *<<*open(*mode=*\"r+*": ask
+    "python3 *<<*open(*mode=*'r+*": ask
+
+    "python3 -c *open(*, *\"w*": ask
+    "python3 -c *open(*, *'w*": ask
+    "python3 -c *open(*, *\"a*": ask
+    "python3 -c *open(*, *'a*": ask
+    "python3 -c *open(*, *\"x*": ask
+    "python3 -c *open(*, *'x*": ask
+    "python3 -c *open(*, *\"r+*": ask
+    "python3 -c *open(*, *'r+*": ask
+    "python3 -c *open(*mode=*\"w*": ask
+    "python3 -c *open(*mode=*'w*": ask
+    "python3 -c *open(*mode=*\"a*": ask
+    "python3 -c *open(*mode=*'a*": ask
+    "python3 -c *open(*mode=*\"x*": ask
+    "python3 -c *open(*mode=*'x*": ask
+    "python3 -c *open(*mode=*\"r+*": ask
+    "python3 -c *open(*mode=*'r+*": ask
 ---
 
 ## Chevron Context and Onboarding
