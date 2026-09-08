@@ -43,7 +43,7 @@ readonly SOURCE_DIRS=(include src lib cmake)
 readonly IMPL_PATTERN='INCOMPLETE IMPL'
 readonly DOC_PATTERN='INCOMPLETE DOC'
 
-# List of incomplete work report sections. 
+# List of incomplete work report sections.
 # Each entry binds its header to its single criterion.
 readonly SECTIONS=(
     "INCOMPLETE SOURCE:$IMPL_PATTERN"
