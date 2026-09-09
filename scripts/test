@@ -1,0 +1,347 @@
+#!/usr/bin/env bash
+
+# -----------------------------------------------------------------------------
+# Chevron Test Runner
+#
+# Runs Chevron's CTest suite through a small, label-oriented interface. The
+# build tree is auto-detected from the generated compile_commands.json at the
+# project root, so no CMake preset needs to be supplied on the command line.
+# -----------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------
+# Strict Mode
+#          -e: Exit immediately if a command exits with a non-zero status.
+#          -u: Treat unset variables as an error.
+# -o pipefail: The return value of a pipeline is the status of the last command
+#              to exit with a non-zero status.
+# -----------------------------------------------------------------------------
+set -euo pipefail
+
+# Get the directory where this script is located
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Project root is one level above the scripts directory
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+
+# ANSI color codes for readable output
+readonly RED='\033[0;31m'
+readonly GREEN='\033[0;32m'
+readonly YELLOW='\033[1;33m'
+readonly NC='\033[0m' # No Color
+
+log_info()    { echo -e "${YELLOW}[INFO]${NC} $1" >&2; }
+log_success() { echo -e "${GREEN}[SUCCESS]${NC} $1" >&2; }
+log_error()   { echo -e "${RED}[ERROR]${NC} $1" >&2; }
+
+# Dependency Validation:
+# Fail immediately if the required tools aren't in the PATH.
+for cmd in ctest jq; do
+    if ! command -v "$cmd" &> /dev/null; then
+        log_error "Dependency missing: '$cmd' is not installed or not in PATH."
+        exit 1
+    fi
+done
+
+# -----------------------------------------------------------------------------
+# Test Category Configuration
+# -----------------------------------------------------------------------------
+
+# What `test all` runs.
+readonly ALL_CATEGORY_LABELS=("unit")
+
+# Compile-command database synced to project root.
+readonly COMPILE_COMMANDS="$PROJECT_ROOT/compile_commands.json"
+
+BUILD_DIR=""
+TEST_DIR=""
+LABEL_LIST=""
+PRESET_OVERRIDE=""
+EXCLUDE_LABELS=""
+EXCLUDE_REGEX=""
+DIR_PATH=""
+
+# --- Usage Instructions ---
+usage() {
+    cat <<'EOF'
+Usage: test <command> [options]
+
+Commands:
+  all                 Run the full suite
+  list                List all discovered tests without running them
+  labels              List the labels registered in the build tree
+  <label>             Run one registered test category (e.g. unit)
+
+Options:
+  -d, --dir <path>        Restrict to the tests/<path> directory
+  -x, --exclude <label>   Exclude a label from the run (repeatable)
+  -p, --preset <name>     Override the auto-detected build tree
+  -h, --help              Show this help
+
+Examples:
+  test unit
+  test all
+  test all --exclude stress
+  test -d unit/utility/bits
+  test list
+  test labels
+EOF
+}
+
+# Resolve the build directory from the generated compile-command database.
+detect_build_dir() {
+    if [[ ! -f "$COMPILE_COMMANDS" ]]; then
+        log_error "No 'compile_commands.json' found at the project root."
+        log_error "Configure and build a preset first (see scripts/configure and scripts/build)."
+        exit 1
+    fi
+
+    local dir
+    if ! dir="$(jq -r '.[0].directory // empty' "$COMPILE_COMMANDS" 2>/dev/null)"; then
+        log_error "Failed to parse 'compile_commands.json'. Re-run configure and build."
+        exit 1
+    fi
+
+    if [[ -z "$dir" ]]; then
+        log_error "Could not determine a build directory from 'compile_commands.json'."
+        exit 1
+    fi
+
+    BUILD_DIR="$dir"
+}
+
+# Finalize BUILD_DIR (honoring a --preset override) and verify it is a
+# configured CTest tree.
+resolve_build_dir() {
+    if [[ -n "$PRESET_OVERRIDE" ]]; then
+        BUILD_DIR="$PROJECT_ROOT/build/$PRESET_OVERRIDE"
+    else
+        detect_build_dir
+    fi
+
+    if [[ ! -f "$BUILD_DIR/CTestTestfile.cmake" ]]; then
+        log_error "No CTest configuration found in '$BUILD_DIR'."
+        log_error "Configure a test-enabled preset first (see scripts/configure)."
+        exit 1
+    fi
+
+    log_info "Using build tree: $BUILD_DIR"
+}
+
+# Compute effective test directory and verify it is a CTest tree.
+resolve_test_dir() {
+    if [[ -n "$DIR_PATH" ]]; then
+        local rel="${DIR_PATH}"
+        rel="${rel#/}"    # strip any leading slash
+        rel="${rel%/}"    # strip any trailing slash
+        [[ -n "$rel" ]] || { log_error "Option '-d' requires a directory path."; usage >&2; exit 1; }
+
+        TEST_DIR="$BUILD_DIR/tests/$rel"
+
+        if [[ ! -f "$TEST_DIR/CTestTestfile.cmake" ]]; then
+            log_error "No test directory found at 'tests/$rel'."
+            log_error "Expected a directory under the build tree's tests/ with a CTestTestfile.cmake."
+            exit 1
+        fi
+
+        log_info "Testing directory: $TEST_DIR"
+    else
+        TEST_DIR="$BUILD_DIR"
+    fi
+}
+
+# Collect the labels registered in the build tree into LABEL_LIST.
+collect_labels() {
+    LABEL_LIST=""
+    local line
+    while IFS= read -r line; do
+        LABEL_LIST+="${line}"$'\n'
+    done < <(
+        ctest --test-dir "$TEST_DIR" --show-only=json-v1 2>/dev/null \
+            | jq -r '[.tests[].properties[] | select(.name == "LABELS") | .value[]] | unique[]'
+    )
+}
+
+# Return 0 if $1 is a registered label, non-zero otherwise.
+label_exists() {
+    [[ -n "$LABEL_LIST" ]] && grep -qxF -- "$1" <<< "$LABEL_LIST"
+}
+
+# Join arguments into an anchored alternation: 'unit stress' -> '^(unit|stress)$'
+join_alternation() {
+    local IFS='|'
+    printf '^(%s)$' "$*"
+}
+
+# Validate each --exclude label and produce the -LE regex.
+validate_excludes() {
+    EXCLUDE_REGEX=""
+    if [[ -z "$EXCLUDE_LABELS" ]]; then
+        return 0
+    fi
+
+    local lbl
+    for lbl in $EXCLUDE_LABELS; do
+        if ! label_exists "$lbl"; then
+            if [[ -z "$LABEL_LIST" ]]; then
+                log_error "No tests or labels found in '$TEST_DIR'. Build the test targets first (scripts/build)."
+            else
+                log_error "\"$lbl\" is not a registered label. Run 'test labels' to see available labels."
+            fi
+            exit 1
+        fi
+    done
+
+    EXCLUDE_REGEX="$(join_alternation $EXCLUDE_LABELS)"
+}
+
+# Run ctest and propagate its exit status to the caller.
+run_ctest() {
+    set +e
+    ctest --test-dir "$TEST_DIR" "$@"
+    local status=$?
+    set -e
+    exit "$status"
+}
+
+# Parse the trailing options shared by all commands.
+# $1: 1 if --exclude is allowed (run commands), 0 otherwise.
+parse_options() {
+    local allow_exclude="$1"
+    shift
+
+    PRESET_OVERRIDE=""
+    EXCLUDE_LABELS=""
+    DIR_PATH=""
+
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            -x|--exclude)
+                [[ "$allow_exclude" == "1" ]] || { log_error "Option '$1' is only valid with 'all' or a test label."; usage >&2; exit 1; }
+                [[ $# -ge 2 ]] || { log_error "Option '$1' requires a label argument."; usage >&2; exit 1; }
+                EXCLUDE_LABELS+="${EXCLUDE_LABELS:+ }$2"
+                shift 2
+                ;;
+            -p|--preset)
+                [[ $# -ge 2 ]] || { log_error "Option '$1' requires a preset name argument."; usage >&2; exit 1; }
+                PRESET_OVERRIDE="$2"
+                shift 2
+                ;;
+            -d|--dir)
+                [[ $# -ge 2 && -n "$2" ]] || { log_error "Option '$1' requires a directory path argument."; usage >&2; exit 1; }
+                DIR_PATH="$2"
+                shift 2
+                ;;
+            -h|--help)
+                usage
+                exit 0
+                ;;
+            *)
+                log_error "Unknown option: $1"
+                usage >&2
+                exit 1
+                ;;
+        esac
+    done
+}
+
+# --- Commands ---
+
+cmd_all() {
+    parse_options 1 "$@"
+    resolve_build_dir
+    resolve_test_dir
+    collect_labels
+    validate_excludes
+
+    local args=(-L "$(join_alternation "${ALL_CATEGORY_LABELS[@]}")")
+    [[ -n "$EXCLUDE_REGEX" ]] && args+=(-LE "$EXCLUDE_REGEX")
+
+    run_ctest "${args[@]}"
+}
+
+cmd_label() {
+    local label="$1"
+    shift
+    parse_options 1 "$@"
+    resolve_build_dir
+    resolve_test_dir
+    collect_labels
+
+    if ! label_exists "$label"; then
+        if [[ -z "$LABEL_LIST" ]]; then
+            log_error "No tests or labels found in '$TEST_DIR'. Build the test targets first (scripts/build)."
+        else
+            log_error "\"$label\" is not a registered label. Run 'test labels' to see available labels."
+        fi
+        exit 1
+    fi
+
+    validate_excludes
+
+    local args=(-L "^${label}$")
+    [[ -n "$EXCLUDE_REGEX" ]] && args+=(-LE "$EXCLUDE_REGEX")
+
+    run_ctest "${args[@]}"
+}
+
+cmd_list() {
+    parse_options 0 "$@"
+    resolve_build_dir
+    resolve_test_dir
+    run_ctest -N
+}
+
+cmd_labels() {
+    parse_options 0 "$@"
+    resolve_build_dir
+    resolve_test_dir
+    collect_labels
+
+    if [[ -z "$LABEL_LIST" ]]; then
+        log_error "No labels registered in '$TEST_DIR'. Build the test targets first (scripts/build)."
+        exit 1
+    fi
+
+    printf '%s' "$LABEL_LIST"
+}
+
+# Run every test under a directory (the bare `test -d <path>` form).
+cmd_dir() {
+    [[ $# -ge 1 && -n "$1" ]] || { log_error "Option '-d' requires a directory path argument."; usage >&2; exit 1; }
+    local path="$1"
+    shift
+
+    parse_options 1 "$@"
+    DIR_PATH="$path"
+
+    resolve_build_dir
+    resolve_test_dir
+    collect_labels
+    validate_excludes
+
+    local args=()
+    [[ -n "$EXCLUDE_REGEX" ]] && args+=(-LE "$EXCLUDE_REGEX")
+
+    run_ctest "${args[@]}"
+}
+
+# --- Main entry point ---
+main() {
+    if [[ $# -eq 0 ]]; then
+        usage >&2
+        exit 1
+    fi
+
+    local command="$1"
+    shift
+
+    case "$command" in
+        all)       cmd_all "$@" ;;
+        list)      cmd_list "$@" ;;
+        labels)    cmd_labels "$@" ;;
+        -d|--dir)  cmd_dir "$@" ;;
+        -h|--help) usage; exit 0 ;;
+        *)         cmd_label "$command" "$@" ;;
+    esac
+}
+
+main "$@"

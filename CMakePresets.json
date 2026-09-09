@@ -71,7 +71,7 @@
                 "CMAKE_CXX_COMPILER": "g++",
                 "chevron_EXPORTS": "ON",
                 "CHEVRON_CLI_DEBUG": "ON",
-                "CHEVRON_UNIT_TEST": "OFF",
+                "CHEVRON_UNIT_TEST": "ON",
                 "CHEVRON_BENCHMARK": "OFF",
                 "CHEVRON_CLANG_FORMAT": "ON",
                 "CHEVRON_CLANG_TIDY": "ON"
