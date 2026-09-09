@@ -3,6 +3,9 @@
 #     /tests Directory Script
 #==================================
 
+# Enable CTest test registration
+enable_testing()
+
 include("${CHEVRON_CMAKE_MODULES_DIR}/utility/testing.cmake")
 
 if(CHEVRON_CLI_DEBUG)
