@@ -31,6 +31,8 @@ permission:
     "echo *": allow
     "cat *": allow
     "wc *": allow
+    "which *": allow
+    "stat *": allow
 
     "sed *": allow
     "sed *-i*": deny
@@ -121,6 +123,58 @@ permission:
     "git checkout *": deny
     "git switch *": deny
     "git restore *": deny
+
+    "ctest": allow
+    "ctest *": allow
+
+    "ctest *-O *": ask
+    "ctest *--output-log *": ask
+    "ctest *--output-log=*": ask
+    "ctest *--output-junit *": ask
+    "ctest *--output-junit=*": ask
+
+    "ctest *--build-and-test *": ask
+    "ctest *--build-generator *": ask
+    "ctest *--build-generator=*": ask
+    "ctest *--build-target *": ask
+    "ctest *--build-target=*": ask
+    "ctest *--build-options *": ask
+    "ctest *--test-command *": ask
+    "ctest *--test-command=*": ask
+
+    "ctest *-D *": ask
+    "ctest *--dashboard *": ask
+    "ctest *--dashboard=*": ask
+    "ctest *-M *": ask
+    "ctest *--test-model *": ask
+    "ctest *--test-model=*": ask
+    "ctest *-T *": ask
+    "ctest *--test-action *": ask
+    "ctest *--test-action=*": ask
+
+    "ctest *-S *": ask
+    "ctest *-SP *": ask
+    "ctest *--script *": ask
+    "ctest *--script=*": ask
+    "ctest *--script-new-process *": ask
+    "ctest *--script-new-process=*": ask
+
+    "ctest *--source-dir *": ask
+    "ctest *--source-dir=*": ask
+    "ctest *--overwrite *": ask
+    "ctest *--overwrite=*": ask
+    "ctest *--collect-instrumentation *": ask
+    "ctest *--collect-instrumentation=*": ask
+    "ctest *--preset *": ask
+    "ctest *--preset=*": ask
+    "ctest *--presets-file *": ask
+    "ctest *--presets-file=*": ask
+
+    "ctest *-- *": ask
+
+    "ctest *-j 0*": ask
+    "ctest *--parallel 0*": ask
+    "ctest *--parallel=0*": ask
 
     "python3 *<<*": allow
     "python3 -c *": allow
@@ -216,7 +270,7 @@ permission:
     "python3 -c *open(*mode=*'r+*": ask
 ---
 
-## Chevron Context and Onboarding
+## Chevron Context & Onboarding
 
 **Before beginning substantive work, determine whether the request requires an
 understanding of Chevron itself**.

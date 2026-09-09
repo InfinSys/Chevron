@@ -28,6 +28,8 @@ permission:
     "echo *": allow
     "cat *": allow
     "wc *": allow
+    "which *": allow
+    "stat *": allow
 
     "sed *": allow
     "sed *-i*": deny
@@ -213,7 +215,7 @@ permission:
     "python3 -c *open(*mode=*'r+*": deny
 ---
 
-## Chevron Context and Onboarding
+## Chevron Context & Onboarding
 
 **Before beginning substantive work, determine whether the request requires an
 understanding of Chevron itself**.

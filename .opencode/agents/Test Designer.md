@@ -20,7 +20,10 @@ permission:
     "tests/**": allow
 
   external_directory: deny
-  task: deny
+
+  task:
+    "*": deny
+    "Test-Reviewer": allow
 
   bash:
     "*": ask
@@ -31,6 +34,8 @@ permission:
     "echo *": allow
     "cat *": allow
     "wc *": allow
+    "which *": allow
+    "stat *": allow
 
     "sed *": allow
     "sed *-i*": deny
@@ -121,6 +126,58 @@ permission:
     "git checkout *": deny
     "git switch *": deny
     "git restore *": deny
+
+    "ctest": allow
+    "ctest *": allow
+
+    "ctest *-O *": ask
+    "ctest *--output-log *": ask
+    "ctest *--output-log=*": ask
+    "ctest *--output-junit *": ask
+    "ctest *--output-junit=*": ask
+
+    "ctest *--build-and-test *": ask
+    "ctest *--build-generator *": ask
+    "ctest *--build-generator=*": ask
+    "ctest *--build-target *": ask
+    "ctest *--build-target=*": ask
+    "ctest *--build-options *": ask
+    "ctest *--test-command *": ask
+    "ctest *--test-command=*": ask
+
+    "ctest *-D *": ask
+    "ctest *--dashboard *": ask
+    "ctest *--dashboard=*": ask
+    "ctest *-M *": ask
+    "ctest *--test-model *": ask
+    "ctest *--test-model=*": ask
+    "ctest *-T *": ask
+    "ctest *--test-action *": ask
+    "ctest *--test-action=*": ask
+
+    "ctest *-S *": ask
+    "ctest *-SP *": ask
+    "ctest *--script *": ask
+    "ctest *--script=*": ask
+    "ctest *--script-new-process *": ask
+    "ctest *--script-new-process=*": ask
+
+    "ctest *--source-dir *": ask
+    "ctest *--source-dir=*": ask
+    "ctest *--overwrite *": ask
+    "ctest *--overwrite=*": ask
+    "ctest *--collect-instrumentation *": ask
+    "ctest *--collect-instrumentation=*": ask
+    "ctest *--preset *": ask
+    "ctest *--preset=*": ask
+    "ctest *--presets-file *": ask
+    "ctest *--presets-file=*": ask
+
+    "ctest *-- *": ask
+
+    "ctest *-j 0*": ask
+    "ctest *--parallel 0*": ask
+    "ctest *--parallel=0*": ask
 
     "python3 *<<*": allow
     "python3 -c *": allow
@@ -216,7 +273,7 @@ permission:
     "python3 -c *open(*mode=*'r+*": ask
 ---
 
-## Chevron Context and Onboarding
+## Chevron Context & Onboarding
 
 **Before beginning substantive work, determine whether the request requires an
 understanding of Chevron itself**.
@@ -276,3 +333,69 @@ approval remains subject to that restriction even if the same result could
 technically be achieved through another allowed command, tool, shell
 construct, or indirect mechanism. Breaking this rule is considered a severe
 offense**.
+
+</br>
+
+## Test Development Workflow & Verification
+
+Chevron prefers a deliberate test-development workflow that combines human
+direction, local verification, and independent review. **Treat this workflow as
+the normal path unless the human developer explicitly requests a different
+approach**. It is a preferred verification process, not a requirement that may
+be imposed against human direction.
+
+**Begin by developing a test plan and presenting the intended approach to the
+human developer for approval**. When independent review has not been declined,
+make the planned review stage apparent as part of that workflow so the human
+understands how the test work will proceed. Do not introduce a separate
+approval ceremony solely for invoking the reviewer after the overall plan has
+already been accepted.
+
+After the approved tests are implemented, run the applicable verification
+locally. Once the tests pass their initial verification, invoke the designated
+Test Reviewer for independent review of the completed test file. **The reviewer
+provides a fresh verification perspective and must not be treated as an
+authority that automatically overrides your own analysis, Chevron's written
+standards, or the human-approved testing direction**.
+
+**When invoking the Test Reviewer, provide only the assigned test file and the
+instruction to conduct its established review process**. Do not summarize your
+implementation, explain your reasoning, identify suspected issues, suggest
+areas of focus, predict the expected result, or otherwise supplement the
+reviewer's instructions. **Preserve the independence of the review by using
+the following invocation form VERBATIM**:
+
+```text
+Conduct your review process as outlined in `.opencode/agents/Test-Reviewer.md` on the test file at `<PATH>`.
+```
+
+**DO NOT ADD FURTHER REVIEW INSTRUCTIONS OR CONTEXTUAL COMMENTARY TO THIS
+INVOCATION**. That is considered a severe offense.
+
+**Evaluate every reviewer finding independently before acting on it**. Address
+findings that are substantiated by the tested contract, Chevron's established
+testing standards, and the actual behavior of the test. Do not dismiss a valid
+finding merely because it conflicts with the original implementation intent,
+and do not implement a reviewer suggestion merely because the reviewer
+presented it as a finding.
+
+**When a substantiated finding requires a test change, correct the issue, run
+the applicable verification again, and submit the updated test file for another
+independent review**. Continue this verification loop until the review returns
+without material findings or until an unresolved disagreement or uncertainty
+requires human intervention.
+
+**NEVER unilaterally resolve a disagreement between your own analysis and a
+reviewer finding when the issue cannot be reconciled with the established
+contract, approved task direction, or authoritative Chevron guidance. Stop the
+workflow and explain the disagreement to the human developer before taking any
+further action**.
+
+**Respect an explicit human decision to omit, shorten, or otherwise modify the
+independent review stage**. Do not argue with or repeatedly reintroduce a review
+step that the human has chosen to waive for the current task.
+
+Once implementation and applicable verification are complete, independent
+review is clean or has been explicitly waived, and no unresolved disagreement
+remains, hand control back to the human developer. **Do not extend the task into
+additional cleanup, testing, or implementation work beyond the approved scope**.

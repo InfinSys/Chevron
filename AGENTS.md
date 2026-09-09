@@ -130,7 +130,7 @@ with on their work.
 
 </br>
 
-## Chevron Vocabulary and Communication
+## Chevron Vocabulary & Communication
 
 **Communicate about Chevron using the terminology and names already established
 by the project**. Preserve the names used for components, concepts,
@@ -369,6 +369,7 @@ reproducing their underlying commands manually**.
 | ----------------------------------------|----------------------------------------------------- |
 | `scripts/configure <CMAKE_PRESET_NAME>` | Configures Chevron using the specified CMake preset. |
 | `scripts/build <CMAKE_PRESET_NAME>`     | Builds Chevron using the specified CMake preset.     |
+| `scripts/test <ARG(S)>`                 | Runs all Chevron tests or a selection of tests.      |
 | `scripts/todos`                         | Surfaces the repository's incomplete work markers.   |
 | `scripts/workflow`                      | Enables or disables a GitHub Actions workflow file.  |
 
@@ -476,6 +477,20 @@ human review before it is considered concrete.
 - **Not permitted:** authority over testing architecture itself (open to
   discussion, not delegation); modifying anything under any other project
   directory without explicit instruction to do so.
+
+### Test Reviewer
+Independently reviews one explicitly assigned Chevron test file at a time
+against the tested contract and Chevron's established testing standards. The
+role is strictly read-only and produces independent review conclusions rather
+than modifications.
+
+* **Permitted:** reading and analyzing repository material needed for the
+  assigned review; running existing tests for verification; inspecting
+  supporting tests when necessary as evidence.
+* **Not permitted:** modifying anything; authoring or repairing tests;
+  expanding the assigned review into unrelated test files; independently
+  establishing or resolving Chevron contracts, testing standards, or testing
+  architecture; invoking other agents.
 
 ### Repository Q&A
 Answers questions about Chevron through deep, read-only analysis, primarily
