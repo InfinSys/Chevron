@@ -37,6 +37,15 @@ permission:
     "which *": allow
     "stat *": allow
 
+    "scripts/todos": allow
+    "./scripts/todos": allow
+    "scripts/test *": allow
+    "./scripts/test *": allow
+    "scripts/build *": allow
+    "./scripts/build *": allow
+    "scripts/configure *": allow
+    "./scripts/configure *": allow
+
     "sed *": allow
     "sed *-i*": deny
     "sed *--in-place*": deny
