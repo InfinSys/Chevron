@@ -54,10 +54,12 @@ readonly COMPILE_COMMANDS="$PROJECT_ROOT/compile_commands.json"
 BUILD_DIR=""
 TEST_DIR=""
 LABEL_LIST=""
+TEST_LIST=""
 PRESET_OVERRIDE=""
 EXCLUDE_LABELS=""
 EXCLUDE_REGEX=""
 DIR_PATH=""
+TEST_NAME=""
 
 # --- Usage Instructions ---
 usage() {
@@ -72,6 +74,7 @@ Commands:
 
 Options:
   -d, --dir <path>        Restrict to the tests/<path> directory
+  -n, --name <name>       Run the single named test (requires --dir)
   -x, --exclude <label>   Exclude a label from the run (repeatable)
   -p, --preset <name>     Override the auto-detected build tree
   -h, --help              Show this help
@@ -79,10 +82,11 @@ Options:
 Examples:
   test unit
   test all
-  test all --exclude stress
-  test -d unit/utility/bits
   test list
   test labels
+  test all --exclude stress
+  test -d unit/utility/bits
+  test -d unit/utility/bits -n <SUITE_NAME>.<TEST_NAME>
 EOF
 }
 
@@ -165,10 +169,33 @@ label_exists() {
     [[ -n "$LABEL_LIST" ]] && grep -qxF -- "$1" <<< "$LABEL_LIST"
 }
 
+# Collect the test names registered in the effective test directory into
+# TEST_LIST (one per line).
+collect_test_names() {
+    TEST_LIST=""
+    local line
+    while IFS= read -r line; do
+        TEST_LIST+="${line}"$'\n'
+    done < <(
+        ctest --test-dir "$TEST_DIR" --show-only=json-v1 2>/dev/null \
+            | jq -r '.tests[].name'
+    )
+}
+
+# Return 0 if $1 is a registered test name, non-zero otherwise.
+test_exists() {
+    [[ -n "$TEST_LIST" ]] && grep -qxF -- "$1" <<< "$TEST_LIST"
+}
+
 # Join arguments into an anchored alternation: 'unit stress' -> '^(unit|stress)$'
 join_alternation() {
     local IFS='|'
     printf '^(%s)$' "$*"
+}
+
+# Escape regex metacharacters so a test name matches literally.
+escape_regex() {
+    sed 's/[.[\*^$()+?{|]/\\&/g' <<< "$1"
 }
 
 # Validate each --exclude label and produce the -LE regex.
@@ -204,13 +231,16 @@ run_ctest() {
 
 # Parse the trailing options shared by all commands.
 # $1: 1 if --exclude is allowed (run commands), 0 otherwise.
+# $2: 1 if --name is allowed (the bare -d form), 0 otherwise.
 parse_options() {
     local allow_exclude="$1"
-    shift
+    local allow_name="$2"
+    shift 2
 
     PRESET_OVERRIDE=""
     EXCLUDE_LABELS=""
     DIR_PATH=""
+    TEST_NAME=""
 
     while [[ $# -gt 0 ]]; do
         case "$1" in
@@ -230,6 +260,12 @@ parse_options() {
                 DIR_PATH="$2"
                 shift 2
                 ;;
+            -n|--name)
+                [[ "$allow_name" == "1" ]] || { log_error "Option '$1' requires the '--dir' option."; usage >&2; exit 1; }
+                [[ $# -ge 2 && -n "$2" ]] || { log_error "Option '$1' requires a test name argument."; usage >&2; exit 1; }
+                TEST_NAME="$2"
+                shift 2
+                ;;
             -h|--help)
                 usage
                 exit 0
@@ -246,7 +282,7 @@ parse_options() {
 # --- Commands ---
 
 cmd_all() {
-    parse_options 1 "$@"
+    parse_options 1 0 "$@"
     resolve_build_dir
     resolve_test_dir
     collect_labels
@@ -261,7 +297,7 @@ cmd_all() {
 cmd_label() {
     local label="$1"
     shift
-    parse_options 1 "$@"
+    parse_options 1 0 "$@"
     resolve_build_dir
     resolve_test_dir
     collect_labels
@@ -284,14 +320,14 @@ cmd_label() {
 }
 
 cmd_list() {
-    parse_options 0 "$@"
+    parse_options 0 0 "$@"
     resolve_build_dir
     resolve_test_dir
     run_ctest -N
 }
 
 cmd_labels() {
-    parse_options 0 "$@"
+    parse_options 0 0 "$@"
     resolve_build_dir
     resolve_test_dir
     collect_labels
@@ -304,24 +340,56 @@ cmd_labels() {
     printf '%s' "$LABEL_LIST"
 }
 
-# Run every test under a directory (the bare `test -d <path>` form).
+# Run every test under a directory (the bare `test -d <path>` form), or a
+# single named test when -n is given.
 cmd_dir() {
     [[ $# -ge 1 && -n "$1" ]] || { log_error "Option '-d' requires a directory path argument."; usage >&2; exit 1; }
     local path="$1"
     shift
 
-    parse_options 1 "$@"
+    parse_options 1 1 "$@"
     DIR_PATH="$path"
+
+    if [[ -n "$TEST_NAME" && -n "$EXCLUDE_LABELS" ]]; then
+        log_error "Option '--name' cannot be combined with '--exclude'."
+        usage >&2
+        exit 1
+    fi
 
     resolve_build_dir
     resolve_test_dir
-    collect_labels
-    validate_excludes
 
-    local args=()
-    [[ -n "$EXCLUDE_REGEX" ]] && args+=(-LE "$EXCLUDE_REGEX")
+    if [[ -n "$TEST_NAME" ]]; then
+        run_named_test "$TEST_NAME"
+    else
+        collect_labels
+        validate_excludes
 
-    run_ctest "${args[@]}"
+        local args=()
+        [[ -n "$EXCLUDE_REGEX" ]] && args+=(-LE "$EXCLUDE_REGEX")
+
+        run_ctest "${args[@]}"
+    fi
+}
+
+# Validate and run the single test named $1 within the scoped directory.
+run_named_test() {
+    local name="$1"
+
+    collect_test_names
+    if ! test_exists "$name"; then
+        if [[ -z "$TEST_LIST" ]]; then
+            log_error "No tests found in '$TEST_DIR'. Build the test targets first (scripts/build)."
+        else
+            log_error "\"$name\" does not match any test in '$TEST_DIR'."
+            log_error "Run 'test list -d <path>' to see available test names."
+        fi
+        exit 1
+    fi
+
+    local regex
+    regex="$(escape_regex "$name")"
+    run_ctest -R "^${regex}$"
 }
 
 # --- Main entry point ---
@@ -339,6 +407,7 @@ main() {
         list)      cmd_list "$@" ;;
         labels)    cmd_labels "$@" ;;
         -d|--dir)  cmd_dir "$@" ;;
+        -n|--name) log_error "The '--name' option requires the '--dir' option."; usage >&2; exit 1 ;;
         -h|--help) usage; exit 0 ;;
         *)         cmd_label "$command" "$@" ;;
     esac
