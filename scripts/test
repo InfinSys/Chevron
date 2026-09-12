@@ -74,7 +74,7 @@ Commands:
 
 Options:
   -d, --dir <path>        Restrict to the tests/<path> directory
-  -n, --name <name>       Run the single named test (requires --dir)
+  -n, --name <name>       Run a test or suite by name (requires --dir)
   -x, --exclude <label>   Exclude a label from the run (repeatable)
   -p, --preset <name>     Override the auto-detected build tree
   -h, --help              Show this help
@@ -86,6 +86,7 @@ Examples:
   test labels
   test all --exclude stress
   test -d unit/utility/bits
+  test -d unit/utility/bits -n <SUITE_NAME>
   test -d unit/utility/bits -n <SUITE_NAME>.<TEST_NAME>
 EOF
 }
@@ -185,6 +186,11 @@ collect_test_names() {
 # Return 0 if $1 is a registered test name, non-zero otherwise.
 test_exists() {
     [[ -n "$TEST_LIST" ]] && grep -qxF -- "$1" <<< "$TEST_LIST"
+}
+
+# Return 0 if $1 names a registered suite (prefix of at least one test).
+suite_exists() {
+    [[ -n "$TEST_LIST" ]] && grep -qE "^$(escape_regex "$1")\." <<< "$TEST_LIST"
 }
 
 # Join arguments into an anchored alternation: 'unit stress' -> '^(unit|stress)$'
@@ -372,24 +378,29 @@ cmd_dir() {
     fi
 }
 
-# Validate and run the single test named $1 within the scoped directory.
+# Validate and run the single test named $1 within the scoped directory, or
+# the entire suite when $1 names a registered suite.
 run_named_test() {
     local name="$1"
 
     collect_test_names
-    if ! test_exists "$name"; then
+
+    local regex
+    if test_exists "$name"; then
+        regex="^$(escape_regex "$name")$"          # a single registered test
+    elif suite_exists "$name"; then
+        regex="^$(escape_regex "$name")\."         # the entire registered suite
+    else
         if [[ -z "$TEST_LIST" ]]; then
             log_error "No tests found in '$TEST_DIR'. Build the test targets first (scripts/build)."
         else
-            log_error "\"$name\" does not match any test in '$TEST_DIR'."
+            log_error "\"$name\" does not match any test or suite in '$TEST_DIR'."
             log_error "Run 'test list -d <path>' to see available test names."
         fi
         exit 1
     fi
 
-    local regex
-    regex="$(escape_regex "$name")"
-    run_ctest -R "^${regex}$"
+    run_ctest -R "$regex"
 }
 
 # --- Main entry point ---
