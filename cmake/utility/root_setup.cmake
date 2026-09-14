@@ -58,3 +58,23 @@ macro(setup_clang_tidy_target)
         endif()
     endif()
 endmacro()
+
+# Sync compile_commands.json to project root for LSP and tooling support
+macro(setup_compile_commands_sync)
+    if(CMAKE_EXPORT_COMPILE_COMMANDS)
+        message(STATUS "${CMAKE_PROJECT_NAME} compile commands sync - enabled")
+
+        add_custom_target(
+            compile_commands
+            ALL  # Run target command every build
+
+            COMMAND
+              ${CMAKE_COMMAND} -E copy_if_different
+              ${CMAKE_BINARY_DIR}/compile_commands.json
+              ${CMAKE_SOURCE_DIR}/compile_commands.json
+
+            COMMENT "Syncing compile_commands.json to project root..."
+            VERBATIM
+        )
+    endif()
+endmacro()
