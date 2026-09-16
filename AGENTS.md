@@ -344,6 +344,28 @@ used for performance measurement. The detailed testing architecture, directory
 organization, conventions, and verification requirements will be established as
 Chevron's testing infrastructure develops.
 
+
+
+### Running Tests
+**Chevron tests should always be run through the repository's `scripts/test`
+script**. This is the project's test execution interface and should be used
+whether running the complete test suite or a selected subset of tests.
+
+```bash
+./scripts/test <ARG(S)>
+```
+
+Agents should not invoke individual test executables, GoogleTest, CTest, Google
+Benchmark, or other underlying testing commands directly merely as an alternative
+to using the script. `scripts/test` centralizes the project-specific details
+required to locate and run Chevron's tests correctly.
+
+Direct interaction with the underlying testing tools is permitted only when
+`scripts/test` cannot support something genuinely required by the task. Such
+use should be exceptional and limited to the unsupported operation rather than
+replacing the normal test-running workflow.
+
+
 ### Developer Sandbox
 Chevron provides `devexe` as a developer sandbox executable for manually
 exercising the library during development. It is built from
