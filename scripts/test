@@ -70,6 +70,7 @@ Commands:
   all                 Run the full suite
   list                List all discovered tests without running them
   labels              List the labels registered in the build tree
+  dev                 Run the `devexe` developer sandbox executable
   <label>             Run one registered test category (e.g. unit)
 
 Options:
@@ -84,6 +85,7 @@ Examples:
   test all
   test list
   test labels
+  test dev
   test all --exclude stress
   test -d unit/utility/bits
   test -d unit/utility/bits -n <SUITE_NAME>
@@ -235,6 +237,15 @@ run_ctest() {
     exit "$status"
 }
 
+# Run the devexe executable and propagate its exit status to the caller.
+run_devexe() {
+    set +e
+    "$@"
+    local status=$?
+    set -e
+    exit "$status"
+}
+
 # Parse the trailing options shared by all commands.
 # $1: 1 if --exclude is allowed (run commands), 0 otherwise.
 # $2: 1 if --name is allowed (the bare -d form), 0 otherwise.
@@ -346,6 +357,23 @@ cmd_labels() {
     printf '%s' "$LABEL_LIST"
 }
 
+# Run the devexe developer sandbox executable from the build tree.
+cmd_dev() {
+    parse_options 0 0 "$@"
+    [[ -z "$DIR_PATH" ]] || { log_error "Option '--dir' is not valid with 'dev'."; usage >&2; exit 1; }
+
+    resolve_build_dir
+
+    local exe="$BUILD_DIR/tests/cli/devexe"
+    if [[ ! -x "$exe" ]]; then
+        log_error "No 'devexe' executable found at 'tests/cli/devexe' in the build tree."
+        log_error "Enable CHEVRON_CLI_DEBUG and build the targets first (scripts/build)."
+        exit 1
+    fi
+
+    run_devexe "$exe"
+}
+
 # Run every test under a directory (the bare `test -d <path>` form), or a
 # single named test when -n is given.
 cmd_dir() {
@@ -417,6 +445,7 @@ main() {
         all)       cmd_all "$@" ;;
         list)      cmd_list "$@" ;;
         labels)    cmd_labels "$@" ;;
+        dev)       cmd_dev "$@" ;;
         -d|--dir)  cmd_dir "$@" ;;
         -n|--name) log_error "The '--name' option requires the '--dir' option."; usage >&2; exit 1 ;;
         -h|--help) usage; exit 0 ;;
