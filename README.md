@@ -40,7 +40,7 @@
 
 > [!WARNING] <!--| GitHub Notice: Early Development |-->
 > <h3>
->    Chevron is in active early development. The API is unstable and breaking changes should be expected. This library is not yet suitable for production code!
+>    Chevron is in active early development, the API is unstable and breaking changes should be expected. This library is not yet suitable for production code.
 > </h3>
 
 </br>
@@ -51,10 +51,10 @@
         <strong>Chevron is GUI application <em>infrastructure</em>,</strong>
     </h3>
     <h3>
-        <strong>not a GUI framework abstraction</strong>
+        <strong>NOT a GUI framework abstraction</strong>
     </h3>
     <p>
-        It <strong>does NOT unify GUI frameworks behind a portable interface</strong> and it <strong>does NOT introduce an explicit widget layer of its own</strong>. A Chevron user
+        It <strong>does not unify GUI frameworks behind a portable interface</strong> and it <strong>does not introduce an explicit widget layer of its own</strong>. A Chevron user
         picks exactly one GUI framework, includes it directly, and writes GUI code similar to how they typically would. What changes is the structural environment that code lives
         inside (<em>the parts of the application that aren't about the GUI but are around it</em>).
     </p>
