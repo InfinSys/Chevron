@@ -165,7 +165,7 @@ ENTRY_POINT_METHOD_SIGNATURE {
 
 </br>
 
-<h2>Planned GUI Framework Support</h2>
+<h2>GUI Framework Support</h2>
 <div align="center">
     <h3>
         <a href="https://wxwidgets.org/">
@@ -173,6 +173,9 @@ ENTRY_POINT_METHOD_SIGNATURE {
         </a>
         <a href="https://www.qt.io/development/qt-framework">
             <img height="100" alt="Qt logo" src="https://github.com/user-attachments/assets/82e83826-8257-4458-8e69-e38c6b9fb85e" />
+        </a>
+        <a href="https://www.glfw.org/">
+            <img height="100" alt="GLFW logo" src="https://github.com/user-attachments/assets/6577b081-c24b-464d-b489-a9939ca79157" />
         </a>
     </h3>
 </div></br>
