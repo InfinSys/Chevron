@@ -165,11 +165,15 @@ ENTRY_POINT_METHOD_SIGNATURE {
 
 </br>
 
-<div>
-    <h2>Planned GUI Framework Support</h2>
+<h2>Planned GUI Framework Support</h2>
+<div align="center">
     <h3>
-        <a href="https://wxwidgets.org/">wxWidgets</a> |
-        <a href="https://www.qt.io/development/qt-framework">Qt Framework</a>
+        <a href="https://wxwidgets.org/">
+            <img height="100" alt="wxWidgets logo" src="https://github.com/user-attachments/assets/16b574fd-02bb-4a96-971a-9d3ff0ef2544" />
+        </a>
+        <a href="https://www.qt.io/development/qt-framework">
+            <img height="100" alt="Qt logo" src="https://github.com/user-attachments/assets/82e83826-8257-4458-8e69-e38c6b9fb85e" />
+        </a>
     </h3>
 </div></br>
 
