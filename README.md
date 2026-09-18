@@ -86,8 +86,8 @@
         Every Chevron application is structured around a single <code>AppProcess</code> at its root. <code>AppProcess</code> owns the <code>GUIEngine</code>, an abstraction whose
         concrete implementation matches the user's chosen GUI framework. The GUI engine hosts Chevron's windowing infrastructure: a dispatcher that creates windows, a coordinator
         that manages them once they exist, and a windowing subsystem that surfaces these components together as a coherent user-facing API. Live windows are represented by
-        <code>WindowEnvelope</code> instances held by the coordinator, each carrying its own per-window infrastructure (<strong><em>PWI</em></strong>). The application's behavior
-        lives inside those windows, where the user writes code against the chosen GUI framework directly.
+        <code>WindowEnvelope</code> instances held by the coordinator, each carrying its own <strong>per-window infrastructure</strong> (<em>PWI</em>). The application's behavior
+        lives inside those windows, where the user writes code against the chosen GUI framework directly, and additionally inside their associated PWI components.
     </p>
     <img width="3334" height="2500" alt="App_Structure_Relationship_003" src="https://github.com/user-attachments/assets/b612df88-4ea1-4a4a-9c02-22fe7c0356b3" />
     <p align="center"><em>( diagram showcasing high-level GUI application structure )</em></p></br>
