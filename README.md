@@ -81,7 +81,7 @@
     </p>
     <img width="2917" height="1250" alt="Chevron three-tier-lifetime hierarchy diagram" src="https://github.com/user-attachments/assets/2febb3cf-b431-48dd-bd0e-d848cf322d89" />
     <p align="center"><em>( diagram showcasing major system component lifetime tiers )</em></p></br>
-    <h2><em>Chevron Application Structure</em></h2>
+    <h2><em>Application Windowing Structure</em></h2>
     <p>
         Every Chevron application is structured around a single <code>AppProcess</code> at its root. <code>AppProcess</code> owns the <code>GUIEngine</code>, an abstraction whose
         concrete implementation matches the user's chosen GUI framework. The GUI engine hosts Chevron's windowing infrastructure: a dispatcher that creates windows, a coordinator
