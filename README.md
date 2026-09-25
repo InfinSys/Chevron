@@ -25,13 +25,14 @@
 <div>
     <h1><em>What is this?</em></h1>
     <p>
-        Every C++ GUI application has to settle the same foundational details before it can really begin: how memory is structured, how concurrent threads of execution are managed,
-        how windows are handled, how dynamic UI views work, and more. None of this is the application <em>itself</em>, yet it is crucial to the applications functionality.
+        Every C++ GUI application has to settle the same foundational details before real development can begin: how memory is structured, how concurrent threads of
+        execution are managed, how windows are handled, how dynamic UI views work, and more. None of this is the application <em>itself</em>, yet it is crucial to the
+        applications functionality.
     </p>
     <p>
         <strong>
-        Chevron is a C++20 GUI application infrastructure library that owns the mechanics of a modern GUI application (<em>process lifetime, window scaffolding, dynamic view handling,
-        thread infrastructure, etc.</em>) so user code can focus on the application itself, written directly against the GUI framework the user chose.
+        Chevron is a C++20 GUI application infrastructure library that owns the mechanics of a modern GUI application (<em>process lifetime, window scaffolding, dynamic view
+        handling, thread infrastructure, etc.</em>) so user code can focus on the application itself, written directly against the GUI framework the user chose.
         </strong>
     </p></br>
     <img width="3334" height="2500" alt="Diagram visually conveying components Chevron provides downstream applications" src="https://github.com/user-attachments/assets/d9de4367-a9ad-4a0b-ba03-d89f9c4af8a9" />
@@ -54,9 +55,9 @@
         <strong>NOT a GUI framework abstraction</strong>
     </h3>
     <p>
-        It <strong>does not unify GUI frameworks behind a portable interface</strong> and it <strong>does not introduce an explicit widget layer of its own</strong>. A Chevron user
-        picks exactly one GUI framework, includes it directly, and writes GUI code similar to how they typically would. What changes is the structural environment that code lives
-        inside (<em>the parts of the application that aren't about the GUI but are around it</em>).
+        It <strong>does not unify GUI frameworks behind a portable interface</strong> and it <strong>does not introduce an explicit widget layer of its own</strong>. A
+        Chevron user picks exactly one GUI framework, includes it directly, and writes GUI code similar to how they typically would. What changes is the structural
+        environment that code lives inside (<em>the parts of the application that aren't about the GUI but are around it</em>).
     </p>
 </div></br>
 
@@ -67,9 +68,9 @@
     </h4>
     <p>
         Chevron remains free and open source software. Anyone may use Chevron, including as infrastructure for proprietary and commercial applications, without Chevron imposing
-        licensing terms upon independently authored downstream application code. When covered Chevron source code is modified and distributed, <strong>those modifications must remain
-        available under Chevron's open-source license</strong>. Chevron's license does not require downstream applications to disclose unrelated source code, permit relinking or
-        substitution of modified Chevron binaries, or otherwise surrender control over the integrity and deployment of the downstream applications own product.
+        licensing terms upon independently authored downstream application code. When covered Chevron source code is modified and distributed, <strong>those modifications must
+        remain available under Chevron's open-source license</strong>. Chevron's license does not require downstream applications to disclose unrelated source code, permit
+        relinking or substitution of modified Chevron binaries, or otherwise surrender control over the integrity and deployment of the downstream applications own product.
     </p>
 </div></br>
 
@@ -104,8 +105,8 @@
 <p>
     Chevron applications are bootstrapped from the users own <code>main()</code> entry point. During this stage, the process is tailor configured to the applications profile, a GUI
     engine is prepared for the users chosen framework, and window factories are registered to declare initial window intent. Once setup work is complete on the GUI engine, it can
-    then be handed off to <code>AppProcess</code> to enter application runtime under Chevron's direction. The bootstrapping phase is also the ideal opportunity to conduct any necessary
-    pre-launch work.
+    then be handed off to <code>AppProcess</code> to enter application runtime under Chevron's direction. The bootstrapping phase is also the ideal opportunity to conduct any
+    necessary pre-launch work.
 </p>
 
 > [!NOTE] <!--| GitHub Notice: Early Development |-->
