@@ -176,13 +176,13 @@ ENTRY_POINT_METHOD_SIGNATURE {
 <div align="center">
     <h3>
         <a href="https://wxwidgets.org/">
-            <img height="100" alt="wxWidgets logo" src="https://github.com/user-attachments/assets/16b574fd-02bb-4a96-971a-9d3ff0ef2544" />
+            <img height="75" alt="wxWidgets logo" src="https://github.com/user-attachments/assets/16b574fd-02bb-4a96-971a-9d3ff0ef2544" />
         </a>
         <a href="https://www.qt.io/development/qt-framework">
-            <img height="100" alt="Qt logo" src="https://github.com/user-attachments/assets/82e83826-8257-4458-8e69-e38c6b9fb85e" />
+            <img height="75" alt="Qt logo" src="https://github.com/user-attachments/assets/82e83826-8257-4458-8e69-e38c6b9fb85e" />
         </a>
         <a href="https://www.glfw.org/">
-            <img height="100" alt="GLFW logo" src="https://github.com/user-attachments/assets/6577b081-c24b-464d-b489-a9939ca79157" />
+            <img height="75" alt="GLFW logo" src="https://github.com/user-attachments/assets/6577b081-c24b-464d-b489-a9939ca79157" />
         </a>
     </h3>
 </div></br>
