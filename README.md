@@ -97,7 +97,7 @@
         lives inside those windows, where the user writes code against the chosen GUI framework directly, and additionally inside their associated PWI components.
     </p>
     <img width="3334" height="2500" alt="App_Structure_Relationship_003" src="https://github.com/user-attachments/assets/b612df88-4ea1-4a4a-9c02-22fe7c0356b3" />
-    <p align="center"><em>( diagram of high-level application window structure )</em></p></br>
+    <p align="center"><em>( high-level diagram of application window structure )</em></p></br>
 </div></br>
 
 <h1>Conceptual Chevron Usage</h1>
