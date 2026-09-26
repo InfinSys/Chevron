@@ -87,7 +87,7 @@
         lives somewhere inside this nesting.
     </p>
     <img width="2917" height="1250" alt="Chevron three-tier-lifetime hierarchy diagram" src="https://github.com/user-attachments/assets/2febb3cf-b431-48dd-bd0e-d848cf322d89" />
-    <p align="center"><em>( diagram showcasing major system component lifetime tiers )</em></p></br>
+    <p align="center"><em>( diagram of major system component lifetime tiers )</em></p></br>
     <h2><em>Application Windowing Structure</em></h2>
     <p>
         Every Chevron application is structured around a single <code>AppProcess</code> at its root. <code>AppProcess</code> owns the <code>GUIEngine</code>, an abstraction whose
@@ -97,7 +97,7 @@
         lives inside those windows, where the user writes code against the chosen GUI framework directly, and additionally inside their associated PWI components.
     </p>
     <img width="3334" height="2500" alt="App_Structure_Relationship_003" src="https://github.com/user-attachments/assets/b612df88-4ea1-4a4a-9c02-22fe7c0356b3" />
-    <p align="center"><em>( diagram showcasing high-level GUI application structure )</em></p></br>
+    <p align="center"><em>( diagram of high-level application window structure )</em></p></br>
 </div></br>
 
 <h1>Conceptual Chevron Usage</h1>
