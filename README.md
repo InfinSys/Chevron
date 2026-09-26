@@ -68,9 +68,9 @@
     </h4>
     <p>
         Chevron remains free and open source software. Anyone may use Chevron, including as infrastructure for proprietary and commercial applications, without Chevron imposing
-        licensing terms upon independently authored downstream application code. When covered Chevron source code is modified and distributed, <strong>those modifications must
+        licensing terms on independently authored downstream application code. When covered Chevron source code is modified and distributed, <strong>those modifications must
         remain available under Chevron's open-source license</strong>. Chevron's license does not require downstream applications to disclose unrelated source code, permit
-        relinking or substitution of modified Chevron binaries, or otherwise surrender control over the integrity and deployment of the downstream applications own product.
+        substitution of modified Chevron binaries, or otherwise surrender control over the integrity and deployment of the downstream applications own product.
     </p>
 </div></br>
 
