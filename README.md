@@ -64,7 +64,7 @@
 <div>
     <h1>License Notice</h1>
     <h4>
-        Chevron is released under the terms of Mozilla Public License 2.0. See <a href="https://github.com/InfinSys/Chevron/blob/v0.x/LICENSE">LICENSE</a> for the full text.
+        Chevron is released under the terms of the Mozilla Public License version 2.0. See <a href="https://github.com/InfinSys/Chevron/blob/v0.x/LICENSE">LICENSE</a> for the full text.
     </h4>
     <p>
         Chevron remains free and open source software. Anyone may use Chevron, including as infrastructure for proprietary and commercial applications, without Chevron imposing
