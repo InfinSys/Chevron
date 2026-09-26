@@ -23,6 +23,9 @@ docs/prj/*.dtmp
 build/*
 install/*
 
+# Ignore generated artifacts
+compile_commands.json
+
 # Ignore generated sources
 lib/include/chevron_meta/info.h
 lib/include/chevron_meta/version.h

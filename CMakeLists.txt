@@ -38,6 +38,7 @@ if (${CMAKE_PROJECT_NAME}_IS_TOP_LEVEL)
 
     # Include root CML helper module
     include(cmake/utility/root_setup.cmake)
+    setup_compile_commands_sync()
     setup_testing_dependencies()
     setup_clang_format_target()
     setup_clang_tidy_target()
