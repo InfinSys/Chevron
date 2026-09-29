@@ -1,25 +1,49 @@
 #!/bin/bash
 
+# The first non-flag argument is the CMake preset;
+CMAKE_PRESET=""
+VERBOSE=0
+
+for arg in "$@"; do
+    case "$arg" in
+        -v|verbose)
+            VERBOSE=1
+            ;;
+        *)
+            if [ -z "$CMAKE_PRESET" ]; then
+                CMAKE_PRESET="$arg"
+            fi
+            ;;
+    esac
+done
+
 # Check for missing CMake preset name argument
-if [ -z "$1" ]; then
+if [ -z "$CMAKE_PRESET" ]; then
     echo ""
     echo "Error: No CMake preset provided."
     echo ""
-    echo "Usage: $(basename "$0") <cmake_preset>"
+    echo "Usage: $(basename "$0") <cmake_preset> [-v|verbose]"
     echo ""
     echo "Examples:"
     echo "  $(basename "$0") linux-x64-gcc-debug"
     echo "  $(basename "$0") macos-arm64-clang-release"
+    echo "  $(basename "$0") linux-x64-gcc-debug -v"
+    echo ""
+    echo "  -v, verbose  Print every compiler step on its own line instead"
+    echo "               of Ninja's in-place terminal status updates."
     echo ""
     exit 1
 fi
 
-CMAKE_PRESET="$1"
-
 # Change to project root directory
 cd "$(dirname "$0")/.." || exit 1
 
-cmake --build --preset "$CMAKE_PRESET"
+if [ "$VERBOSE" = "1" ]; then
+    # Disables Ninja's "smart terminal"
+    TERM=dumb cmake --build --preset "$CMAKE_PRESET"
+else
+    cmake --build --preset "$CMAKE_PRESET"
+fi
 
 echo "Done."
 echo ""
