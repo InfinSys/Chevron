@@ -62,9 +62,33 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char* argv[])
 
     //
 
-    MemoryScope memScope{
-        MemoryScope::Config{ .acquire_size = 16_MiB, .distribute_size = 4_MiB }
-    };
+    MemoryScope rootMemScope{
+        MemoryScope::Config{ .acquire = 16_MiB, .distribute = 4_MiB }
+    }; ///< 4 blocks
+
+    MemoryScope layer2MemScope{
+        rootMemScope,
+        MemoryScope::Config{ .acquire = 4_MiB, .distribute = 512_KiB }
+    }; ///< 8 blocks
+
+    MemoryScope layer3MemScope{
+        layer2MemScope,
+        MemoryScope::Config{ .acquire = 512_KiB, .distribute = 8_KiB }
+    }; ///< 64 blocks
+
+    // layer3MemScope.extendMemory(chevron::Bytes{18});
+
+    std::cout << "\n\t[Memory Scope Info]"
+        << "\n~ Root Scope"
+        << "\nIs child of root: " << rootMemScope.isChildOfRoot()
+        << "\n\n~ Layer 2 Scope"
+        << "\nIs child of root: " << layer2MemScope.isChildOfRoot()
+        << "\n\n~ Layer 3 Scope"
+        << "\nIs child of root: " << layer3MemScope.isChildOfRoot()
+        << std::endl;
+
+    // NOTES:
+    // bool autoRescrReturn = false/true;
 
     //
     //\\//
