@@ -40,6 +40,94 @@ struct FreeRegionNode {
 	void* next;   ///< Pointer to next free block
 };
 
+/*!
+ * @brief
+ * TODO: INCOMPLETE DOCUMENTATION!!!
+ * 
+ * @details
+ * TODO: INCOMPLETE DOCUMENTATION!!!
+ */
+class FreeRegionChain {
+    // ===================================================================================== //
+    //      <> chevron::memory::FreeRegionChain | [PRIVATE] ATTRIBUTES
+    // ===================================================================================== //
+
+    FreeRegionNode* head_; ///< Head of free region chain
+    FreeRegionNode* tail_; ///< Tail of free region chain
+    size_t length_;        ///< Number of nodes in chain
+
+    // ===================================================================================== //
+    //      <> chevron::memory::FreeRegionChain | CONSTRUCTORS / DESTRUCTOR
+    // ===================================================================================== //
+public:
+    /*! @brief Construct empty free-region node chain. */
+    FreeRegionChain() noexcept;
+    /*! @brief Construct single free-region node chain. */
+    FreeRegionChain(FreeRegionNode* solo_region) noexcept;
+    /*! @brief Construct free-region node chain. */
+    FreeRegionChain(FreeRegionNode* chain_head, FreeRegionNode* chain_tail, size_t length) noexcept;
+
+    ~FreeRegionChain() = default;
+
+    // ===================================================================================== //
+    //      <> chevron::memory::FreeRegionChain | [PUBLIC] MEMBER METHODS
+    // ===================================================================================== //
+
+    /*!
+     * @brief
+     * TODO: INCOMPLETE DOCUMENTATION!!!
+     *
+     * @details
+     * TODO: INCOMPLETE DOCUMENTATION!!!
+     */
+    [[nodiscard]] bool isValid() const noexcept;
+
+    /*!
+     * @brief
+     * TODO: INCOMPLETE DOCUMENTATION!!!
+     *
+     * @details
+     * TODO: INCOMPLETE DOCUMENTATION!!!
+     */
+    [[nodiscard]] bool isEmpty() const noexcept;
+
+    /*!
+     * @brief
+     * TODO: INCOMPLETE DOCUMENTATION!!!
+     *
+     * @details
+     * TODO: INCOMPLETE DOCUMENTATION!!!
+     */
+    [[nodiscard]] size_t length() const noexcept;
+
+    /*!
+     * @brief
+     * TODO: INCOMPLETE DOCUMENTATION!!!
+     *
+     * @details
+     * TODO: INCOMPLETE DOCUMENTATION!!!
+     */
+    [[nodiscard]] FreeRegionNode* head() noexcept;
+
+    /*!
+     * @brief
+     * TODO: INCOMPLETE DOCUMENTATION!!!
+     *
+     * @details
+     * TODO: INCOMPLETE DOCUMENTATION!!!
+     */
+    [[nodiscard]] FreeRegionNode* tail() noexcept;
+
+    /*!
+     * @brief
+     * TODO: INCOMPLETE DOCUMENTATION!!!
+     *
+     * @details
+     * TODO: INCOMPLETE DOCUMENTATION!!!
+     */
+    void invalidate() noexcept;
+};
+
 }
 
 #endif // CHEVRON_LIB_MEMORY_DEFINITIONS_H_
