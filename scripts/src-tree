@@ -6,4 +6,4 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 # Run tree command in project root
-tree "$PROJECT_ROOT" -P '*.hpp|*.cpp|*.h|*.c' -I 'build' --prune -n
+tree "$PROJECT_ROOT" -P '*.hpp|*.hpp.in|*.cpp|*.cpp.in|*.h|*.h.in|*.c|*.c.in' -I 'build' --prune -n
