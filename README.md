@@ -126,7 +126,7 @@
  * Conceptual portable GUI application launch sequence.
  */
 
-#include <chevron/entry.hpp>      // Entry point helpers and macros
+#include <chevron/launch.hpp>     // Entry point helpers and macros
 #include <chevron/process.hpp>    // Application process-level constructs
 #include <chevron/wx/runtime.hpp> // wxWidgets GUI framework engine
 
@@ -140,7 +140,7 @@ using chevron::ProcessExitReport;
 
 // Note:
 // `ENTRY_POINT_METHOD_SIGNATURE` and `ENTRY_POINT_ARG_VARS` are
-// Chevron defined macros from <chevron/entry.hpp>.
+// Chevron defined macros from <chevron/launch.hpp>.
 
 /*!
  * @brief
