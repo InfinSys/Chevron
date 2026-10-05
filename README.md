@@ -26,8 +26,8 @@
     <h1><em>What is this?</em></h1>
     <p>
         Every C++ GUI application has to settle the same foundational details before real development can begin: how memory is structured, how concurrent threads of
-        execution are managed, how windows are handled, how dynamic UI views work, and more. None of this is the application <em>itself</em>, yet it is crucial to the
-        applications functionality.
+        execution are managed, how windows are handled, the mechanics of dynamic UI views, and more. None of that is the application <em>itself</em>, but it is crucial
+        to the applications functionality.
     </p>
     <p>
         <strong>
@@ -114,8 +114,8 @@
 
 > [!NOTE] <!--| GitHub Notice: Early Development |-->
 > <p>
->     <strong>The main method is always tasked with handling process-wide setup, it is not application code. The application itself lives downstream of this stage, in the windows
->     and infrastructure that come online during runtime.</strong>
+>     <strong>The main method is always tasked with handling process-wide setup, it is not application code. The application itself lives downstream of this stage in the windows
+>     and their associated components.</strong>
 > </p>
 
 ```cpp
@@ -134,9 +134,9 @@ using chevron::AppProcess;
 using WxEngine = chevron::wx::Engine;
 
 using chevron::WindowFactory;
-using chevron::ProcessMemoryConfig;
-using chevron::ProcessThreadConfig;
-using chevron::ProcessExitReport;
+using chevron::AppMemoryConfig;
+using chevron::AppThreadConfig;
+using chevron::AppExitReport;
 
 // Note:
 // `ENTRY_POINT_METHOD_SIGNATURE` and `ENTRY_POINT_ARG_VARS` are
@@ -147,8 +147,8 @@ using chevron::ProcessExitReport;
  * Application entry point (main method)
  */
 ENTRY_POINT_METHOD_SIGNATURE {
-    ProcessMemoryConfig memoryConfig{ /*Configure process memory*/ };
-    ProcessThreadConfig threadConfig{ /*Configure process threads*/ };
+    AppMemoryConfig memoryConfig{ /*Configure process memory*/ };
+    AppThreadConfig threadConfig{ /*Configure process threads*/ };
     
     AppProcess proc{memoryConfig, threadConfig};
     
@@ -168,7 +168,7 @@ ENTRY_POINT_METHOD_SIGNATURE {
     proc.initializeGUIEngine();
     
     proc.mainloopEntry();
-    ProcessExitReport report = proc.shutdown();
+    AppExitReport report = proc.shutdown();
     return report.exitCode;
 }
 ```
