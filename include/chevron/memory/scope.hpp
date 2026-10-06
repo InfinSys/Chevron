@@ -19,8 +19,8 @@
 #ifndef CHEVRON_LIB_MEMORY_HIERARCHY_SCOPE_H_
 #define CHEVRON_LIB_MEMORY_HIERARCHY_SCOPE_H_
 
-#include "chevron/memory/memory_defs.hpp"
 #include "chevron/memory/region.hpp"
+#include "chevron/memory/free_region_chain.hpp"
 #include "chevron/memory/atomic_free_list.hpp"
 #include "chevron/utility/function/callable.hpp"
 #include "chevron/common/export.h"
