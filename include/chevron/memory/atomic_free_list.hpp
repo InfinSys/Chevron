@@ -38,6 +38,7 @@
 #ifndef CHEVRON_LIB_ATOMIC_MEMORY_FREE_LIST_H_
 #define CHEVRON_LIB_ATOMIC_MEMORY_FREE_LIST_H_
 
+#include <cstddef>
 #include "chevron/memory/memory_defs.hpp"
 #include "chevron/thread/utility/tagged_ptr.hpp"
 
