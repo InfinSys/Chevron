@@ -29,7 +29,7 @@
 // ===================================================================================== //
 
 chevron::process::ProcessMemoryAllocator::ProcessMemoryAllocator(const size_t maxAllocs)
-    : allocListHead_{nullptr}, chunkCount_{0}, maxAllocs_{maxAllocs}
+    : alloc_list_head_{nullptr}, chunk_count_{0}, max_allocs_{maxAllocs}
 {
     if (maxAllocs == 0) {
         throw std::invalid_argument{
@@ -40,7 +40,7 @@ chevron::process::ProcessMemoryAllocator::ProcessMemoryAllocator(const size_t ma
 
 chevron::process::ProcessMemoryAllocator::~ProcessMemoryAllocator() noexcept
 {
-    AllocationNode* currentAlloc = allocListHead_.load(std::memory_order_relaxed);
+    AllocationNode* currentAlloc = alloc_list_head_.load(std::memory_order_relaxed);
 
     while (currentAlloc != nullptr) {
         AllocationNode* nextAlloc = currentAlloc->next;
@@ -60,12 +60,12 @@ chevron::process::ProcessMemoryAllocator::~ProcessMemoryAllocator() noexcept
 
 size_t chevron::process::ProcessMemoryAllocator::acquisition_count() const noexcept
 {
-    return chunkCount_.load(std::memory_order_relaxed);
+    return chunk_count_.load(std::memory_order_relaxed);
 }
 
 size_t chevron::process::ProcessMemoryAllocator::max_acquisition_count() const noexcept
 {
-    return maxAllocs_;
+    return max_allocs_;
 }
 
 chevron::memory::MemoryRegion chevron::process::ProcessMemoryAllocator::acquire_chunk(
@@ -86,16 +86,16 @@ chevron::memory::MemoryRegion chevron::process::ProcessMemoryAllocator::acquire_
     // roll back and throw. A successful increment only means you may
     // attempt an OS allocation and nothing more.
 
-    size_t previousAllocCount = chunkCount_.fetch_add(1, std::memory_order_acq_rel);
+    size_t previousAllocCount = chunk_count_.fetch_add(1, std::memory_order_acq_rel);
 
     // Decrement allocation count on failure beyond this point
     ScopeGuard allocIncrementGuard{
         [&] {
-            chunkCount_.fetch_sub(1, std::memory_order_relaxed);
+            chunk_count_.fetch_sub(1, std::memory_order_relaxed);
         }
     };
 
-    if (previousAllocCount >= maxAllocs_)
+    if (previousAllocCount >= max_allocs_)
         throw std::bad_alloc{};
 
     ///---------------------------------------------------------------------------------
@@ -139,10 +139,10 @@ chevron::memory::MemoryRegion chevron::process::ProcessMemoryAllocator::acquire_
     // and updates node->next to the new head automatically for another
     // try.
 
-    newAllocNode_ptr->next = allocListHead_.load(std::memory_order_acquire);
+    newAllocNode_ptr->next = alloc_list_head_.load(std::memory_order_acquire);
 
     while (
-        !allocListHead_.compare_exchange_weak(
+        !alloc_list_head_.compare_exchange_weak(
             newAllocNode_ptr->next,      ///< Expected current head
             newAllocNode_ptr,            ///< New head to install if expected still present
             std::memory_order_release,   ///< Success: publish node write to other threads

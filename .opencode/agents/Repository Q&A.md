@@ -105,6 +105,19 @@ permission:
     "git ls-files *": allow
     "git ls-tree *": allow
 
+    "git notes": allow
+    "git notes list *": allow
+    "git notes show *": allow
+    "git notes get-ref": allow
+
+    "git notes add *": deny
+    "git notes append *": deny
+    "git notes copy *": deny
+    "git notes edit *": deny
+    "git notes merge *": deny
+    "git notes remove *": deny
+    "git notes prune *": deny
+
     "git branch --show-current": allow
     "git branch -a": allow
     "git branch --all": allow

@@ -20,9 +20,6 @@
 #ifndef CHEVRON_LIB_MEMORY_DEFINITIONS_H_
 #define CHEVRON_LIB_MEMORY_DEFINITIONS_H_
 
-#include <cstdint>
-#include <atomic>
-
 namespace chevron::memory
 {
 

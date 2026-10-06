@@ -29,6 +29,11 @@ chevron::memory::MemoryDescription::MemoryDescription(void* base, size_t alignme
 //      <> chevron::memory::MemoryDescription | [PUBLIC] MEMBER METHODS
 // ===================================================================================== //
 
+bool chevron::memory::MemoryDescription::isValid() const noexcept
+{
+	return baseAddress_ && (alignment_ != 0 && capacity_ != 0);
+}
+
 void* chevron::memory::MemoryDescription::base() const noexcept
 {
 	return baseAddress_;

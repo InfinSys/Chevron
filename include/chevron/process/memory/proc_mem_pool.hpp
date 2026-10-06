@@ -71,11 +71,11 @@ class ProcessMemoryPool {
      * remaining blocks to the shared list.
      */
     struct ThreadLocalMemoryCache {
+        ProcessMemoryPool* shared_pool;           ///< Process-level shared memory pool
         memory::FreeRegionNode* free_list_head;   ///< Head of thread-local free block chain
         size_t free_blocks;                       ///< Number of blocks currently free in local cache
         size_t cached_blocks;                     ///< Number of blocks in local cache possession
         size_t batch_size;                        ///< Batch size for next trip to shared memory pool
-        ProcessMemoryPool* shared_pool;           ///< Process-level shared memory pool
 
         /*! @brief Thread-local memory cache destructor. */
         ~ThreadLocalMemoryCache() noexcept;
@@ -233,7 +233,7 @@ public:
      * @return
      * Allocated memory region
      */
-    [[nodiscard]] memory::MemoryRegion allocate();
+    [[nodiscard]] memory::MemoryRegion allocate_block(ProcessMemoryAllocator& allocator);
 
     /*!
      * @brief
@@ -244,7 +244,7 @@ public:
      * If the cache exceeds its capacity, a batch of blocks is
      * drained back to the shared free list.
      */
-    void deallocate(memory::MemoryRegion& block) noexcept;
+    void deallocate_block(memory::MemoryRegion& block) noexcept;
 
     // ===================================================================================== //
     //      <> chevron::process::ProcessMemoryPool | OPERATORS
@@ -261,8 +261,7 @@ private:
     memory::AtomicFreeList free_list_;   ///< Embedded free list
     atomic_size_t bytes_acquired_;       ///< Total bytes currently occupied from OS
     size_t blocks_per_chunk_;            ///< Number of blocks carved from each chunk
-    MemoryPoolConfig config_;            ///< Process memory pool configuration 
-    ProcessMemoryAllocator allocator_;   ///< Process memory allocator
+    MemoryPoolConfig config_;            ///< Process memory pool configuration
     AtomicExpandState expansion_state_;  ///< Current state of memory expansion execution
 
     // ===================================================================================== //
@@ -289,18 +288,6 @@ private:
      * Validates memory pool budget constraints.
      */
     void validate_budget_constraints();
-
-    /*!
-     * @brief
-     * Reconstructs process memory allocator with effective geometry
-     * values.
-     * 
-     * @details
-     * Uses placement new to reconstruct the allocator in-place because
-     * its construction parameters depend on effective geometry values
-     * that are not available at initializer list time.
-     */
-    void reinit_memory_allocator();
 
     /*!
      * @brief
@@ -372,7 +359,7 @@ private:
      * project's needs. The first thread to arrive at the expansion
      * execution path is the expansion owner.
      */
-    void expand_memory();
+    void expand_memory(ProcessMemoryAllocator& allocator);
 };
 
 }
