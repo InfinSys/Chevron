@@ -49,7 +49,7 @@ void FreeList::push(FreeRegionChain& batch)
 {
     batch.tail()->next = free_list_head_;
     free_list_head_ = batch.head();
-    batch.invalidate();
+    batch.clear();
 }
 
 FreeRegionChain FreeList::pop(size_t quantity)

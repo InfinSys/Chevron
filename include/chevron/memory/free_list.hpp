@@ -23,6 +23,7 @@
 #define CHEVRON_LIB_MEMORY_FREE_LIST_H_
 
 #include "chevron/memory/memory_defs.hpp"
+#include "chevron/memory/free_region_chain.hpp"
 
 namespace chevron::memory
 {
